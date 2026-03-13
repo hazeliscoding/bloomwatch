@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\BloomWatch.Modules.WatchSpaces.Domain\BloomWatch.Modules.WatchSpaces.Domain.csproj" />
+    <ProjectReference Include="..\BloomWatch.Modules.WatchSpaces.Contracts\BloomWatch.Modules.WatchSpaces.Contracts.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

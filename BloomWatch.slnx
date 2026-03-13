@@ -10,8 +10,16 @@
     <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Domain/BloomWatch.Modules.Identity.Domain.csproj" />
     <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure/BloomWatch.Modules.Identity.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/WatchSpaces/">
+    <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Application/BloomWatch.Modules.WatchSpaces.Application.csproj" />
+    <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Contracts/BloomWatch.Modules.WatchSpaces.Contracts.csproj" />
+    <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Domain/BloomWatch.Modules.WatchSpaces.Domain.csproj" />
+    <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure/BloomWatch.Modules.WatchSpaces.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/BloomWatch.Modules.Identity.IntegrationTests/BloomWatch.Modules.Identity.IntegrationTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.Identity.UnitTests/BloomWatch.Modules.Identity.UnitTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.WatchSpaces.IntegrationTests/BloomWatch.Modules.WatchSpaces.IntegrationTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.WatchSpaces.UnitTests/BloomWatch.Modules.WatchSpaces.UnitTests.csproj" />
   </Folder>
 </Solution>
