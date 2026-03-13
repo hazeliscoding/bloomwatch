@@ -25,24 +25,138 @@ public static class WatchSpacesEndpoints
         var invitationsGroup = app.MapGroup("/watchspaces/invitations").WithTags("WatchSpaces");
 
         // Space management
-        group.MapPost("/", CreateAsync);
-        group.MapGet("/", GetMySpacesAsync);
-        group.MapGet("/{id:guid}", GetByIdAsync);
-        group.MapPatch("/{id:guid}", RenameAsync);
-        group.MapPost("/{id:guid}/transfer-ownership", TransferOwnershipAsync);
+        group.MapPost("/", CreateAsync)
+            .WithName("CreateWatchSpace")
+            .WithSummary("Create a new WatchSpace")
+            .WithDescription(
+                "Creates a new WatchSpace owned by the authenticated user. " +
+                "The caller is automatically added as the Owner member.")
+            .Produces<CreateWatchSpaceResult>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest);
+
+        group.MapGet("/", GetMySpacesAsync)
+            .WithName("GetMyWatchSpaces")
+            .WithSummary("List WatchSpaces for the current user")
+            .WithDescription(
+                "Returns all WatchSpaces the authenticated user belongs to, " +
+                "including their role in each space.")
+            .Produces<IReadOnlyList<WatchSpaceSummary>>(StatusCodes.Status200OK);
+
+        group.MapGet("/{id:guid}", GetByIdAsync)
+            .WithName("GetWatchSpaceById")
+            .WithSummary("Get a WatchSpace by ID")
+            .WithDescription(
+                "Returns the full details of a single WatchSpace, including its member list. " +
+                "The authenticated user must be a member of the space.")
+            .Produces<WatchSpaceDetail>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden);
+
+        group.MapPatch("/{id:guid}", RenameAsync)
+            .WithName("RenameWatchSpace")
+            .WithSummary("Rename a WatchSpace")
+            .WithDescription(
+                "Updates the name of the specified WatchSpace. " +
+                "Only the Owner may perform this action.")
+            .Produces<RenameWatchSpaceResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status400BadRequest);
+
+        group.MapPost("/{id:guid}/transfer-ownership", TransferOwnershipAsync)
+            .WithName("TransferOwnership")
+            .WithSummary("Transfer WatchSpace ownership to another member")
+            .WithDescription(
+                "Assigns ownership of the WatchSpace to a different member. " +
+                "The requesting user must currently be the Owner. " +
+                "The target user must already be a member of the space.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status400BadRequest);
 
         // Invitations (owner actions)
-        group.MapPost("/{id:guid}/invitations", InviteAsync);
-        group.MapGet("/{id:guid}/invitations", ListInvitationsAsync);
-        group.MapDelete("/{id:guid}/invitations/{invitationId:guid}", RevokeInvitationAsync);
+        group.MapPost("/{id:guid}/invitations", InviteAsync)
+            .WithName("InviteMember")
+            .WithSummary("Invite a user to a WatchSpace")
+            .WithDescription(
+                "Sends an invitation to the specified email address. " +
+                "Only the Owner may send invitations. " +
+                "The invitation includes a unique token that the recipient uses to accept or decline.")
+            .Produces<InviteMemberResult>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status409Conflict)
+            .Produces(StatusCodes.Status422UnprocessableEntity);
+
+        group.MapGet("/{id:guid}/invitations", ListInvitationsAsync)
+            .WithName("ListInvitations")
+            .WithSummary("List pending invitations for a WatchSpace")
+            .WithDescription(
+                "Returns all invitations (pending, accepted, declined, expired) for the given WatchSpace. " +
+                "Only the Owner may view invitations.")
+            .Produces<IReadOnlyList<InvitationDetail>>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden);
+
+        group.MapDelete("/{id:guid}/invitations/{invitationId:guid}", RevokeInvitationAsync)
+            .WithName("RevokeInvitation")
+            .WithSummary("Revoke a pending invitation")
+            .WithDescription(
+                "Cancels a pending invitation so it can no longer be accepted. " +
+                "Only the Owner may revoke invitations.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status409Conflict);
 
         // Invitations (invitee actions — no space ID needed, token identifies the invitation)
-        invitationsGroup.MapPost("/{token}/accept", AcceptInvitationAsync).RequireAuthorization();
-        invitationsGroup.MapPost("/{token}/decline", DeclineInvitationAsync).RequireAuthorization();
+        invitationsGroup.MapPost("/{token}/accept", AcceptInvitationAsync)
+            .WithName("AcceptInvitation")
+            .WithSummary("Accept a WatchSpace invitation")
+            .WithDescription(
+                "The authenticated user accepts the invitation identified by the provided token. " +
+                "The user's email must match the email the invitation was addressed to. " +
+                "Returns 410 Gone if the invitation has expired.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status410Gone)
+            .Produces(StatusCodes.Status409Conflict)
+            .Produces(StatusCodes.Status403Forbidden)
+            .RequireAuthorization();
+
+        invitationsGroup.MapPost("/{token}/decline", DeclineInvitationAsync)
+            .WithName("DeclineInvitation")
+            .WithSummary("Decline a WatchSpace invitation")
+            .WithDescription(
+                "The authenticated user declines the invitation identified by the provided token. " +
+                "The user's email must match the email the invitation was addressed to.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status400BadRequest)
+            .RequireAuthorization();
 
         // Membership
-        group.MapDelete("/{id:guid}/members/{userId:guid}", RemoveMemberAsync);
-        group.MapDelete("/{id:guid}/members/me", LeaveAsync);
+        group.MapDelete("/{id:guid}/members/{userId:guid}", RemoveMemberAsync)
+            .WithName("RemoveMember")
+            .WithSummary("Remove a member from a WatchSpace")
+            .WithDescription(
+                "Removes the specified user from the WatchSpace. " +
+                "Only the Owner may remove members. The Owner cannot remove themselves.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status409Conflict);
+
+        group.MapDelete("/{id:guid}/members/me", LeaveAsync)
+            .WithName("LeaveWatchSpace")
+            .WithSummary("Leave a WatchSpace")
+            .WithDescription(
+                "Removes the authenticated user from the WatchSpace. " +
+                "The Owner cannot leave; they must transfer ownership first.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status409Conflict);
 
         return app;
     }

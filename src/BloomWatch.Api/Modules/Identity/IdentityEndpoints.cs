@@ -10,8 +10,24 @@ public static class IdentityEndpoints
     {
         var group = app.MapGroup("/auth").WithTags("Identity");
 
-        group.MapPost("/register", RegisterAsync);
-        group.MapPost("/login", LoginAsync);
+        group.MapPost("/register", RegisterAsync)
+            .WithName("Register")
+            .WithSummary("Register a new user account")
+            .WithDescription(
+                "Creates a new user account with the provided email, password, and display name. " +
+                "Returns the newly created user's ID on success.")
+            .Produces<RegisterUserResult>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status409Conflict)
+            .Produces(StatusCodes.Status400BadRequest);
+
+        group.MapPost("/login", LoginAsync)
+            .WithName("Login")
+            .WithSummary("Authenticate and obtain a JWT access token")
+            .WithDescription(
+                "Validates the provided credentials and, if correct, returns a signed JWT access token " +
+                "along with its expiration timestamp.")
+            .Produces<LoginUserResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized);
 
         return app;
     }
