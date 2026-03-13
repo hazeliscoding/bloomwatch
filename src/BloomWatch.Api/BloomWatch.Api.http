@@ -1,0 +1,81 @@
+@host = http://localhost:5192
+
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "password123",
+  "displayName": "Alice"
+}
+
+###
+
+### Register - duplicate email (should return 409)
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "password123",
+  "displayName": "Alice Again"
+}
+
+###
+
+### Register - invalid email (should return 400)
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "password123",
+  "displayName": "Bad Email User"
+}
+
+###
+
+### Register - short password (should return 400)
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "bob@example.com",
+  "password": "short",
+  "displayName": "Bob"
+}
+
+###
+
+### Login - valid credentials
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+###
+
+### Login - wrong password (should return 401)
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "wrongpassword"
+}
+
+###
+
+### Login - non-existent user (should return 401)
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "nobody@example.com",
+  "password": "password123"
+}
+
+###
