@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(openspec new:*)",
+      "Bash(openspec status:*)",
+      "Bash(openspec instructions:*)",
+      "Bash(ls /home/hazeliscoding/projects/bloomwatch/ && find /home/hazeliscoding/projects/bloomwatch -name \"*.sln\" -o -name \"*.csproj\" 2>/dev/null | head -20)",
+      "Bash(dotnet --version 2>&1)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(DOMAIN=\"src/Modules/Identity/BloomWatch.Modules.Identity.Domain/BloomWatch.Modules.Identity.Domain.csproj\"\nAPP=\"src/Modules/Identity/BloomWatch.Modules.Identity.Application/BloomWatch.Modules.Identity.Application.csproj\"\nINFRA=\"src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure/BloomWatch.Modules.Identity.Infrastructure.csproj\"\nCONTRACTS=\"src/Modules/Identity/BloomWatch.Modules.Identity.Contracts/BloomWatch.Modules.Identity.Contracts.csproj\"\nAPI=\"src/BloomWatch.Api/BloomWatch.Api.csproj\"\n\ndotnet add \"$APP\" reference \"$DOMAIN\" 2>&1\ndotnet add \"$INFRA\" reference \"$APP\" \"$DOMAIN\" 2>&1\ndotnet add \"$CONTRACTS\" reference \"$DOMAIN\" 2>&1\ndotnet add \"$API\" reference \"$INFRA\" \"$CONTRACTS\" 2>&1)",
+      "Bash(find src/Modules/Identity -name \"Class1.cs\" -delete && find src/BloomWatch.SharedKernel -name \"Class1.cs\" -delete && echo \"cleaned\")",
+      "Bash(INFRA=\"src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure\" dotnet add \"$INFRA/$INFRA.csproj\" package Microsoft.EntityFrameworkCore --version 9.0.3)",
+      "Bash(INFRA=\"src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure/BloomWatch.Modules.Identity.Infrastructure.csproj\" dotnet add \"$INFRA\" package Microsoft.EntityFrameworkCore --version 9.0.3)",
+      "Bash(dotnet tool:*)",
+      "Bash(INFRA=\"src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure/BloomWatch.Modules.Identity.Infrastructure.csproj\"\ndotnet add \"$INFRA\" package Microsoft.EntityFrameworkCore.Design --version 9.0.3 2>&1 | tail -2)",
+      "Bash(dotnet ef:*)",
+      "Bash(export PATH=\"$PATH:$HOME/.dotnet/tools\" && dotnet ef migrations add InitialIdentitySchema --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure --output-dir Persistence/Migrations 2>&1)",
+      "Bash(dotnet build:*)",
+      "Bash(ls *.sln 2>/dev/null && dotnet build 2>&1 | tail -20)",
+      "Bash(ls *.slnx 2>/dev/null && dotnet build BloomWatch.slnx 2>&1 | tail -20)",
+      "Bash(dotnet add:*)",
+      "Bash(UNIT=\"tests/BloomWatch.Modules.Identity.UnitTests/BloomWatch.Modules.Identity.UnitTests.csproj\" INTG=\"tests/BloomWatch.Modules.Identity.IntegrationTests/BloomWatch.Modules.Identity.IntegrationTests.csproj\" DOMAIN=\"src/Modules/Identity/BloomWatch.Modules.Identity.Domain/BloomWatch.Modules.Identity.Domain.csproj\" APP=\"src/Modules/Identity/BloomWatch.Modules.Identity.Application/BloomWatch.Modules.Identity.Application.csproj\" INFRA=\"src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure/BloomWatch.Modules.Identity.Infrastructure.csproj\" API=\"src/BloomWatch.Api/BloomWatch.Api.csproj\" __NEW_LINE_0e4fc869049f2e0e__ dotnet add \"$UNIT\" reference \"$DOMAIN\" \"$APP\")",
+      "Bash(INTG=\"tests/BloomWatch.Modules.Identity.IntegrationTests/BloomWatch.Modules.Identity.IntegrationTests.csproj\"\ndotnet add \"$INTG\" package Microsoft.EntityFrameworkCore.InMemory --version 9.0.3 2>&1 | tail -2)",
+      "Bash(dotnet test:*)",
+      "Bash(which dotnet-ef:*)",
+      "Bash(ls ~/.dotnet/tools/ && export PATH=\"$PATH:$HOME/.dotnet/tools\" && dotnet-ef --version 2>&1)",
+      "Bash(export PATH=\"$PATH:$HOME/.dotnet/tools\" && dotnet ef database update --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure/BloomWatch.Modules.Identity.Infrastructure.csproj --startup-project src/BloomWatch.Api/BloomWatch.Api.csproj 2>&1)",
+      "Bash(sleep 6 && curl -s -w \"\\\\nHTTP Status: %{http_code}\\\\n\" http://localhost:5192/auth/register -X POST -H \"Content-Type: application/json\" -d '{\"email\":\"alice@example.com\",\"password\":\"password123\",\"displayName\":\"Alice\"}' 2>&1)",
+      "Bash(curl -s -w \"\\\\nHTTP Status: %{http_code}\\\\n\" http://localhost:5192/auth/login -X POST -H \"Content-Type: application/json\" -d '{\"email\":\"alice@example.com\",\"password\":\"password123\"}' 2>&1)",
+      "Bash(git cz:*)",
+      "Bash(git add:*)",
+      "Bash(which git-cz:*)",
+      "Bash(git-cz --non-interactive --type chore --subject \"initialize solution with architecture docs and gitignore\")",
+      "Bash(npx git-conventional-commits:*)"
+    ]
+  }
+}
