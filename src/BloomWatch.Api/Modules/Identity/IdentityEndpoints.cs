@@ -1,5 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using BloomWatch.Modules.Identity.Application.UseCases.GetProfile;
 using BloomWatch.Modules.Identity.Application.UseCases.Login;
 using BloomWatch.Modules.Identity.Application.UseCases.Register;
+using BloomWatch.Modules.Identity.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BloomWatch.Api.Modules.Identity;
@@ -28,6 +32,19 @@ public static class IdentityEndpoints
                 "along with its expiration timestamp.")
             .Produces<LoginUserResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized);
+
+        var usersGroup = app.MapGroup("/users").WithTags("Users");
+
+        usersGroup.MapGet("/me", GetMyProfileAsync)
+            .WithName("GetMyProfile")
+            .WithSummary("Get the authenticated user's profile")
+            .WithDescription(
+                "Returns the profile of the currently authenticated user, " +
+                "including account status and email verification state.")
+            .RequireAuthorization()
+            .Produces<UserProfileResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound);
 
         return app;
     }
@@ -75,6 +92,29 @@ public static class IdentityEndpoints
         catch (AccountNotActiveException)
         {
             return Results.Unauthorized();
+        }
+    }
+
+    private static async Task<IResult> GetMyProfileAsync(
+        ClaimsPrincipal user,
+        GetUserProfileQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var subClaim = user.FindFirstValue(JwtRegisteredClaimNames.Sub)
+            ?? user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (subClaim is null || !Guid.TryParse(subClaim, out var userId))
+            return Results.Unauthorized();
+
+        try
+        {
+            var query = new GetUserProfileQuery(UserId.From(userId));
+            var result = await handler.HandleAsync(query, cancellationToken);
+            return Results.Ok(result);
+        }
+        catch (UserNotFoundException)
+        {
+            return Results.NotFound();
         }
     }
 }
