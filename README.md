@@ -18,15 +18,22 @@ src/
 ├── BloomWatch.Api/                          # HTTP host — entry point, middleware, endpoint registration
 ├── BloomWatch.SharedKernel/                 # Shared abstractions used across modules
 └── Modules/
-    └── Identity/
-        ├── BloomWatch.Modules.Identity.Domain/          # Aggregates, value objects, repository interfaces
-        ├── BloomWatch.Modules.Identity.Application/     # Use case command handlers, service abstractions
-        ├── BloomWatch.Modules.Identity.Infrastructure/  # EF Core, BCrypt, JWT, migrations
-        └── BloomWatch.Modules.Identity.Contracts/       # Integration events for inter-module communication
+    ├── Identity/
+    │   ├── BloomWatch.Modules.Identity.Domain/          # Aggregates, value objects, repository interfaces
+    │   ├── BloomWatch.Modules.Identity.Application/     # Use case command handlers, service abstractions
+    │   ├── BloomWatch.Modules.Identity.Infrastructure/  # EF Core, BCrypt, JWT, migrations
+    │   └── BloomWatch.Modules.Identity.Contracts/       # Integration events for inter-module communication
+    └── WatchSpaces/
+        ├── BloomWatch.Modules.WatchSpaces.Domain/          # WatchSpace aggregate, Invitation entity, member rules
+        ├── BloomWatch.Modules.WatchSpaces.Application/     # 12 use case handlers (create, invite, accept, leave…)
+        ├── BloomWatch.Modules.WatchSpaces.Infrastructure/  # EF Core, email lookup, migrations
+        └── BloomWatch.Modules.WatchSpaces.Contracts/       # Integration events for downstream modules
 
 tests/
-├── BloomWatch.Modules.Identity.UnitTests/          # Domain + use case unit tests (25 tests)
-└── BloomWatch.Modules.Identity.IntegrationTests/   # HTTP endpoint integration tests (6 tests)
+├── BloomWatch.Modules.Identity.UnitTests/              # Domain + use case unit tests (25 tests)
+├── BloomWatch.Modules.Identity.IntegrationTests/       # HTTP endpoint integration tests (6 tests)
+├── BloomWatch.Modules.WatchSpaces.UnitTests/           # Domain unit tests (23 tests)
+└── BloomWatch.Modules.WatchSpaces.IntegrationTests/    # HTTP endpoint integration tests (10 tests)
 
 docs/
 └── architecture.md     # Full system design, module breakdown, and planned feature phases
@@ -68,6 +75,9 @@ export ConnectionStrings__DefaultConnection="Host=localhost;Database=bloomwatch;
 ```bash
 dotnet ef database update --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure \
                           --startup-project src/BloomWatch.Api
+
+dotnet ef database update --project src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure \
+                          --startup-project src/BloomWatch.Api
 ```
 
 **4. Run the API**
@@ -107,6 +117,28 @@ Content-Type: application/json
 
 Returns a signed JWT access token valid for 1 hour.
 
+### WatchSpaces
+
+All WatchSpace endpoints require a valid JWT (`Authorization: Bearer <token>`).
+
+```http
+POST   /watchspaces                                      # Create a new watch space
+GET    /watchspaces                                      # List spaces you belong to
+GET    /watchspaces/{id}                                 # Get a single space (members only)
+PATCH  /watchspaces/{id}                                 # Rename a space (owner only)
+POST   /watchspaces/{id}/transfer-ownership              # Transfer ownership to a member
+
+POST   /watchspaces/{id}/invitations                     # Invite a user by email (owner only)
+GET    /watchspaces/{id}/invitations                     # List pending invitations (owner only)
+DELETE /watchspaces/{id}/invitations/{invitationId}      # Revoke an invitation (owner only)
+
+POST   /watchspaces/invitations/{token}/accept           # Accept an invitation by token
+POST   /watchspaces/invitations/{token}/decline          # Decline an invitation by token
+
+DELETE /watchspaces/{id}/members/{userId}                # Remove a member (owner only)
+DELETE /watchspaces/{id}/members/me                      # Leave a space
+```
+
 A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
 
 ## Configuration
@@ -134,11 +166,17 @@ All configuration lives in `appsettings.json`. The key sections:
 # All tests
 dotnet test
 
-# Unit tests only
+# Identity unit tests
 dotnet test tests/BloomWatch.Modules.Identity.UnitTests
 
-# Integration tests only
+# Identity integration tests
 dotnet test tests/BloomWatch.Modules.Identity.IntegrationTests
+
+# WatchSpaces unit tests
+dotnet test tests/BloomWatch.Modules.WatchSpaces.UnitTests
+
+# WatchSpaces integration tests
+dotnet test tests/BloomWatch.Modules.WatchSpaces.IntegrationTests
 ```
 
 Integration tests use an in-memory SQLite database via `WebApplicationFactory` — no real database required.
@@ -168,14 +206,22 @@ openspec/
 ├── config.yaml                   # OpenSpec configuration
 ├── specs/                        # Standalone feature specs (reusable across changes)
 │   ├── user-registration/
-│   └── user-authentication/
+│   ├── user-authentication/
+│   ├── watch-space-management/
+│   ├── watch-space-invitations/
+│   └── watch-space-membership/
 └── changes/
     └── archive/
-        └── 2026-03-13-scaffold-identity-module/   # Completed Identity module change
-            ├── proposal.md       # Why this change was made and what it includes
-            ├── design.md         # Technical design decisions
-            ├── tasks.md          # All 39 tasks, fully checked off
-            └── specs/            # Specs used during this change
+        ├── 2026-03-13-scaffold-identity-module/   # Completed Identity module change
+        │   ├── proposal.md
+        │   ├── design.md
+        │   ├── tasks.md
+        │   └── specs/
+        └── 2026-03-13-watchspaces-module/         # Completed WatchSpaces module change
+            ├── proposal.md
+            ├── design.md
+            ├── tasks.md
+            └── specs/
 ```
 
 ### Completed changes
@@ -183,6 +229,7 @@ openspec/
 | Change | Date | Summary |
 |--------|------|---------|
 | `scaffold-identity-module` | 2026-03-13 | User registration, JWT login, full Identity module (domain → API) |
+| `watchspaces-module` | 2026-03-13 | Watch space creation, email invitations, membership management, full WatchSpaces module (domain → API) |
 
 ### Working with OpenSpec
 
