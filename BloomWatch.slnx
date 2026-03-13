@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BloomWatch.Api/BloomWatch.Api.csproj" />
+    <Project Path="src/BloomWatch.SharedKernel/BloomWatch.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Application/BloomWatch.Modules.Identity.Application.csproj" />
+    <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Contracts/BloomWatch.Modules.Identity.Contracts.csproj" />
+    <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Domain/BloomWatch.Modules.Identity.Domain.csproj" />
+    <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure/BloomWatch.Modules.Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BloomWatch.Modules.Identity.IntegrationTests/BloomWatch.Modules.Identity.IntegrationTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.Identity.UnitTests/BloomWatch.Modules.Identity.UnitTests.csproj" />
+  </Folder>
+</Solution>
