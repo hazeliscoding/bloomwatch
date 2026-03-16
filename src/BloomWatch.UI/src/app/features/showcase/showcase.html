@@ -1,0 +1,277 @@
+<div class="showcase">
+  <!-- Hero -->
+  <div class="showcase__hero">
+    <h1>BloomWatch Design System</h1>
+    <p>Kawaii / Y2K Component Library Preview</p>
+  </div>
+
+  <!-- ===== BUTTONS ===== -->
+  <section class="showcase__section">
+    <h2 class="showcase__section-title">Buttons</h2>
+    <p class="showcase__section-desc">Gel-button aesthetic with glossy shine, 5 variants and 3 sizes.</p>
+
+    <div class="showcase__label">Variants</div>
+    <div class="showcase__row">
+      <bloom-button variant="primary">Primary</bloom-button>
+      <bloom-button variant="secondary">Secondary</bloom-button>
+      <bloom-button variant="accent">Accent</bloom-button>
+      <bloom-button variant="ghost">Ghost</bloom-button>
+      <bloom-button variant="danger">Danger</bloom-button>
+    </div>
+
+    <div class="showcase__label">Sizes</div>
+    <div class="showcase__row">
+      <bloom-button size="sm">Small</bloom-button>
+      <bloom-button size="md">Medium</bloom-button>
+      <bloom-button size="lg">Large</bloom-button>
+    </div>
+
+    <div class="showcase__label">States</div>
+    <div class="showcase__row">
+      <bloom-button [disabled]="true">Disabled</bloom-button>
+      <bloom-button [loading]="true">Loading</bloom-button>
+      <bloom-button [fullWidth]="true" variant="accent">Full Width</bloom-button>
+    </div>
+
+    <div class="showcase__label">With Icons</div>
+    <div class="showcase__row">
+      <bloom-button variant="primary">
+        <span bloomButtonIconLeft>&#x2764;</span>
+        Like
+      </bloom-button>
+      <bloom-button variant="secondary">
+        Add
+        <span bloomButtonIconRight>&#x2728;</span>
+      </bloom-button>
+      <bloom-button variant="accent">
+        <span bloomButtonIconLeft>&#x2B50;</span>
+        Favourite
+        <span bloomButtonIconRight>&#x2B50;</span>
+      </bloom-button>
+    </div>
+  </section>
+
+  <hr class="showcase__divider" />
+
+  <!-- ===== CARDS ===== -->
+  <section class="showcase__section">
+    <h2 class="showcase__section-title">Cards</h2>
+    <p class="showcase__section-desc">Content containers with soft shadows, rounded corners, and optional sparkle borders.</p>
+
+    <div class="showcase__grid">
+      <bloom-card>
+        <h3 bloomCardHeader>Default Card</h3>
+        <p>This is a standard card with a subtle hover lift effect. Great for content sections.</p>
+        <div bloomCardFooter>
+          <bloom-button variant="ghost" size="sm">View More</bloom-button>
+        </div>
+      </bloom-card>
+
+      <bloom-card variant="highlighted">
+        <h3 bloomCardHeader>Highlighted Card</h3>
+        <p>This card has an animated rainbow sparkle border for emphasis and extra kawaii vibes!</p>
+        <div bloomCardFooter>
+          <bloom-button variant="primary" size="sm">Explore</bloom-button>
+        </div>
+      </bloom-card>
+
+      <bloom-card>
+        <h3 bloomCardHeader>Anime Night</h3>
+        <p>Watch "Spy x Family" with your crew this Friday. Everyone's rated it 9/10 so far!</p>
+        <div bloomCardFooter>
+          <bloom-badge color="green" [dot]="true">Watching</bloom-badge>
+        </div>
+      </bloom-card>
+    </div>
+  </section>
+
+  <hr class="showcase__divider" />
+
+  <!-- ===== INPUTS ===== -->
+  <section class="showcase__section">
+    <h2 class="showcase__section-title">Inputs</h2>
+    <p class="showcase__section-desc">Form fields with pastel focus rings, kawaii labels, and friendly error states.</p>
+
+    <div class="showcase__input-grid">
+      <bloom-input
+        label="Display Name"
+        placeholder="e.g. SakuraChan"
+        hint="This is how others will see you"
+      ></bloom-input>
+
+      <bloom-input
+        label="Email"
+        type="email"
+        placeholder="you@example.com"
+        [required]="true"
+      ></bloom-input>
+
+      <bloom-input
+        label="Password"
+        type="password"
+        placeholder="Super secret..."
+        [required]="true"
+      ></bloom-input>
+
+      <bloom-input
+        label="Favourite Anime"
+        placeholder="Type here..."
+        error="This field is required!"
+      ></bloom-input>
+
+      <bloom-input
+        label="Search"
+        placeholder="Search anime..."
+        size="sm"
+      >
+        <span bloomInputPrefix>&#x1F50D;</span>
+      </bloom-input>
+
+      <bloom-input
+        label="Disabled Field"
+        placeholder="Can't touch this"
+        [disabled]="true"
+      ></bloom-input>
+    </div>
+
+    <div class="showcase__label">Sizes</div>
+    <div class="showcase__input-grid">
+      <bloom-input size="sm" placeholder="Small input" label="Small"></bloom-input>
+      <bloom-input size="md" placeholder="Medium input" label="Medium"></bloom-input>
+      <bloom-input size="lg" placeholder="Large input" label="Large"></bloom-input>
+    </div>
+  </section>
+
+  <hr class="showcase__divider" />
+
+  <!-- ===== BADGES ===== -->
+  <section class="showcase__section">
+    <h2 class="showcase__section-title">Badges</h2>
+    <p class="showcase__section-desc">Pill-shaped status tags in kawaii pastel colors.</p>
+
+    <div class="showcase__label">Colors</div>
+    <div class="showcase__badge-row">
+      <bloom-badge color="pink">Pink</bloom-badge>
+      <bloom-badge color="blue">Blue</bloom-badge>
+      <bloom-badge color="green">Green</bloom-badge>
+      <bloom-badge color="lilac">Lilac</bloom-badge>
+      <bloom-badge color="yellow">Yellow</bloom-badge>
+      <bloom-badge color="neutral">Neutral</bloom-badge>
+    </div>
+
+    <div class="showcase__label">With Dot Indicator</div>
+    <div class="showcase__badge-row">
+      <bloom-badge color="green" [dot]="true">Watching</bloom-badge>
+      <bloom-badge color="pink" [dot]="true">Completed</bloom-badge>
+      <bloom-badge color="blue" [dot]="true">Plan to Watch</bloom-badge>
+      <bloom-badge color="yellow" [dot]="true">On Hold</bloom-badge>
+      <bloom-badge color="neutral" [dot]="true">Dropped</bloom-badge>
+    </div>
+
+    <div class="showcase__label">Sizes</div>
+    <div class="showcase__badge-row">
+      <bloom-badge size="sm" color="pink">Small</bloom-badge>
+      <bloom-badge size="md" color="lilac">Medium</bloom-badge>
+    </div>
+
+    <div class="showcase__label">In Context</div>
+    <div class="showcase__badge-row">
+      <bloom-badge color="pink">Romance</bloom-badge>
+      <bloom-badge color="blue">Action</bloom-badge>
+      <bloom-badge color="lilac">Fantasy</bloom-badge>
+      <bloom-badge color="green">Slice of Life</bloom-badge>
+      <bloom-badge color="yellow">Comedy</bloom-badge>
+    </div>
+  </section>
+
+  <hr class="showcase__divider" />
+
+  <!-- ===== AVATARS ===== -->
+  <section class="showcase__section">
+    <h2 class="showcase__section-title">Avatars</h2>
+    <p class="showcase__section-desc">Circular avatars with kawaii borders, initials fallback, and status indicators.</p>
+
+    <div class="showcase__label">Sizes</div>
+    <div class="showcase__avatar-row">
+      <bloom-avatar size="xs" name="Sakura"></bloom-avatar>
+      <bloom-avatar size="sm" name="Naruto Uzumaki"></bloom-avatar>
+      <bloom-avatar size="md" name="Mikasa Ackerman"></bloom-avatar>
+      <bloom-avatar size="lg" name="Gojo Satoru"></bloom-avatar>
+    </div>
+
+    <div class="showcase__label">With Status</div>
+    <div class="showcase__avatar-row">
+      <bloom-avatar size="md" name="Online User" status="online"></bloom-avatar>
+      <bloom-avatar size="md" name="Offline User" status="offline"></bloom-avatar>
+      <bloom-avatar size="md" name="Watching Now" status="watching"></bloom-avatar>
+      <bloom-avatar size="md" name="No Status" status="none"></bloom-avatar>
+    </div>
+
+    <div class="showcase__label">Avatar Stack</div>
+    <div class="showcase__avatar-row">
+      <bloom-avatar-stack ariaLabel="Watch party members">
+        <bloom-avatar size="sm" name="Sakura Chan" status="online"></bloom-avatar>
+        <bloom-avatar size="sm" name="Naruto Uzumaki" status="online"></bloom-avatar>
+        <bloom-avatar size="sm" name="Hinata Hyuga" status="watching"></bloom-avatar>
+        <bloom-avatar size="sm" name="Sasuke Uchiha" status="offline"></bloom-avatar>
+      </bloom-avatar-stack>
+    </div>
+  </section>
+
+  <hr class="showcase__divider" />
+
+  <!-- ===== MIXED COMPOSITIONS ===== -->
+  <section class="showcase__section">
+    <h2 class="showcase__section-title">Compositions</h2>
+    <p class="showcase__section-desc">Components working together in real-world-ish scenarios.</p>
+
+    <div class="showcase__grid">
+      <!-- Watch Space Card -->
+      <bloom-card variant="highlighted">
+        <div bloomCardHeader style="display: flex; align-items: center; gap: 0.75rem;">
+          <bloom-avatar-stack ariaLabel="Members">
+            <bloom-avatar size="xs" name="Hazel" status="online"></bloom-avatar>
+            <bloom-avatar size="xs" name="Luna" status="watching"></bloom-avatar>
+          </bloom-avatar-stack>
+          <span style="font-weight: 700;">Our Anime Night</span>
+        </div>
+        <p>3 anime in backlog &middot; 12 completed</p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+          <bloom-badge color="pink" size="sm">Romance</bloom-badge>
+          <bloom-badge color="lilac" size="sm">Fantasy</bloom-badge>
+        </div>
+        <div bloomCardFooter style="display: flex; gap: 0.5rem;">
+          <bloom-button variant="primary" size="sm">Open</bloom-button>
+          <bloom-button variant="ghost" size="sm">Invite</bloom-button>
+        </div>
+      </bloom-card>
+
+      <!-- Search Card -->
+      <bloom-card>
+        <h3 bloomCardHeader>Find Anime</h3>
+        <bloom-input placeholder="Search AniList..." size="md">
+          <span bloomInputPrefix>&#x1F50D;</span>
+        </bloom-input>
+        <div bloomCardFooter>
+          <bloom-button variant="accent" size="sm" [fullWidth]="true">Search</bloom-button>
+        </div>
+      </bloom-card>
+
+      <!-- Profile Card -->
+      <bloom-card>
+        <div bloomCardHeader style="display: flex; align-items: center; gap: 1rem;">
+          <bloom-avatar size="lg" name="Hazel Coding" status="online"></bloom-avatar>
+          <div>
+            <strong style="display: block; font-size: 1.1rem;">Hazel</strong>
+            <bloom-badge color="green" [dot]="true" size="sm">Online</bloom-badge>
+          </div>
+        </div>
+        <p>42 anime completed &middot; 8.2 avg score</p>
+        <div bloomCardFooter style="display: flex; gap: 0.5rem;">
+          <bloom-button variant="secondary" size="sm">View Profile</bloom-button>
+          <bloom-button variant="ghost" size="sm">Settings</bloom-button>
+        </div>
+      </bloom-card>
+    </div>
+  </section>
+</div>
