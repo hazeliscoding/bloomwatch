@@ -1,0 +1,11 @@
+<nav class="shell-nav">
+  <a class="shell-nav__brand" routerLink="/">BloomWatch</a>
+  <ul class="shell-nav__links">
+    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a></li>
+    <li><a routerLink="/watch-spaces" routerLinkActive="active">Watch Spaces</a></li>
+    <li><a routerLink="/settings" routerLinkActive="active">Settings</a></li>
+  </ul>
+</nav>
+<main class="shell-content">
+  <router-outlet />
+</main>
