@@ -364,13 +364,13 @@ As a non-owner member, I want to leave a watch space, so that I am no longer ass
 
 **Goal:** The backend can search AniList for anime metadata and serve it to clients. Metadata is cached locally.
 **Module:** AniListSync (discovery portion)
-**Backend status:** To Do
+**Backend status:** Partial (1 of 2 stories done)
 
 ---
 
 ### Story 3.1 — AniList Search Proxy (Backend)
 
-**Status:** To Do
+**Status:** Done
 **Points:** 5
 **Sizing rationale:** Requires building a GraphQL client (HttpClient-based), writing the AniList search query, mapping the response to internal DTOs, and layering in a short-lived cache. Cross-cutting concern between AniListSync and the API layer.
 
@@ -700,13 +700,13 @@ As a watch space member, I want the system to pick a random anime from our backl
 ## Epic 6 — Angular Frontend Shell
 
 **Goal:** The Angular application has a working shell with routing, authentication guards, HTTP interceptors, and a responsive layout.
-**Frontend status:** To Do
+**Frontend status:** Partial (1 of 3 stories done)
 
 ---
 
 ### Story 6.1 — Angular Project Setup and Routing Shell
 
-**Status:** To Do
+**Status:** Done
 **Points:** 3
 **Sizing rationale:** Initial Angular app setup with feature-based structure, lazy-loaded routes, and basic layout component. No domain logic, but a meaningful amount of configuration and structural work.
 
@@ -1082,10 +1082,10 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 |---|---|---|---|
 | Epic 1 — Authentication and Identity (Backend) | 3 Done | 3 | 8 |
 | Epic 2 — Watch Spaces Management (Backend) | 12 Done | 12 | 28 |
-| Epic 3 — AniList Discovery (Backend) | To Do | 2 | 8 |
+| Epic 3 — AniList Discovery (Backend) | 1 Done / 1 To Do | 2 | 8 |
 | Epic 4 — Anime Tracking (Backend) | To Do | 7 | 23 |
 | Epic 5 — Analytics and Dashboard (Backend) | To Do | 5 | 18 |
-| Epic 6 — Angular Frontend Shell | To Do | 3 | 8 |
+| Epic 6 — Angular Frontend Shell | 1 Done / 2 To Do | 3 | 8 |
 | Epic 7 — Auth Frontend | To Do | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | To Do | 3 | 11 |
 | Epic 9 — Anime Tracking Frontend | To Do | 4 | 21 |
@@ -1096,8 +1096,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| Done (Identity backend + WatchSpaces backend) | 38 |
-| To Do (remaining MVP) | 115 |
+| Done (Identity backend + WatchSpaces backend + AniList search + Angular shell) | 46 |
+| To Do (remaining MVP) | 107 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
