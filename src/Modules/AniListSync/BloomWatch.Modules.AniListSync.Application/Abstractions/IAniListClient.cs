@@ -1,3 +1,4 @@
+using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 
 namespace BloomWatch.Modules.AniListSync.Application.Abstractions;
@@ -21,4 +22,15 @@ public interface IAniListClient
     /// Returns an empty list when no results are found.
     /// </returns>
     Task<IReadOnlyList<AnimeSearchResult>> SearchAnimeAsync(string query, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves full metadata for a single AniList anime by its media ID.
+    /// </summary>
+    /// <param name="anilistMediaId">The AniList media identifier.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>
+    /// An <see cref="AnimeMediaDetail"/> containing the full metadata, or <c>null</c> if AniList
+    /// does not have an entry for the given ID.
+    /// </returns>
+    Task<AnimeMediaDetail?> GetMediaByIdAsync(int anilistMediaId, CancellationToken cancellationToken = default);
 }

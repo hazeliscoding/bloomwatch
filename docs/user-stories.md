@@ -392,7 +392,7 @@ As an authenticated user, I want to search for anime by name, so that I can find
 
 ### Story 3.2 — AniList Media Detail (Backend)
 
-**Status:** To Do
+**Status:** Done
 **Points:** 3
 **Sizing rationale:** Single-record fetch by AniList media ID. Cache hit path is trivial; cache miss triggers AniList GraphQL call and writes to `anilist_sync.media_cache`.
 
@@ -725,7 +725,7 @@ As a developer, I want a working Angular project with lazy-loaded feature routes
 
 ### Story 6.2 — HTTP Client and Auth Interceptor
 
-**Status:** To Do
+**Status:** Done
 **Points:** 3
 **Sizing rationale:** API service layer with base URL configuration, JWT injection interceptor, and 401 redirect handling. Cross-cutting; affects every API call.
 

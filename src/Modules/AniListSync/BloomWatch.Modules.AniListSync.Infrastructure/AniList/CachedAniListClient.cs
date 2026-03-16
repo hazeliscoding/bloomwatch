@@ -1,4 +1,5 @@
 using BloomWatch.Modules.AniListSync.Application.Abstractions;
+using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -58,5 +59,17 @@ internal sealed class CachedAniListClient : IAniListClient
         _cache.Set(cacheKey, results, CacheDuration);
 
         return results;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Detail caching is handled at the database level by the query handler.
+    /// This method passes through directly to the inner client.
+    /// </remarks>
+    public Task<AnimeMediaDetail?> GetMediaByIdAsync(
+        int anilistMediaId,
+        CancellationToken cancellationToken = default)
+    {
+        return _inner.GetMediaByIdAsync(anilistMediaId, cancellationToken);
     }
 }

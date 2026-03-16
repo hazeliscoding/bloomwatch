@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddWatchSpacesModule(builder.Configuration);
-builder.Services.AddAniListSyncModule();
+builder.Services.AddAniListSyncModule(builder.Configuration);
 
 builder.Services.AddOpenApi(options =>
 {

@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using BloomWatch.Modules.AniListSync.Application.Abstractions;
+using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 
 namespace BloomWatch.Modules.AniListSync.Infrastructure.AniList;
@@ -35,6 +36,31 @@ internal sealed class AniListGraphQlClient : IAniListClient
               seasonYear
               genres
             }
+          }
+        }
+        """;
+
+    private const string MediaByIdQuery = """
+        query ($id: Int) {
+          Media(id: $id, type: ANIME) {
+            id
+            title {
+              romaji
+              english
+              native
+            }
+            coverImage {
+              large
+            }
+            episodes
+            status
+            format
+            season
+            seasonYear
+            genres
+            description
+            averageScore
+            popularity
           }
         }
         """;
@@ -101,6 +127,60 @@ internal sealed class AniListGraphQlClient : IAniListClient
                 SeasonYear: m.SeasonYear,
                 Genres: (IReadOnlyList<string>)(m.Genres ?? [])))
             .ToList();
+    }
+
+    /// <inheritdoc />
+    /// <exception cref="AniListApiException">
+    /// Thrown when the AniList API returns a non-success HTTP status code or a malformed JSON response.
+    /// </exception>
+    public async Task<AnimeMediaDetail?> GetMediaByIdAsync(
+        int anilistMediaId,
+        CancellationToken cancellationToken = default)
+    {
+        var requestBody = new
+        {
+            query = MediaByIdQuery,
+            variables = new { id = anilistMediaId }
+        };
+
+        using var response = await _httpClient.PostAsJsonAsync("", requestBody, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var statusCode = (int)response.StatusCode;
+            throw new AniListApiException($"AniList API returned HTTP {statusCode}.");
+        }
+
+        AniListGraphQlResponse? result;
+        try
+        {
+            result = await response.Content.ReadFromJsonAsync<AniListGraphQlResponse>(cancellationToken);
+        }
+        catch (JsonException ex)
+        {
+            throw new AniListApiException("AniList API returned a malformed response.", ex);
+        }
+
+        var media = result?.Data?.Media;
+        if (media is null)
+            return null;
+
+        return new AnimeMediaDetail(
+            AnilistMediaId: media.Id,
+            TitleRomaji: media.Title?.Romaji,
+            TitleEnglish: media.Title?.English,
+            TitleNative: media.Title?.Native,
+            CoverImageUrl: media.CoverImage?.Large,
+            Episodes: media.Episodes,
+            Status: media.Status,
+            Format: media.Format,
+            Season: media.Season,
+            SeasonYear: media.SeasonYear,
+            Genres: (IReadOnlyList<string>)(media.Genres ?? []),
+            Description: media.Description,
+            AverageScore: media.AverageScore,
+            Popularity: media.Popularity,
+            CachedAt: default);
     }
 }
 

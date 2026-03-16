@@ -53,7 +53,10 @@
       "Bash(APP=/home/hazeliscoding/projects/bloomwatch/src/BloomWatch.UI/src/app && mkdir -p \"$APP/core/layout\" \"$APP/shared/ui\" \"$APP/shared/models\" \"$APP/features/auth\" \"$APP/features/dashboard\" \"$APP/features/watch-spaces\" \"$APP/features/settings\")",
       "Bash(APP=/home/hazeliscoding/projects/bloomwatch/src/BloomWatch.UI/src/app && touch \"$APP/shared/ui/.gitkeep\" \"$APP/shared/models/.gitkeep\")",
       "Bash(git:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npx ng:*)",
+      "Bash(openspec list:*)",
+      "Bash(openspec:*)"
     ]
   }
 }

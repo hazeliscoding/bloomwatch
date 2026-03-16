@@ -1,7 +1,11 @@
 using BloomWatch.Modules.AniListSync.Application.Abstractions;
+using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 using BloomWatch.Modules.AniListSync.Infrastructure.AniList;
+using BloomWatch.Modules.AniListSync.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BloomWatch.Modules.AniListSync.Infrastructure.Extensions;
@@ -14,21 +18,22 @@ public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Registers all services required by the AniListSync module, including the AniList
-    /// GraphQL HTTP client, the caching decorator, and the search query handler.
+    /// GraphQL HTTP client, the caching decorator, persistence, and query handlers.
     /// </summary>
-    /// <remarks>
-    /// <para>
-    /// This method configures an <see cref="HttpClient"/> targeting the AniList GraphQL
-    /// endpoint at <c>https://graphql.anilist.co</c>. It also registers
-    /// <see cref="CachedAniListClient"/> as the <see cref="IAniListClient"/> implementation,
-    /// wrapping the underlying <see cref="AniListGraphQlClient"/> with an in-memory cache
-    /// to reduce API calls.
-    /// </para>
-    /// </remarks>
     /// <param name="services">The service collection to add the AniListSync services to.</param>
+    /// <param name="configuration">The application configuration for reading connection strings.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance for chaining.</returns>
-    public static IServiceCollection AddAniListSyncModule(this IServiceCollection services)
+    public static IServiceCollection AddAniListSyncModule(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
+        // Persistence
+        services.AddDbContext<AniListSyncDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<IMediaCacheRepository, EfMediaCacheRepository>();
+
+        // AniList HTTP client + caching decorator
         services.AddMemoryCache();
 
         services.AddHttpClient<AniListGraphQlClient>(client =>
@@ -42,7 +47,9 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<AniListGraphQlClient>(),
                 sp.GetRequiredService<IMemoryCache>()));
 
+        // Use case handlers
         services.AddScoped<SearchAnimeQueryHandler>();
+        services.AddScoped<GetMediaDetailQueryHandler>();
 
         return services;
     }

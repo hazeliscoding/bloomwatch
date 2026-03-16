@@ -24,6 +24,12 @@ internal sealed class AniListData
     /// </summary>
     [JsonPropertyName("Page")]
     public AniListPage? Page { get; set; }
+
+    /// <summary>
+    /// Gets or sets the single media entry returned by the <c>Media(id:)</c> query.
+    /// </summary>
+    [JsonPropertyName("Media")]
+    public AniListMedia? Media { get; set; }
 }
 
 /// <summary>
@@ -96,6 +102,24 @@ internal sealed class AniListMedia
     /// </summary>
     [JsonPropertyName("genres")]
     public List<string>? Genres { get; set; }
+
+    /// <summary>
+    /// Gets or sets the HTML/Markdown description of the anime.
+    /// </summary>
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the average user score (0–100) on AniList.
+    /// </summary>
+    [JsonPropertyName("averageScore")]
+    public int? AverageScore { get; set; }
+
+    /// <summary>
+    /// Gets or sets the popularity rank (number of users with this on their list).
+    /// </summary>
+    [JsonPropertyName("popularity")]
+    public int? Popularity { get; set; }
 }
 
 /// <summary>
@@ -114,6 +138,12 @@ internal sealed class AniListTitle
     /// </summary>
     [JsonPropertyName("english")]
     public string? English { get; set; }
+
+    /// <summary>
+    /// Gets or sets the native-language title.
+    /// </summary>
+    [JsonPropertyName("native")]
+    public string? Native { get; set; }
 }
 
 /// <summary>

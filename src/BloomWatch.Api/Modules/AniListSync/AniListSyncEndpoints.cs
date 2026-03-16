@@ -1,3 +1,4 @@
+using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 using BloomWatch.Modules.AniListSync.Infrastructure.AniList;
 
@@ -34,6 +35,18 @@ public static class AniListSyncEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status502BadGateway);
 
+        group.MapGet("/media/{anilistMediaId:int}", GetMediaDetailAsync)
+            .WithName("GetMediaDetail")
+            .WithSummary("Get full metadata for a single AniList anime")
+            .WithDescription(
+                "Returns full cached metadata for the given AniList media ID. " +
+                "Fetches from AniList on cache miss or stale cache (24-hour freshness window).")
+            .RequireAuthorization()
+            .Produces<AnimeMediaDetail>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status502BadGateway);
+
         return app;
     }
 
@@ -61,6 +74,32 @@ public static class AniListSyncEndpoints
             var searchQuery = new SearchAnimeQuery(query);
             var results = await handler.HandleAsync(searchQuery, cancellationToken);
             return Results.Ok(results);
+        }
+        catch (AniListApiException ex)
+        {
+            return Results.Problem(
+                detail: ex.Message,
+                statusCode: StatusCodes.Status502BadGateway,
+                title: "AniList API Error");
+        }
+    }
+
+    /// <summary>
+    /// Handles the media detail request by delegating to the <see cref="GetMediaDetailQueryHandler"/>.
+    /// </summary>
+    private static async Task<IResult> GetMediaDetailAsync(
+        int anilistMediaId,
+        GetMediaDetailQueryHandler handler,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var query = new GetMediaDetailQuery(anilistMediaId);
+            var result = await handler.HandleAsync(query, cancellationToken);
+
+            return result is null
+                ? Results.NotFound()
+                : Results.Ok(result);
         }
         catch (AniListApiException ex)
         {

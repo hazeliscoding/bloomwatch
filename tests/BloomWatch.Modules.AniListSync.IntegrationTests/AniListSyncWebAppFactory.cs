@@ -1,5 +1,6 @@
 using System.Net;
 using BloomWatch.Modules.AniListSync.Infrastructure.AniList;
+using BloomWatch.Modules.AniListSync.Infrastructure.Persistence;
 using BloomWatch.Modules.Identity.Infrastructure.Persistence;
 using BloomWatch.Modules.WatchSpaces.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
 {
     private SqliteConnection? _identityConnection;
     private SqliteConnection? _watchSpacesConnection;
+    private SqliteConnection? _aniListSyncConnection;
 
     private StubAniListHandler _stubHandler = new();
 
@@ -26,6 +28,9 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
 
         _watchSpacesConnection = new SqliteConnection("Data Source=:memory:");
         await _watchSpacesConnection.OpenAsync();
+
+        _aniListSyncConnection = new SqliteConnection("Data Source=:memory:");
+        await _aniListSyncConnection.OpenAsync();
     }
 
     public new async Task DisposeAsync()
@@ -34,6 +39,8 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
             await _identityConnection.DisposeAsync();
         if (_watchSpacesConnection is not null)
             await _watchSpacesConnection.DisposeAsync();
+        if (_aniListSyncConnection is not null)
+            await _aniListSyncConnection.DisposeAsync();
 
         await base.DisposeAsync();
     }
@@ -42,9 +49,10 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
     {
         builder.ConfigureServices(services =>
         {
-            // Replace IdentityDbContext with SQLite in-memory
+            // Replace DbContexts with SQLite in-memory
             ReplaceDbContext<IdentityDbContext>(services, _identityConnection!);
             ReplaceDbContext<WatchSpacesDbContext>(services, _watchSpacesConnection!);
+            ReplaceDbContext<AniListSyncDbContext>(services, _aniListSyncConnection!);
 
             // Replace the AniListGraphQlClient's HttpClient with a stub handler
             services.AddHttpClient<AniListGraphQlClient>()
@@ -59,6 +67,7 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
         using var scope = Services.CreateScope();
         scope.ServiceProvider.GetRequiredService<IdentityDbContext>().Database.EnsureCreated();
         scope.ServiceProvider.GetRequiredService<WatchSpacesDbContext>().Database.EnsureCreated();
+        scope.ServiceProvider.GetRequiredService<AniListSyncDbContext>().Database.EnsureCreated();
     }
 
     private static void ReplaceDbContext<TContext>(IServiceCollection services, SqliteConnection connection)
