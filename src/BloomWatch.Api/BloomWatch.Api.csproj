@@ -5,6 +5,7 @@
     <ProjectReference Include="..\Modules\Identity\BloomWatch.Modules.Identity.Contracts\BloomWatch.Modules.Identity.Contracts.csproj" />
     <ProjectReference Include="..\Modules\WatchSpaces\BloomWatch.Modules.WatchSpaces.Infrastructure\BloomWatch.Modules.WatchSpaces.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\WatchSpaces\BloomWatch.Modules.WatchSpaces.Contracts\BloomWatch.Modules.WatchSpaces.Contracts.csproj" />
+    <ProjectReference Include="..\Modules\AniListSync\BloomWatch.Modules.AniListSync.Infrastructure\BloomWatch.Modules.AniListSync.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

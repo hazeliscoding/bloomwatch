@@ -1,5 +1,7 @@
+using BloomWatch.Api.Modules.AniListSync;
 using BloomWatch.Api.Modules.Identity;
 using BloomWatch.Api.Modules.WatchSpaces;
+using BloomWatch.Modules.AniListSync.Infrastructure.Extensions;
 using BloomWatch.Modules.Identity.Infrastructure.Extensions;
 using BloomWatch.Modules.WatchSpaces.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddWatchSpacesModule(builder.Configuration);
+builder.Services.AddAniListSyncModule();
 
 builder.Services.AddOpenApi(options =>
 {
@@ -19,7 +22,7 @@ builder.Services.AddOpenApi(options =>
         {
             Title = "BloomWatch API",
             Version = "v1",
-            Description = "BloomWatch modular monolith API — Identity and WatchSpaces modules."
+            Description = "BloomWatch modular monolith API — Identity, WatchSpaces, and AniListSync modules."
         };
 
         document.Components ??= new OpenApiComponents();
@@ -74,6 +77,7 @@ app.UseAuthorization();
 
 app.MapIdentityEndpoints();
 app.MapWatchSpacesEndpoints();
+app.MapAniListSyncEndpoints();
 
 app.Run();
 
