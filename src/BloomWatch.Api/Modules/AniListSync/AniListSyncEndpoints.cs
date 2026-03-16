@@ -3,8 +3,21 @@ using BloomWatch.Modules.AniListSync.Infrastructure.AniList;
 
 namespace BloomWatch.Api.Modules.AniListSync;
 
+/// <summary>
+/// Defines the minimal API endpoints for the AniListSync module.
+/// </summary>
 public static class AniListSyncEndpoints
 {
+    /// <summary>
+    /// Maps the AniListSync HTTP endpoints onto the application's routing pipeline.
+    /// </summary>
+    /// <remarks>
+    /// Registers a <c>GET /api/anilist/search</c> endpoint that proxies search queries
+    /// to the AniList GraphQL API. The endpoint requires authorization and returns
+    /// cached results when available.
+    /// </remarks>
+    /// <param name="app">The endpoint route builder to add the AniList routes to.</param>
+    /// <returns>The same <see cref="IEndpointRouteBuilder"/> instance for chaining.</returns>
     public static IEndpointRouteBuilder MapAniListSyncEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/anilist").WithTags("AniList");
@@ -24,6 +37,17 @@ public static class AniListSyncEndpoints
         return app;
     }
 
+    /// <summary>
+    /// Handles the anime search request by validating the query parameter and delegating
+    /// to the <see cref="SearchAnimeQueryHandler"/>.
+    /// </summary>
+    /// <param name="query">The search term provided as a query string parameter.</param>
+    /// <param name="handler">The query handler resolved from dependency injection.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>
+    /// An <see cref="IResult"/> containing a 200 OK with the search results,
+    /// a 400 Bad Request if the query is empty, or a 502 Bad Gateway if the AniList API fails.
+    /// </returns>
     private static async Task<IResult> SearchAnimeAsync(
         string? query,
         SearchAnimeQueryHandler handler,

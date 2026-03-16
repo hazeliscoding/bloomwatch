@@ -15,8 +15,37 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BloomWatch.Modules.Identity.Infrastructure.Extensions;
 
+/// <summary>
+/// Provides extension methods for registering the Identity module's services
+/// with the dependency injection container.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registers all Identity module services, including persistence, authentication,
+    /// authorization, and application-layer use-case handlers.
+    /// </summary>
+    /// <remarks>
+    /// <para>The following services are registered:</para>
+    /// <list type="bullet">
+    ///   <item><description><b>Persistence</b> -- <see cref="IdentityDbContext"/> backed by PostgreSQL (connection string <c>DefaultConnection</c>).</description></item>
+    ///   <item><description><b>Repositories</b> -- <see cref="IUserRepository"/> as scoped.</description></item>
+    ///   <item><description><b>Auth services</b> -- <see cref="IPasswordHasher"/> (bcrypt) and <see cref="IJwtTokenGenerator"/> as scoped.</description></item>
+    ///   <item><description><b>Use-case handlers</b> -- <see cref="RegisterUserCommandHandler"/>, <see cref="LoginUserCommandHandler"/>, and <see cref="GetUserProfileQueryHandler"/> as scoped.</description></item>
+    ///   <item><description><b>JWT bearer authentication</b> -- configured with HMAC-SHA256 validation, zero clock skew, and issuer/audience checks sourced from <c>Identity:Jwt:*</c> configuration.</description></item>
+    ///   <item><description><b>Authorization</b> -- default policy via <c>AddAuthorization()</c>.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <param name="services">The service collection to register services into.</param>
+    /// <param name="configuration">
+    /// The application configuration. Must contain a <c>ConnectionStrings:DefaultConnection</c> entry
+    /// and an <c>Identity:Jwt:SecretKey</c> entry. <c>Identity:Jwt:Issuer</c> and
+    /// <c>Identity:Jwt:Audience</c> are optional (default to <c>"BloomWatch"</c>).
+    /// </param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the required <c>Identity:Jwt:SecretKey</c> configuration value is missing.
+    /// </exception>
     public static IServiceCollection AddIdentityModule(
         this IServiceCollection services,
         IConfiguration configuration)

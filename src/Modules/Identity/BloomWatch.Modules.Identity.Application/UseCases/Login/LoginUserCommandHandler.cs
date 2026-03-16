@@ -5,12 +5,22 @@ using BloomWatch.Modules.Identity.Domain.ValueObjects;
 
 namespace BloomWatch.Modules.Identity.Application.UseCases.Login;
 
+/// <summary>
+/// Handles user authentication by validating credentials, checking account status,
+/// and issuing a JWT access token upon successful login.
+/// </summary>
 public sealed class LoginUserCommandHandler
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LoginUserCommandHandler"/> class.
+    /// </summary>
+    /// <param name="userRepository">The repository for querying user aggregates by email.</param>
+    /// <param name="passwordHasher">The service used to verify the password against the stored hash.</param>
+    /// <param name="jwtTokenGenerator">The service used to generate JWT access tokens.</param>
     public LoginUserCommandHandler(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
@@ -21,6 +31,28 @@ public sealed class LoginUserCommandHandler
         _jwtTokenGenerator = jwtTokenGenerator;
     }
 
+    /// <summary>
+    /// Processes a login command by authenticating the user and returning an access token.
+    /// </summary>
+    /// <remarks>
+    /// This method performs the following steps:
+    /// <list type="number">
+    ///   <item>Parses and validates the email address format.</item>
+    ///   <item>Looks up the user by email address.</item>
+    ///   <item>Verifies that the account is in an <see cref="AccountStatus.Active"/> state.</item>
+    ///   <item>Verifies the plain-text password against the stored hash.</item>
+    ///   <item>Generates and returns a signed JWT access token.</item>
+    /// </list>
+    /// For security, invalid email format, unknown email, and wrong password all raise
+    /// the same <see cref="InvalidCredentialsException"/> to prevent user enumeration.
+    /// </remarks>
+    /// <param name="command">The login command containing the user's email and password.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A <see cref="LoginUserResult"/> containing the access token and its expiration time.</returns>
+    /// <exception cref="InvalidCredentialsException">
+    /// Thrown when the email format is invalid, no account matches the email, or the password is incorrect.
+    /// </exception>
+    /// <exception cref="AccountNotActiveException">Thrown when the matched account is not in an active state.</exception>
     public async Task<LoginUserResult> HandleAsync(
         LoginUserCommand command,
         CancellationToken cancellationToken = default)
@@ -52,8 +84,19 @@ public sealed class LoginUserCommandHandler
     }
 }
 
+/// <summary>
+/// Thrown when a login attempt fails due to an invalid email or incorrect password.
+/// </summary>
+/// <remarks>
+/// This exception is intentionally vague to prevent user enumeration attacks.
+/// It does not distinguish between an unknown email and a wrong password.
+/// </remarks>
 public sealed class InvalidCredentialsException()
     : Exception("Invalid email or password.");
 
+/// <summary>
+/// Thrown when a login attempt targets an account that is not in an active state
+/// (for example, suspended or pending verification).
+/// </summary>
 public sealed class AccountNotActiveException()
     : Exception("Account is not active.");

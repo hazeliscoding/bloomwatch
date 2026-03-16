@@ -8,8 +8,25 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BloomWatch.Api.Modules.Identity;
 
+/// <summary>
+/// Defines the minimal API endpoints for the Identity module, covering user registration,
+/// authentication, and profile retrieval.
+/// </summary>
 public static class IdentityEndpoints
 {
+    /// <summary>
+    /// Maps the Identity HTTP endpoints onto the application's routing pipeline.
+    /// </summary>
+    /// <remarks>
+    /// <para>Registers the following endpoints:</para>
+    /// <list type="bullet">
+    ///   <item><description><c>POST /auth/register</c> -- Create a new user account.</description></item>
+    ///   <item><description><c>POST /auth/login</c> -- Authenticate and receive a JWT access token.</description></item>
+    ///   <item><description><c>GET /users/me</c> -- Retrieve the authenticated user's profile.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <param name="app">The endpoint route builder to add the Identity routes to.</param>
+    /// <returns>The same <see cref="IEndpointRouteBuilder"/> instance for chaining.</returns>
     public static IEndpointRouteBuilder MapIdentityEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/auth").WithTags("Identity");
@@ -49,6 +66,16 @@ public static class IdentityEndpoints
         return app;
     }
 
+    /// <summary>
+    /// Handles user registration by creating a new account with the provided credentials.
+    /// </summary>
+    /// <param name="request">The registration request containing email, password, and display name.</param>
+    /// <param name="handler">The command handler resolved from dependency injection.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>
+    /// A 201 Created result with the new user's ID, a 409 Conflict if the email is already registered,
+    /// or a 400 Bad Request if validation fails.
+    /// </returns>
     private static async Task<IResult> RegisterAsync(
         [FromBody] RegisterRequest request,
         RegisterUserCommandHandler handler,
@@ -74,6 +101,16 @@ public static class IdentityEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles user login by validating credentials and issuing a JWT access token.
+    /// </summary>
+    /// <param name="request">The login request containing email and password.</param>
+    /// <param name="handler">The command handler resolved from dependency injection.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>
+    /// A 200 OK result with the access token and expiration, or a 401 Unauthorized result
+    /// if credentials are invalid or the account is not active.
+    /// </returns>
     private static async Task<IResult> LoginAsync(
         [FromBody] LoginRequest request,
         LoginUserCommandHandler handler,
@@ -95,6 +132,16 @@ public static class IdentityEndpoints
         }
     }
 
+    /// <summary>
+    /// Retrieves the profile of the currently authenticated user from JWT claims.
+    /// </summary>
+    /// <param name="user">The authenticated user's claims principal from the JWT token.</param>
+    /// <param name="handler">The query handler resolved from dependency injection.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>
+    /// A 200 OK result with the user profile, a 401 Unauthorized if the user ID claim
+    /// is missing or malformed, or a 404 Not Found if the user no longer exists.
+    /// </returns>
     private static async Task<IResult> GetMyProfileAsync(
         ClaimsPrincipal user,
         GetUserProfileQueryHandler handler,
@@ -119,5 +166,17 @@ public static class IdentityEndpoints
     }
 }
 
+/// <summary>
+/// Represents the request body for user registration.
+/// </summary>
+/// <param name="Email">The email address for the new account.</param>
+/// <param name="Password">The password for the new account.</param>
+/// <param name="DisplayName">The display name shown to other users.</param>
 public sealed record RegisterRequest(string Email, string Password, string DisplayName);
+
+/// <summary>
+/// Represents the request body for user login.
+/// </summary>
+/// <param name="Email">The email address of the account to authenticate.</param>
+/// <param name="Password">The password to validate against the account.</param>
 public sealed record LoginRequest(string Email, string Password);

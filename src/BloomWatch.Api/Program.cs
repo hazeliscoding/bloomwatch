@@ -81,4 +81,11 @@ app.MapAniListSyncEndpoints();
 
 app.Run();
 
+/// <summary>
+/// The entry point class for the BloomWatch API application.
+/// </summary>
+/// <remarks>
+/// Declared as a partial class to enable integration test projects (e.g., using
+/// <c>WebApplicationFactory&lt;Program&gt;</c>) to reference the application entry point.
+/// </remarks>
 public partial class Program { }

@@ -5,10 +5,22 @@ using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 
+/// <summary>
+/// Handles <see cref="AcceptInvitationCommand"/> by resolving the watch space from the invitation token,
+/// accepting the invitation on the aggregate, and publishing a <c>MemberJoinedWatchSpace</c> integration event.
+/// </summary>
+/// <param name="repository">The watch space repository used for persistence.</param>
+/// <param name="publisher">The integration event publisher used to notify other modules of the new membership.</param>
 public sealed class AcceptInvitationCommandHandler(
     IWatchSpaceRepository repository,
     IIntegrationEventPublisher publisher)
 {
+    /// <summary>
+    /// Accepts a pending invitation, adds the user as a member, and publishes a membership event.
+    /// </summary>
+    /// <param name="command">The command containing the invitation token, accepting user identifier, and email.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <exception cref="InvitationNotFoundException">Thrown when no invitation matches the provided token.</exception>
     public async Task HandleAsync(
         AcceptInvitationCommand command,
         CancellationToken cancellationToken = default)

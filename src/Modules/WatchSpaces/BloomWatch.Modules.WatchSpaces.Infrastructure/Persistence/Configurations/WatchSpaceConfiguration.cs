@@ -6,8 +6,29 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BloomWatch.Modules.WatchSpaces.Infrastructure.Persistence.Configurations;
 
+/// <summary>
+/// EF Core entity type configuration for the <see cref="WatchSpace"/> aggregate root.
+/// </summary>
+/// <remarks>
+/// <para>Maps to the <c>watch_spaces.watch_spaces</c> table with the following columns:</para>
+/// <list type="bullet">
+///   <item><description><c>id</c> (PK) -- <see cref="WatchSpaceId"/> value object, stored as <see cref="Guid"/>.</description></item>
+///   <item><description><c>name</c> -- required, max 100 characters.</description></item>
+///   <item><description><c>created_by_user_id</c> -- required <see cref="Guid"/>.</description></item>
+///   <item><description><c>created_at_utc</c>, <c>updated_at_utc</c> -- required timestamps.</description></item>
+/// </list>
+/// <para>Relationships:</para>
+/// <list type="bullet">
+///   <item><description>One-to-many with <see cref="WatchSpaceMember"/> (cascade delete), navigated via backing field <c>_members</c>.</description></item>
+///   <item><description>One-to-many with <see cref="Invitation"/> (cascade delete), navigated via backing field <c>_invitations</c>.</description></item>
+/// </list>
+/// </remarks>
 internal sealed class WatchSpaceConfiguration : IEntityTypeConfiguration<WatchSpace>
 {
+    /// <summary>
+    /// Configures the <see cref="WatchSpace"/> entity mapping, column definitions, and relationships.
+    /// </summary>
+    /// <param name="builder">The entity type builder for <see cref="WatchSpace"/>.</param>
     public void Configure(EntityTypeBuilder<WatchSpace> builder)
     {
         builder.ToTable("watch_spaces");
