@@ -16,7 +16,15 @@
     <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Domain/BloomWatch.Modules.WatchSpaces.Domain.csproj" />
     <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure/BloomWatch.Modules.WatchSpaces.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/AniListSync/">
+    <Project Path="src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Application/BloomWatch.Modules.AniListSync.Application.csproj" />
+    <Project Path="src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Contracts/BloomWatch.Modules.AniListSync.Contracts.csproj" />
+    <Project Path="src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Domain/BloomWatch.Modules.AniListSync.Domain.csproj" />
+    <Project Path="src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Infrastructure/BloomWatch.Modules.AniListSync.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/BloomWatch.Modules.AniListSync.IntegrationTests/BloomWatch.Modules.AniListSync.IntegrationTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.AniListSync.UnitTests/BloomWatch.Modules.AniListSync.UnitTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.Identity.IntegrationTests/BloomWatch.Modules.Identity.IntegrationTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.Identity.UnitTests/BloomWatch.Modules.Identity.UnitTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.WatchSpaces.IntegrationTests/BloomWatch.Modules.WatchSpaces.IntegrationTests.csproj" />
