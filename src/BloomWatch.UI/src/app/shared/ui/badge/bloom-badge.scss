@@ -1,0 +1,150 @@
+// ============================================================================
+// BloomWatch Badge Component
+// Kawaii / Y2K Pill Badge Aesthetic
+// ============================================================================
+
+:host {
+  display: inline-block;
+}
+
+// --------------------------------------------------------------------------
+// Base Badge
+// --------------------------------------------------------------------------
+
+.bloom-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bloom-space-1-5);
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-semibold);
+  white-space: nowrap;
+  border-radius: var(--bloom-radius-pill);
+  border: 1.5px solid transparent;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+// --------------------------------------------------------------------------
+// Size Variants
+// --------------------------------------------------------------------------
+
+.bloom-badge--sm {
+  padding: var(--bloom-space-0-5) var(--bloom-space-2);
+  font-size: var(--bloom-text-xs);
+}
+
+.bloom-badge--md {
+  padding: var(--bloom-space-1) var(--bloom-space-3);
+  font-size: var(--bloom-text-sm);
+}
+
+// --------------------------------------------------------------------------
+// Dot Indicator
+// --------------------------------------------------------------------------
+
+.bloom-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--bloom-radius-circle);
+  flex-shrink: 0;
+  animation: bloom-badge-dot-pulse 2s ease-in-out infinite;
+}
+
+.bloom-badge--sm .bloom-badge__dot {
+  width: 5px;
+  height: 5px;
+}
+
+@keyframes bloom-badge-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// --------------------------------------------------------------------------
+// Color Variants
+// --------------------------------------------------------------------------
+
+// Pink
+.bloom-badge--pink {
+  background-color: var(--bloom-pink-100);
+  color: var(--bloom-pink-700);
+  border-color: var(--bloom-pink-200);
+
+  .bloom-badge__dot {
+    background-color: var(--bloom-pink-500);
+  }
+}
+
+// Blue
+.bloom-badge--blue {
+  background-color: var(--bloom-blue-100);
+  color: var(--bloom-blue-700);
+  border-color: var(--bloom-blue-200);
+
+  .bloom-badge__dot {
+    background-color: var(--bloom-blue-500);
+  }
+}
+
+// Green
+.bloom-badge--green {
+  background-color: var(--bloom-lime-100);
+  color: var(--bloom-lime-700);
+  border-color: var(--bloom-lime-200);
+
+  .bloom-badge__dot {
+    background-color: var(--bloom-lime-500);
+  }
+}
+
+// Lilac
+.bloom-badge--lilac {
+  background-color: var(--bloom-lilac-100);
+  color: var(--bloom-lilac-700);
+  border-color: var(--bloom-lilac-200);
+
+  .bloom-badge__dot {
+    background-color: var(--bloom-lilac-500);
+  }
+}
+
+// Yellow
+.bloom-badge--yellow {
+  background-color: var(--bloom-yellow-100);
+  color: var(--bloom-yellow-800);
+  border-color: var(--bloom-yellow-200);
+
+  .bloom-badge__dot {
+    background-color: var(--bloom-yellow-500);
+  }
+}
+
+// Neutral
+.bloom-badge--neutral {
+  background-color: var(--bloom-neutral-100);
+  color: var(--bloom-neutral-700);
+  border-color: var(--bloom-neutral-200);
+
+  .bloom-badge__dot {
+    background-color: var(--bloom-neutral-500);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Label
+// --------------------------------------------------------------------------
+
+.bloom-badge__label {
+  display: inline-flex;
+  align-items: center;
+}
+
+// --------------------------------------------------------------------------
+// Reduced Motion
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .bloom-badge__dot {
+    animation: none;
+  }
+}

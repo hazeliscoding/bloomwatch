@@ -1,0 +1,226 @@
+// ============================================================================
+// BloomWatch Avatar Component
+// Kawaii / Y2K Circular Avatar with Decorative Border
+// ============================================================================
+
+:host {
+  display: inline-block;
+}
+
+// --------------------------------------------------------------------------
+// Base Avatar
+// --------------------------------------------------------------------------
+
+.bloom-avatar {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.bloom-avatar__frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--bloom-radius-circle);
+  overflow: hidden;
+  background: var(--bloom-gradient-kawaii);
+  border: 2px solid var(--bloom-surface-base);
+  box-shadow: var(--bloom-shadow-sm);
+
+  // Decorative outer ring
+  outline: 2px solid var(--bloom-pink-200);
+  outline-offset: 1px;
+}
+
+// --------------------------------------------------------------------------
+// Size Variants
+// --------------------------------------------------------------------------
+
+.bloom-avatar--xs {
+  .bloom-avatar__frame {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-width: 1.5px;
+    outline-width: 1.5px;
+  }
+
+  .bloom-avatar__initials {
+    font-size: 0.5rem;
+  }
+}
+
+.bloom-avatar--sm {
+  .bloom-avatar__frame {
+    width: 2rem;
+    height: 2rem;
+    border-width: 1.5px;
+    outline-width: 1.5px;
+  }
+
+  .bloom-avatar__initials {
+    font-size: 0.625rem;
+  }
+}
+
+.bloom-avatar--md {
+  .bloom-avatar__frame {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .bloom-avatar__initials {
+    font-size: var(--bloom-text-sm);
+  }
+}
+
+.bloom-avatar--lg {
+  .bloom-avatar__frame {
+    width: 4rem;
+    height: 4rem;
+    border-width: 3px;
+    outline-width: 2.5px;
+    outline-offset: 2px;
+  }
+
+  .bloom-avatar__initials {
+    font-size: var(--bloom-text-lg);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Image
+// --------------------------------------------------------------------------
+
+.bloom-avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// --------------------------------------------------------------------------
+// Initials Fallback
+// --------------------------------------------------------------------------
+
+.bloom-avatar__initials {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-bold);
+  color: var(--bloom-neutral-0);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+  line-height: 1;
+  user-select: none;
+}
+
+// --------------------------------------------------------------------------
+// Status Dot
+// --------------------------------------------------------------------------
+
+.bloom-avatar__status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-radius: var(--bloom-radius-circle);
+  border: 2px solid var(--bloom-surface-base);
+}
+
+// Status sizes by avatar size
+.bloom-avatar--xs .bloom-avatar__status {
+  width: 8px;
+  height: 8px;
+  border-width: 1.5px;
+  bottom: -1px;
+  right: -1px;
+}
+
+.bloom-avatar--sm .bloom-avatar__status {
+  width: 10px;
+  height: 10px;
+  border-width: 1.5px;
+  bottom: -1px;
+  right: -1px;
+}
+
+.bloom-avatar--md .bloom-avatar__status {
+  width: 12px;
+  height: 12px;
+}
+
+.bloom-avatar--lg .bloom-avatar__status {
+  width: 16px;
+  height: 16px;
+  border-width: 2.5px;
+  bottom: 1px;
+  right: 1px;
+}
+
+// Status colors
+.bloom-avatar__status--online {
+  background-color: var(--bloom-success);
+  box-shadow: 0 0 6px rgb(52 211 153 / 0.5);
+}
+
+.bloom-avatar__status--offline {
+  background-color: var(--bloom-neutral-400);
+}
+
+.bloom-avatar__status--watching {
+  background-color: var(--bloom-pink-500);
+  animation: bloom-avatar-watching-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 6px rgb(255 45 138 / 0.5);
+}
+
+@keyframes bloom-avatar-watching-pulse {
+  0%, 100% {
+    box-shadow: 0 0 4px rgb(255 45 138 / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 10px rgb(255 45 138 / 0.6);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Avatar Stack
+// --------------------------------------------------------------------------
+
+.bloom-avatar-stack {
+  display: flex;
+  align-items: center;
+
+  // Overlap each avatar (except the first)
+  > :not(:first-child) {
+    margin-left: -0.5rem;
+  }
+
+  // Remove outer ring for stacked avatars to reduce visual noise
+  bloom-avatar {
+    .bloom-avatar__frame {
+      outline: none;
+      border-width: 2.5px;
+      border-color: var(--bloom-surface-base);
+    }
+
+    &:hover {
+      z-index: 1;
+      transform: translateY(-2px);
+    }
+  }
+
+  // Smooth hover transition
+  bloom-avatar {
+    transition: transform var(--bloom-duration-fast) var(--bloom-ease-bounce);
+    position: relative;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Reduced Motion
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .bloom-avatar__status--watching {
+    animation: none;
+  }
+
+  .bloom-avatar-stack bloom-avatar:hover {
+    transform: none;
+  }
+}

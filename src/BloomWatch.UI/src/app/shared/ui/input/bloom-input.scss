@@ -1,0 +1,230 @@
+// ============================================================================
+// BloomWatch Input Component
+// Kawaii / Y2K Soft Input Aesthetic
+// ============================================================================
+
+:host {
+  display: block;
+}
+
+// --------------------------------------------------------------------------
+// Base Input Wrapper
+// --------------------------------------------------------------------------
+
+.bloom-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bloom-space-1-5);
+}
+
+// --------------------------------------------------------------------------
+// Label
+// --------------------------------------------------------------------------
+
+.bloom-input__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bloom-space-1);
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-semibold);
+  color: var(--bloom-text-primary);
+  cursor: pointer;
+}
+
+.bloom-input--sm .bloom-input__label {
+  font-size: var(--bloom-text-sm);
+}
+
+.bloom-input--md .bloom-input__label {
+  font-size: var(--bloom-text-sm);
+}
+
+.bloom-input--lg .bloom-input__label {
+  font-size: var(--bloom-text-base);
+}
+
+.bloom-input__required {
+  color: var(--bloom-pink-500);
+  font-weight: var(--bloom-font-bold);
+}
+
+// --------------------------------------------------------------------------
+// Field Wrapper (contains prefix + input + suffix)
+// --------------------------------------------------------------------------
+
+.bloom-input__field-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-2);
+  background-color: var(--bloom-surface-base);
+  border: 2px solid var(--bloom-border-default);
+  transition:
+    border-color var(--bloom-duration-fast) var(--bloom-ease-default),
+    box-shadow var(--bloom-duration-fast) var(--bloom-ease-default),
+    background-color var(--bloom-duration-fast) var(--bloom-ease-default);
+
+  &:hover:not(.bloom-input--disabled &) {
+    border-color: var(--bloom-pink-300);
+  }
+
+  &--focused {
+    border-color: var(--bloom-pink-400);
+    box-shadow:
+      0 0 0 3px rgb(255 45 138 / 0.12),
+      var(--bloom-shadow-xs);
+    background-color: var(--bloom-neutral-0);
+  }
+}
+
+// Size variants for field wrapper
+.bloom-input--sm .bloom-input__field-wrapper {
+  padding: var(--bloom-space-1-5) var(--bloom-space-3);
+  border-radius: var(--bloom-radius-lg);
+  min-height: 2rem;
+}
+
+.bloom-input--md .bloom-input__field-wrapper {
+  padding: var(--bloom-space-2-5) var(--bloom-space-4);
+  border-radius: var(--bloom-radius-xl);
+  min-height: 2.75rem;
+}
+
+.bloom-input--lg .bloom-input__field-wrapper {
+  padding: var(--bloom-space-3) var(--bloom-space-5);
+  border-radius: var(--bloom-radius-2xl);
+  min-height: 3.25rem;
+}
+
+// --------------------------------------------------------------------------
+// Input Field
+// --------------------------------------------------------------------------
+
+.bloom-input__field {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--bloom-font-family-body);
+  color: var(--bloom-text-primary);
+
+  &::placeholder {
+    color: var(--bloom-text-tertiary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--bloom-text-disabled);
+  }
+}
+
+.bloom-input--sm .bloom-input__field {
+  font-size: var(--bloom-text-sm);
+}
+
+.bloom-input--md .bloom-input__field {
+  font-size: var(--bloom-text-base);
+}
+
+.bloom-input--lg .bloom-input__field {
+  font-size: var(--bloom-text-md);
+}
+
+// --------------------------------------------------------------------------
+// Prefix & Suffix
+// --------------------------------------------------------------------------
+
+.bloom-input__prefix,
+.bloom-input__suffix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--bloom-text-tertiary);
+
+  &:empty {
+    display: none;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Error State
+// --------------------------------------------------------------------------
+
+.bloom-input--error {
+  .bloom-input__field-wrapper {
+    border-color: var(--bloom-error);
+    background-color: var(--bloom-error-bg);
+
+    &:hover {
+      border-color: var(--bloom-error-dark);
+    }
+
+    &--focused {
+      border-color: var(--bloom-error-dark);
+      box-shadow: 0 0 0 3px rgb(248 113 113 / 0.15);
+    }
+  }
+
+  .bloom-input__label {
+    color: var(--bloom-error-dark);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Disabled State
+// --------------------------------------------------------------------------
+
+.bloom-input--disabled {
+  .bloom-input__field-wrapper {
+    background-color: var(--bloom-surface-sunken);
+    border-color: var(--bloom-neutral-200);
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  .bloom-input__label {
+    color: var(--bloom-text-disabled);
+    cursor: not-allowed;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Hint & Error Text
+// --------------------------------------------------------------------------
+
+.bloom-input__hint {
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-text-tertiary);
+  padding-left: var(--bloom-space-1);
+}
+
+.bloom-input__error {
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-error-dark);
+  font-weight: var(--bloom-font-medium);
+  padding-left: var(--bloom-space-1);
+  animation: bloom-input-error-shake 0.35s ease-in-out;
+}
+
+@keyframes bloom-input-error-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+// --------------------------------------------------------------------------
+// Reduced Motion
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .bloom-input__field-wrapper {
+    transition: none;
+  }
+
+  .bloom-input__error {
+    animation: none;
+  }
+}

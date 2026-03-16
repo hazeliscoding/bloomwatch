@@ -1,0 +1,178 @@
+// ============================================================================
+// BloomWatch Card Component
+// Kawaii / Y2K Soft Card Aesthetic
+// ============================================================================
+
+:host {
+  display: block;
+}
+
+// --------------------------------------------------------------------------
+// Base Card
+// --------------------------------------------------------------------------
+
+.bloom-card {
+  position: relative;
+  border-radius: var(--bloom-radius-2xl);
+  overflow: hidden;
+  transition:
+    transform var(--bloom-duration-normal) var(--bloom-ease-spring),
+    box-shadow var(--bloom-duration-normal) var(--bloom-ease-default);
+}
+
+.bloom-card__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+// --------------------------------------------------------------------------
+// Default Variant
+// --------------------------------------------------------------------------
+
+.bloom-card--default {
+  background-color: var(--bloom-surface-base);
+  border: 1.5px solid var(--bloom-border-default);
+  box-shadow: var(--bloom-shadow-sm);
+
+  &.bloom-card--hoverable:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--bloom-shadow-lg);
+    border-color: var(--bloom-pink-200);
+  }
+
+  &.bloom-card--hoverable:active {
+    transform: translateY(-1px);
+    box-shadow: var(--bloom-shadow-md);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Highlighted Variant (sparkle border)
+// --------------------------------------------------------------------------
+
+.bloom-card--highlighted {
+  background-color: var(--bloom-surface-base);
+  box-shadow: var(--bloom-shadow-md);
+  border: none;
+
+  // Pad the inner to make room for the gradient border
+  .bloom-card__inner {
+    margin: 2px;
+    background-color: var(--bloom-surface-base);
+    border-radius: calc(var(--bloom-radius-2xl) - 2px);
+  }
+
+  &.bloom-card--hoverable:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      var(--bloom-shadow-xl),
+      0 0 20px rgb(255 45 138 / 0.1),
+      0 0 20px rgb(169 116 255 / 0.1);
+  }
+}
+
+// Animated sparkle border background
+.bloom-card__sparkle-border {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--bloom-pink-300),
+    var(--bloom-lilac-300),
+    var(--bloom-blue-300),
+    var(--bloom-pink-300),
+    var(--bloom-lilac-300)
+  );
+  background-size: 300% 100%;
+  animation: bloom-card-border-shimmer 5s linear infinite;
+}
+
+@keyframes bloom-card-border-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+// --------------------------------------------------------------------------
+// Header
+// --------------------------------------------------------------------------
+
+.bloom-card__header {
+  padding: var(--bloom-space-5) var(--bloom-space-5) 0;
+  border-bottom: none;
+
+  &:empty {
+    display: none;
+  }
+
+  // Decorative accent line at top of header
+  &:not(:empty) {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: var(--bloom-space-5);
+      right: var(--bloom-space-5);
+      height: 3px;
+      background: var(--bloom-gradient-kawaii);
+      border-radius: 0 0 var(--bloom-radius-pill) var(--bloom-radius-pill);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Body
+// --------------------------------------------------------------------------
+
+.bloom-card__body {
+  flex: 1;
+  padding: var(--bloom-space-5);
+
+  .bloom-card__header:not(:empty) + & {
+    padding-top: var(--bloom-space-3);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Footer
+// --------------------------------------------------------------------------
+
+.bloom-card__footer {
+  padding: 0 var(--bloom-space-5) var(--bloom-space-5);
+
+  &:empty {
+    display: none;
+  }
+
+  &:not(:empty) {
+    padding-top: var(--bloom-space-3);
+    border-top: 1px solid var(--bloom-border-default);
+    margin-top: auto;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Reduced Motion
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .bloom-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .bloom-card__sparkle-border {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}
