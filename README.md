@@ -1,42 +1,73 @@
 # BloomWatch
 
-A shared anime tracking platform for pairs and small groups. BloomWatch lets friends maintain a joint backlog, log watch history, leave separate ratings, and surface compatibility analytics — without relying on spreadsheets or Discord threads.
+A shared anime tracking platform for pairs and small groups. BloomWatch lets friends maintain a joint backlog, log watch history, leave separate ratings, and surface compatibility analytics -- without relying on spreadsheets or Discord threads.
 
 ## Tech Stack
 
-- **Runtime:** .NET 10 / ASP.NET Core (Minimal APIs)
-- **Database:** PostgreSQL — one schema per module
-- **ORM:** Entity Framework Core 9 + Npgsql
-- **Auth:** JWT HS256 (1-hour expiry) + BCrypt password hashing (work factor 12)
-- **Architecture:** DDD-inspired modular monolith
-- **Testing:** xUnit, NSubstitute, FluentAssertions
+**Backend**
+
+- .NET 10 / ASP.NET Core (Minimal APIs)
+- PostgreSQL -- one schema per module
+- Entity Framework Core 9 + Npgsql
+- JWT HS256 (1-hour expiry) + BCrypt password hashing (work factor 12)
+- OpenAPI + [Scalar](https://scalar.com/) interactive API docs
+- DDD-inspired modular monolith architecture
+
+**Frontend**
+
+- Angular 21 with standalone components and signal-based APIs
+- SCSS design system with CSS custom property tokens
+- Kawaii/Y2K visual theme (Quicksand + Nunito typefaces, gel effects, pastel palette)
+- Vitest for unit testing
+
+**Testing**
+
+- xUnit, NSubstitute, FluentAssertions (backend)
+- 72 automated tests across 7 test projects
 
 ## Project Structure
 
 ```
 src/
-├── BloomWatch.Api/                          # HTTP host — entry point, middleware, endpoint registration
+├── BloomWatch.Api/                          # HTTP host -- entry point, middleware, endpoint registration
 ├── BloomWatch.SharedKernel/                 # Shared abstractions used across modules
+├── BloomWatch.UI/                           # Angular 21 frontend application
+│   └── src/
+│       ├── app/
+│       │   ├── core/layout/                 # Shell layout (nav bar) and minimal layout (auth pages)
+│       │   ├── features/                    # Feature modules: auth, dashboard, watch-spaces, settings, showcase
+│       │   └── shared/
+│       │       ├── styles/                  # Design tokens, base styles, animations, utilities
+│       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar)
+│       └── styles.scss                      # Global stylesheet
 └── Modules/
     ├── Identity/
     │   ├── BloomWatch.Modules.Identity.Domain/          # Aggregates, value objects, repository interfaces
-    │   ├── BloomWatch.Modules.Identity.Application/     # Use case command handlers, service abstractions
+    │   ├── BloomWatch.Modules.Identity.Application/     # Use case handlers, service abstractions
     │   ├── BloomWatch.Modules.Identity.Infrastructure/  # EF Core, BCrypt, JWT, migrations
     │   └── BloomWatch.Modules.Identity.Contracts/       # Integration events for inter-module communication
-    └── WatchSpaces/
-        ├── BloomWatch.Modules.WatchSpaces.Domain/          # WatchSpace aggregate, Invitation entity, member rules
-        ├── BloomWatch.Modules.WatchSpaces.Application/     # 12 use case handlers (create, invite, accept, leave…)
-        ├── BloomWatch.Modules.WatchSpaces.Infrastructure/  # EF Core, email lookup, migrations
-        └── BloomWatch.Modules.WatchSpaces.Contracts/       # Integration events for downstream modules
+    ├── WatchSpaces/
+    │   ├── BloomWatch.Modules.WatchSpaces.Domain/          # WatchSpace aggregate, Invitation entity, member rules
+    │   ├── BloomWatch.Modules.WatchSpaces.Application/     # 12 use case handlers (create, invite, accept, leave, ...)
+    │   ├── BloomWatch.Modules.WatchSpaces.Infrastructure/  # EF Core, email lookup, migrations
+    │   └── BloomWatch.Modules.WatchSpaces.Contracts/       # Integration events for downstream modules
+    └── AniListSync/
+        ├── BloomWatch.Modules.AniListSync.Domain/          # (reserved for future domain entities)
+        ├── BloomWatch.Modules.AniListSync.Application/     # Search query handler, client abstraction
+        ├── BloomWatch.Modules.AniListSync.Infrastructure/  # AniList GraphQL client, in-memory caching
+        └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
 
 tests/
-├── BloomWatch.Modules.Identity.UnitTests/              # Domain + use case unit tests (25 tests)
-├── BloomWatch.Modules.Identity.IntegrationTests/       # HTTP endpoint integration tests (6 tests)
+├── BloomWatch.Modules.Identity.UnitTests/              # Domain + use case unit tests (17 tests)
+├── BloomWatch.Modules.Identity.IntegrationTests/       # HTTP endpoint integration tests (9 tests)
 ├── BloomWatch.Modules.WatchSpaces.UnitTests/           # Domain unit tests (23 tests)
-└── BloomWatch.Modules.WatchSpaces.IntegrationTests/    # HTTP endpoint integration tests (10 tests)
+├── BloomWatch.Modules.WatchSpaces.IntegrationTests/    # HTTP endpoint integration tests (10 tests)
+├── BloomWatch.Modules.AniListSync.UnitTests/           # Handler + caching unit tests (6 tests)
+└── BloomWatch.Modules.AniListSync.IntegrationTests/    # HTTP endpoint integration tests (7 tests)
 
 docs/
-└── architecture.md     # Full system design, module breakdown, and planned feature phases
+├── architecture.md     # Full system design, module breakdown, and planned feature phases
+└── user-stories.md     # Product user stories and completion tracking
 
 openspec/               # Spec-driven change management (see below)
 ```
@@ -44,11 +75,12 @@ openspec/               # Spec-driven change management (see below)
 ## Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [Node.js 18+](https://nodejs.org/) and npm 10+ (for the Angular frontend)
 - PostgreSQL running locally (default: `localhost:5432`)
 
 ## Getting Started
 
-**1. Clone and restore dependencies**
+### 1. Clone and restore dependencies
 
 ```bash
 git clone <repo-url>
@@ -56,7 +88,7 @@ cd bloomwatch
 dotnet restore
 ```
 
-**2. Configure the database connection**
+### 2. Configure the database connection
 
 The default connection string in `appsettings.json` targets a local PostgreSQL instance:
 
@@ -70,7 +102,7 @@ Override it in `appsettings.Development.json` or via environment variable if you
 export ConnectionStrings__DefaultConnection="Host=localhost;Database=bloomwatch;Username=youruser;Password=yourpass"
 ```
 
-**3. Apply migrations**
+### 3. Apply migrations
 
 ```bash
 dotnet ef database update --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure \
@@ -80,42 +112,39 @@ dotnet ef database update --project src/Modules/WatchSpaces/BloomWatch.Modules.W
                           --startup-project src/BloomWatch.Api
 ```
 
-**4. Run the API**
+### 4. Run the API
 
 ```bash
 dotnet run --project src/BloomWatch.Api
 ```
 
-The API will be available at `http://localhost:5192` (or `https://localhost:7073`).
+The API is available at `http://localhost:5192` (or `https://localhost:7073`).
+
+In development mode, interactive API documentation is served by Scalar at `/scalar/v1`.
+
+### 5. Run the frontend
+
+```bash
+cd src/BloomWatch.UI
+npm install
+npm start
+```
+
+The Angular dev server starts at `http://localhost:4200`.
 
 ## API Endpoints
 
-### Register a user
+### Interactive documentation
+
+When running in Development mode, visit `/scalar/v1` for a full interactive API reference powered by Scalar and the OpenAPI spec.
+
+### Identity
 
 ```http
-POST /auth/register
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "yourpassword",
-  "displayName": "YourName"
-}
+POST /auth/register                                    # Create a new user account
+POST /auth/login                                       # Authenticate and receive a JWT
+GET  /users/me                                         # Get the authenticated user's profile
 ```
-
-### Log in
-
-```http
-POST /auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "yourpassword"
-}
-```
-
-Returns a signed JWT access token valid for 1 hour.
 
 ### WatchSpaces
 
@@ -139,7 +168,52 @@ DELETE /watchspaces/{id}/members/{userId}                # Remove a member (owne
 DELETE /watchspaces/{id}/members/me                      # Leave a space
 ```
 
+### AniList Search
+
+Requires a valid JWT. Results are cached in memory for 5 minutes.
+
+```http
+GET /api/anilist/search?query=cowboy+bebop              # Search for anime via AniList
+```
+
 A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
+
+## Frontend
+
+The Angular frontend lives in `src/BloomWatch.UI/` and provides the user-facing application shell.
+
+### Routing structure
+
+| Route | Layout | Description |
+|-------|--------|-------------|
+| `/login` | Minimal | Login page (no nav bar) |
+| `/register` | Minimal | Registration page (no nav bar) |
+| `/` | Shell | Dashboard |
+| `/watch-spaces` | Shell | Watch space list and detail views |
+| `/settings` | Shell | User settings |
+| `/showcase` | Shell | Component library showcase |
+
+### Bloom component library
+
+The frontend includes a custom component library under `src/app/shared/ui/`, built with the kawaii/Y2K design system. All components use the `bloom-` selector prefix and follow Angular standalone component patterns with signal-based inputs and outputs.
+
+| Component | Selector | Description |
+|-----------|----------|-------------|
+| Button | `bloom-button` | Primary, secondary, ghost, and danger variants with gel shine effects |
+| Card | `bloom-card` | Content container with multiple visual variants |
+| Input | `bloom-input` | Form input with label, validation states, and size options |
+| Badge | `bloom-badge` | Status and category badges with color options |
+| Avatar | `bloom-avatar` | User avatar with status indicators |
+| Avatar Stack | `bloom-avatar-stack` | Overlapping avatar group display |
+
+### Design system
+
+The design system is defined through SCSS partials in `src/app/shared/styles/`:
+
+- **`_tokens.scss`** -- CSS custom property design tokens (colors, typography, spacing, shadows, radii, animation timings)
+- **`_base.scss`** -- Global resets and base element styles
+- **`_animations.scss`** -- Keyframe animations (sparkle, float, bounce, shimmer, gel press effects)
+- **`_utilities.scss`** -- Utility classes for common patterns
 
 ## Configuration
 
@@ -152,7 +226,7 @@ All configuration lives in `appsettings.json`. The key sections:
   },
   "Identity": {
     "Jwt": {
-      "SecretKey": "<long random secret — change before deploying>",
+      "SecretKey": "<long random secret -- change before deploying>",
       "Issuer": "BloomWatch",
       "Audience": "BloomWatch"
     }
@@ -163,34 +237,33 @@ All configuration lives in `appsettings.json`. The key sections:
 ## Running Tests
 
 ```bash
-# All tests
+# All backend tests
 dotnet test
 
-# Identity unit tests
+# By module
 dotnet test tests/BloomWatch.Modules.Identity.UnitTests
-
-# Identity integration tests
 dotnet test tests/BloomWatch.Modules.Identity.IntegrationTests
-
-# WatchSpaces unit tests
 dotnet test tests/BloomWatch.Modules.WatchSpaces.UnitTests
-
-# WatchSpaces integration tests
 dotnet test tests/BloomWatch.Modules.WatchSpaces.IntegrationTests
+dotnet test tests/BloomWatch.Modules.AniListSync.UnitTests
+dotnet test tests/BloomWatch.Modules.AniListSync.IntegrationTests
+
+# Frontend tests
+cd src/BloomWatch.UI && npm test
 ```
 
-Integration tests use an in-memory SQLite database via `WebApplicationFactory` — no real database required.
+Backend integration tests use an in-memory SQLite database via `WebApplicationFactory` -- no running database required.
 
 ## OpenSpec Workflow
 
-BloomWatch uses [OpenSpec](openspec/config.yaml) — a spec-driven change management workflow — to plan, document, and track every meaningful feature change before and during implementation.
+BloomWatch uses [OpenSpec](openspec/config.yaml) -- a spec-driven change management workflow -- to plan, document, and track every meaningful feature change before and during implementation.
 
 ### How it works
 
 Each change moves through three stages:
 
 ```
-propose → apply → archive
+propose -> apply -> archive
 ```
 
 | Stage | What happens |
@@ -207,39 +280,35 @@ openspec/
 ├── specs/                        # Standalone feature specs (reusable across changes)
 │   ├── user-registration/
 │   ├── user-authentication/
+│   ├── user-profile/
 │   ├── watch-space-management/
 │   ├── watch-space-invitations/
-│   └── watch-space-membership/
+│   ├── watch-space-membership/
+│   ├── anilist-search/
+│   └── angular-routing-shell/
 └── changes/
-    └── archive/
-        ├── 2026-03-13-scaffold-identity-module/   # Completed Identity module change
-        │   ├── proposal.md
-        │   ├── design.md
-        │   ├── tasks.md
-        │   └── specs/
-        └── 2026-03-13-watchspaces-module/         # Completed WatchSpaces module change
-            ├── proposal.md
-            ├── design.md
-            ├── tasks.md
-            └── specs/
+    └── archive/                  # Completed changes
 ```
 
 ### Completed changes
 
 | Change | Date | Summary |
 |--------|------|---------|
-| `scaffold-identity-module` | 2026-03-13 | User registration, JWT login, full Identity module (domain → API) |
-| `watchspaces-module` | 2026-03-13 | Watch space creation, email invitations, membership management, full WatchSpaces module (domain → API) |
+| `scaffold-identity-module` | 2026-03-13 | User registration, JWT login, full Identity module (domain to API) |
+| `watchspaces-module` | 2026-03-13 | Watch space creation, email invitations, membership management |
+| `user-profile-endpoint` | 2026-03-13 | `GET /users/me` authenticated profile retrieval |
+| `anilist-search-proxy` | 2026-03-16 | `GET /api/anilist/search` with GraphQL proxy and in-memory caching |
+| `angular-project-setup-routing-shell` | 2026-03-16 | Angular 21 frontend scaffold, routing shell, kawaii/Y2K design system, component library |
 
 ### Working with OpenSpec
 
 The workflow is integrated with Claude Code via slash commands:
 
 ```
-/opsx:propose   — describe a new feature and generate proposal + specs + tasks
-/opsx:explore   — think through requirements or investigate an existing change
-/opsx:apply     — implement tasks from an active change
-/opsx:archive   — finalize and archive a completed change
+/opsx:propose   -- describe a new feature and generate proposal + specs + tasks
+/opsx:explore   -- think through requirements or investigate an existing change
+/opsx:apply     -- implement tasks from an active change
+/opsx:archive   -- finalize and archive a completed change
 ```
 
 ## Architecture
