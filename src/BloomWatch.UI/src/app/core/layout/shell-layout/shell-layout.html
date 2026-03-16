@@ -1,11 +1,85 @@
-<nav class="shell-nav">
-  <a class="shell-nav__brand" routerLink="/">BloomWatch</a>
-  <ul class="shell-nav__links">
-    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a></li>
-    <li><a routerLink="/watch-spaces" routerLinkActive="active">Watch Spaces</a></li>
-    <li><a routerLink="/settings" routerLinkActive="active">Settings</a></li>
-  </ul>
+<nav class="shell-nav" role="navigation" aria-label="Main navigation">
+  <div class="shell-nav__inner">
+    <!-- Brand -->
+    <a class="shell-nav__brand" routerLink="/" aria-label="BloomWatch home">
+      <span class="shell-nav__brand-icon" aria-hidden="true">&#10047;</span>
+      <span class="shell-nav__brand-text">BloomWatch</span>
+    </a>
+
+    <!-- Mobile menu toggle -->
+    <button
+      class="shell-nav__toggle"
+      type="button"
+      (click)="toggleMobile()"
+      [attr.aria-expanded]="mobileOpen()"
+      aria-controls="shell-nav-links"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="shell-nav__toggle-bar"></span>
+      <span class="shell-nav__toggle-bar"></span>
+      <span class="shell-nav__toggle-bar"></span>
+    </button>
+
+    <!-- Navigation Links -->
+    <ul
+      class="shell-nav__links"
+      [class.shell-nav__links--open]="mobileOpen()"
+      id="shell-nav-links"
+      role="menubar"
+    >
+      <li role="none">
+        <a
+          routerLink="/"
+          routerLinkActive="shell-nav__link--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="shell-nav__link"
+          role="menuitem"
+          (click)="closeMobile()"
+        >
+          <span class="shell-nav__link-icon" aria-hidden="true">&#9733;</span>
+          Dashboard
+        </a>
+      </li>
+      <li role="none">
+        <a
+          routerLink="/watch-spaces"
+          routerLinkActive="shell-nav__link--active"
+          class="shell-nav__link"
+          role="menuitem"
+          (click)="closeMobile()"
+        >
+          <span class="shell-nav__link-icon" aria-hidden="true">&#9829;</span>
+          Watch Spaces
+        </a>
+      </li>
+      <li role="none">
+        <a
+          routerLink="/settings"
+          routerLinkActive="shell-nav__link--active"
+          class="shell-nav__link"
+          role="menuitem"
+          (click)="closeMobile()"
+        >
+          <span class="shell-nav__link-icon" aria-hidden="true">&#10023;</span>
+          Settings
+        </a>
+      </li>
+      <li role="none">
+        <a
+          routerLink="/showcase"
+          routerLinkActive="shell-nav__link--active"
+          class="shell-nav__link"
+          role="menuitem"
+          (click)="closeMobile()"
+        >
+          <span class="shell-nav__link-icon" aria-hidden="true">&#127912;</span>
+          Showcase
+        </a>
+      </li>
+    </ul>
+  </div>
 </nav>
+
 <main class="shell-content">
   <router-outlet />
 </main>
