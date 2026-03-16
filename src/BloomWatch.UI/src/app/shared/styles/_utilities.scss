@@ -1,0 +1,562 @@
+// ============================================================================
+// BloomWatch Utility Classes
+// Kawaii / Y2K Design System
+// ============================================================================
+
+// --------------------------------------------------------------------------
+// Display
+// --------------------------------------------------------------------------
+
+.bloom-block { display: block; }
+.bloom-inline-block { display: inline-block; }
+.bloom-inline { display: inline; }
+.bloom-hidden { display: none; }
+.bloom-contents { display: contents; }
+
+// --------------------------------------------------------------------------
+// Flexbox Layout
+// --------------------------------------------------------------------------
+
+.bloom-flex { display: flex; }
+.bloom-inline-flex { display: inline-flex; }
+
+.bloom-flex-row { flex-direction: row; }
+.bloom-flex-col { flex-direction: column; }
+.bloom-flex-row-reverse { flex-direction: row-reverse; }
+.bloom-flex-col-reverse { flex-direction: column-reverse; }
+
+.bloom-flex-wrap { flex-wrap: wrap; }
+.bloom-flex-nowrap { flex-wrap: nowrap; }
+
+.bloom-items-start { align-items: flex-start; }
+.bloom-items-center { align-items: center; }
+.bloom-items-end { align-items: flex-end; }
+.bloom-items-stretch { align-items: stretch; }
+.bloom-items-baseline { align-items: baseline; }
+
+.bloom-justify-start { justify-content: flex-start; }
+.bloom-justify-center { justify-content: center; }
+.bloom-justify-end { justify-content: flex-end; }
+.bloom-justify-between { justify-content: space-between; }
+.bloom-justify-around { justify-content: space-around; }
+.bloom-justify-evenly { justify-content: space-evenly; }
+
+.bloom-flex-1 { flex: 1 1 0%; }
+.bloom-flex-auto { flex: 1 1 auto; }
+.bloom-flex-none { flex: none; }
+.bloom-flex-grow { flex-grow: 1; }
+.bloom-flex-shrink-0 { flex-shrink: 0; }
+
+.bloom-self-start { align-self: flex-start; }
+.bloom-self-center { align-self: center; }
+.bloom-self-end { align-self: flex-end; }
+.bloom-self-stretch { align-self: stretch; }
+
+// Center shortcut
+.bloom-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Stack shortcut (vertical flex with gap)
+.bloom-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+// Inline shortcut (horizontal flex with gap)
+.bloom-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+// --------------------------------------------------------------------------
+// Grid Layout
+// --------------------------------------------------------------------------
+
+.bloom-grid { display: grid; }
+
+.bloom-grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.bloom-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.bloom-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.bloom-grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+.bloom-grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
+.bloom-grid-cols-12 { grid-template-columns: repeat(12, 1fr); }
+
+// Auto-fill responsive grids
+.bloom-grid-auto-sm {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.bloom-grid-auto-md {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.bloom-grid-auto-lg {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+}
+
+.bloom-col-span-2 { grid-column: span 2; }
+.bloom-col-span-3 { grid-column: span 3; }
+.bloom-col-span-4 { grid-column: span 4; }
+.bloom-col-span-full { grid-column: 1 / -1; }
+
+.bloom-place-center { place-items: center; }
+
+// --------------------------------------------------------------------------
+// Gap
+// --------------------------------------------------------------------------
+
+.bloom-gap-0 { gap: 0; }
+.bloom-gap-1 { gap: var(--bloom-space-1); }
+.bloom-gap-2 { gap: var(--bloom-space-2); }
+.bloom-gap-3 { gap: var(--bloom-space-3); }
+.bloom-gap-4 { gap: var(--bloom-space-4); }
+.bloom-gap-5 { gap: var(--bloom-space-5); }
+.bloom-gap-6 { gap: var(--bloom-space-6); }
+.bloom-gap-8 { gap: var(--bloom-space-8); }
+.bloom-gap-10 { gap: var(--bloom-space-10); }
+.bloom-gap-12 { gap: var(--bloom-space-12); }
+
+// --------------------------------------------------------------------------
+// Spacing (Margin & Padding)
+// --------------------------------------------------------------------------
+
+$spacing-map: (
+  '0': var(--bloom-space-0),
+  '1': var(--bloom-space-1),
+  '2': var(--bloom-space-2),
+  '3': var(--bloom-space-3),
+  '4': var(--bloom-space-4),
+  '5': var(--bloom-space-5),
+  '6': var(--bloom-space-6),
+  '8': var(--bloom-space-8),
+  '10': var(--bloom-space-10),
+  '12': var(--bloom-space-12),
+  '16': var(--bloom-space-16),
+  'auto': auto,
+);
+
+@each $key, $value in $spacing-map {
+  // Margin
+  .bloom-m-#{$key} { margin: $value; }
+  .bloom-mx-#{$key} { margin-inline: $value; }
+  .bloom-my-#{$key} { margin-block: $value; }
+  .bloom-mt-#{$key} { margin-top: $value; }
+  .bloom-mr-#{$key} { margin-right: $value; }
+  .bloom-mb-#{$key} { margin-bottom: $value; }
+  .bloom-ml-#{$key} { margin-left: $value; }
+
+  // Padding (skip auto)
+  @if $key != 'auto' {
+    .bloom-p-#{$key} { padding: $value; }
+    .bloom-px-#{$key} { padding-inline: $value; }
+    .bloom-py-#{$key} { padding-block: $value; }
+    .bloom-pt-#{$key} { padding-top: $value; }
+    .bloom-pr-#{$key} { padding-right: $value; }
+    .bloom-pb-#{$key} { padding-bottom: $value; }
+    .bloom-pl-#{$key} { padding-left: $value; }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Typography Utilities
+// --------------------------------------------------------------------------
+
+// Text Sizes
+.bloom-text-xs { font-size: var(--bloom-text-xs); }
+.bloom-text-sm { font-size: var(--bloom-text-sm); }
+.bloom-text-base { font-size: var(--bloom-text-base); }
+.bloom-text-md { font-size: var(--bloom-text-md); }
+.bloom-text-lg { font-size: var(--bloom-text-lg); }
+.bloom-text-xl { font-size: var(--bloom-text-xl); }
+.bloom-text-2xl { font-size: var(--bloom-text-2xl); }
+.bloom-text-3xl { font-size: var(--bloom-text-3xl); }
+.bloom-text-4xl { font-size: var(--bloom-text-4xl); }
+
+// Font Families
+.bloom-font-display { font-family: var(--bloom-font-family-display); }
+.bloom-font-body { font-family: var(--bloom-font-family-body); }
+.bloom-font-mono { font-family: var(--bloom-font-family-mono); }
+
+// Font Weights
+.bloom-font-light { font-weight: var(--bloom-font-light); }
+.bloom-font-regular { font-weight: var(--bloom-font-regular); }
+.bloom-font-medium { font-weight: var(--bloom-font-medium); }
+.bloom-font-semibold { font-weight: var(--bloom-font-semibold); }
+.bloom-font-bold { font-weight: var(--bloom-font-bold); }
+.bloom-font-extrabold { font-weight: var(--bloom-font-extrabold); }
+
+// Text Alignment
+.bloom-text-left { text-align: left; }
+.bloom-text-center { text-align: center; }
+.bloom-text-right { text-align: right; }
+
+// Text Wrapping
+.bloom-text-nowrap { white-space: nowrap; }
+.bloom-text-break { word-break: break-word; overflow-wrap: break-word; }
+
+// Text Decoration
+.bloom-underline { text-decoration: underline; }
+.bloom-no-underline { text-decoration: none; }
+.bloom-line-through { text-decoration: line-through; }
+
+// Text Transform
+.bloom-uppercase { text-transform: uppercase; }
+.bloom-lowercase { text-transform: lowercase; }
+.bloom-capitalize { text-transform: capitalize; }
+
+// Truncation
+.bloom-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bloom-line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bloom-line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// --------------------------------------------------------------------------
+// Text Colors
+// --------------------------------------------------------------------------
+
+.bloom-text-primary { color: var(--bloom-text-primary); }
+.bloom-text-secondary { color: var(--bloom-text-secondary); }
+.bloom-text-tertiary { color: var(--bloom-text-tertiary); }
+.bloom-text-disabled { color: var(--bloom-text-disabled); }
+.bloom-text-inverse { color: var(--bloom-text-inverse); }
+.bloom-text-link { color: var(--bloom-text-link); }
+
+.bloom-text-pink { color: var(--bloom-pink-500); }
+.bloom-text-blue { color: var(--bloom-blue-500); }
+.bloom-text-lilac { color: var(--bloom-lilac-500); }
+.bloom-text-lime { color: var(--bloom-lime-500); }
+.bloom-text-peach { color: var(--bloom-peach-500); }
+.bloom-text-success { color: var(--bloom-success); }
+.bloom-text-warning { color: var(--bloom-warning-dark); }
+.bloom-text-error { color: var(--bloom-error-dark); }
+
+// --------------------------------------------------------------------------
+// Background Colors
+// --------------------------------------------------------------------------
+
+.bloom-bg-base { background-color: var(--bloom-surface-base); }
+.bloom-bg-raised { background-color: var(--bloom-surface-raised); }
+.bloom-bg-sunken { background-color: var(--bloom-surface-sunken); }
+.bloom-bg-tinted { background-color: var(--bloom-surface-tinted); }
+
+.bloom-bg-pink-50 { background-color: var(--bloom-pink-50); }
+.bloom-bg-pink-100 { background-color: var(--bloom-pink-100); }
+.bloom-bg-blue-50 { background-color: var(--bloom-blue-50); }
+.bloom-bg-blue-100 { background-color: var(--bloom-blue-100); }
+.bloom-bg-lilac-50 { background-color: var(--bloom-lilac-50); }
+.bloom-bg-lilac-100 { background-color: var(--bloom-lilac-100); }
+
+// --------------------------------------------------------------------------
+// Border Radius
+// --------------------------------------------------------------------------
+
+.bloom-rounded-none { border-radius: var(--bloom-radius-none); }
+.bloom-rounded-sm { border-radius: var(--bloom-radius-sm); }
+.bloom-rounded-md { border-radius: var(--bloom-radius-md); }
+.bloom-rounded-lg { border-radius: var(--bloom-radius-lg); }
+.bloom-rounded-xl { border-radius: var(--bloom-radius-xl); }
+.bloom-rounded-2xl { border-radius: var(--bloom-radius-2xl); }
+.bloom-rounded-3xl { border-radius: var(--bloom-radius-3xl); }
+.bloom-rounded-pill { border-radius: var(--bloom-radius-pill); }
+.bloom-rounded-circle { border-radius: var(--bloom-radius-circle); }
+
+// --------------------------------------------------------------------------
+// Shadows
+// --------------------------------------------------------------------------
+
+.bloom-shadow-none { box-shadow: none; }
+.bloom-shadow-xs { box-shadow: var(--bloom-shadow-xs); }
+.bloom-shadow-sm { box-shadow: var(--bloom-shadow-sm); }
+.bloom-shadow-md { box-shadow: var(--bloom-shadow-md); }
+.bloom-shadow-lg { box-shadow: var(--bloom-shadow-lg); }
+.bloom-shadow-xl { box-shadow: var(--bloom-shadow-xl); }
+
+// --------------------------------------------------------------------------
+// Width & Height
+// --------------------------------------------------------------------------
+
+.bloom-w-full { width: 100%; }
+.bloom-w-auto { width: auto; }
+.bloom-w-fit { width: fit-content; }
+.bloom-min-w-0 { min-width: 0; }
+.bloom-max-w-sm { max-width: var(--bloom-container-sm); }
+.bloom-max-w-md { max-width: var(--bloom-container-md); }
+.bloom-max-w-lg { max-width: var(--bloom-container-lg); }
+.bloom-max-w-xl { max-width: var(--bloom-container-xl); }
+.bloom-max-w-full { max-width: 100%; }
+
+.bloom-h-full { height: 100%; }
+.bloom-h-screen { height: 100dvh; }
+.bloom-h-auto { height: auto; }
+.bloom-min-h-screen { min-height: 100dvh; }
+
+// --------------------------------------------------------------------------
+// Overflow
+// --------------------------------------------------------------------------
+
+.bloom-overflow-hidden { overflow: hidden; }
+.bloom-overflow-auto { overflow: auto; }
+.bloom-overflow-x-auto { overflow-x: auto; }
+.bloom-overflow-y-auto { overflow-y: auto; }
+
+// --------------------------------------------------------------------------
+// Position
+// --------------------------------------------------------------------------
+
+.bloom-relative { position: relative; }
+.bloom-absolute { position: absolute; }
+.bloom-fixed { position: fixed; }
+.bloom-sticky { position: sticky; top: 0; }
+
+.bloom-inset-0 { inset: 0; }
+
+// --------------------------------------------------------------------------
+// Visibility
+// --------------------------------------------------------------------------
+
+.bloom-visible { visibility: visible; }
+.bloom-invisible { visibility: hidden; }
+
+.bloom-opacity-0 { opacity: 0; }
+.bloom-opacity-50 { opacity: 0.5; }
+.bloom-opacity-75 { opacity: 0.75; }
+.bloom-opacity-100 { opacity: 1; }
+
+// --------------------------------------------------------------------------
+// Cursor
+// --------------------------------------------------------------------------
+
+.bloom-cursor-pointer { cursor: pointer; }
+.bloom-cursor-default { cursor: default; }
+.bloom-cursor-not-allowed { cursor: not-allowed; }
+
+// --------------------------------------------------------------------------
+// Selection
+// --------------------------------------------------------------------------
+
+.bloom-select-none { user-select: none; }
+.bloom-select-text { user-select: text; }
+.bloom-select-all { user-select: all; }
+
+// --------------------------------------------------------------------------
+// Pointer Events
+// --------------------------------------------------------------------------
+
+.bloom-pointer-events-none { pointer-events: none; }
+.bloom-pointer-events-auto { pointer-events: auto; }
+
+// --------------------------------------------------------------------------
+// Container
+// --------------------------------------------------------------------------
+
+.bloom-container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--bloom-space-4);
+
+  @media (min-width: 640px) {
+    max-width: var(--bloom-container-sm);
+  }
+
+  @media (min-width: 768px) {
+    max-width: var(--bloom-container-md);
+    padding-inline: var(--bloom-space-6);
+  }
+
+  @media (min-width: 1024px) {
+    max-width: var(--bloom-container-lg);
+  }
+
+  @media (min-width: 1280px) {
+    max-width: var(--bloom-container-xl);
+    padding-inline: var(--bloom-space-8);
+  }
+}
+
+.bloom-container-narrow {
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  padding-inline: var(--bloom-space-4);
+}
+
+// --------------------------------------------------------------------------
+// Kawaii-Specific Decorative Utilities
+// --------------------------------------------------------------------------
+
+// Gradient Text
+.bloom-gradient-text {
+  background: var(--bloom-gradient-kawaii);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bloom-gradient-text-pink {
+  background: var(--bloom-gradient-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bloom-gradient-text-ocean {
+  background: var(--bloom-gradient-ocean);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bloom-gradient-text-sunset {
+  background: var(--bloom-gradient-sunset);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Glow Borders
+.bloom-border-glow-pink {
+  border: 2px solid var(--bloom-pink-300);
+  box-shadow: 0 0 12px rgb(255 45 138 / 0.15),
+              inset 0 0 12px rgb(255 45 138 / 0.05);
+}
+
+.bloom-border-glow-blue {
+  border: 2px solid var(--bloom-blue-300);
+  box-shadow: 0 0 12px rgb(26 127 255 / 0.15),
+              inset 0 0 12px rgb(26 127 255 / 0.05);
+}
+
+.bloom-border-glow-lilac {
+  border: 2px solid var(--bloom-lilac-300);
+  box-shadow: 0 0 12px rgb(169 116 255 / 0.15),
+              inset 0 0 12px rgb(169 116 255 / 0.05);
+}
+
+// Sparkle Border (animated rainbow gradient border)
+.bloom-sparkle-border {
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      var(--bloom-pink-300),
+      var(--bloom-lilac-300),
+      var(--bloom-blue-300),
+      var(--bloom-lime-300),
+      var(--bloom-peach-300),
+      var(--bloom-pink-300)
+    );
+    background-size: 300% 100%;
+    animation: bloom-border-sparkle 4s linear infinite;
+    z-index: -1;
+    border-radius: inherit;
+  }
+}
+
+// Glass / Frosted Effect
+.bloom-glass {
+  background: rgb(255 255 255 / 0.7);
+  backdrop-filter: blur(12px) saturate(1.5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  border: 1px solid rgb(255 255 255 / 0.3);
+}
+
+.bloom-glass-pink {
+  background: rgb(255 214 232 / 0.4);
+  backdrop-filter: blur(12px) saturate(1.5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  border: 1px solid rgb(255 214 232 / 0.5);
+}
+
+// Kawaii Decorative Divider
+.bloom-divider-kawaii {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-3);
+  color: var(--bloom-text-tertiary);
+  font-size: var(--bloom-text-sm);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--bloom-gradient-kawaii);
+    border-radius: var(--bloom-radius-pill);
+    opacity: 0.4;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Responsive Visibility
+// --------------------------------------------------------------------------
+
+.bloom-hide-mobile {
+  @media (max-width: 639px) {
+    display: none !important;
+  }
+}
+
+.bloom-hide-tablet {
+  @media (min-width: 640px) and (max-width: 1023px) {
+    display: none !important;
+  }
+}
+
+.bloom-hide-desktop {
+  @media (min-width: 1024px) {
+    display: none !important;
+  }
+}
+
+.bloom-show-mobile {
+  display: none !important;
+
+  @media (max-width: 639px) {
+    display: block !important;
+  }
+}
+
+.bloom-show-tablet {
+  display: none !important;
+
+  @media (min-width: 640px) and (max-width: 1023px) {
+    display: block !important;
+  }
+}
+
+.bloom-show-desktop {
+  display: none !important;
+
+  @media (min-width: 1024px) {
+    display: block !important;
+  }
+}

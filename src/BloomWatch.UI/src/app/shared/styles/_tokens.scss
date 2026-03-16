@@ -1,0 +1,425 @@
+// ============================================================================
+// BloomWatch Design Tokens
+// Kawaii / Y2K Design System
+// ============================================================================
+
+:root {
+  // --------------------------------------------------------------------------
+  // Color Palette -- Primary (Hot Pink)
+  // --------------------------------------------------------------------------
+  --bloom-pink-50: #fff0f6;
+  --bloom-pink-100: #ffd6e8;
+  --bloom-pink-200: #ffadd2;
+  --bloom-pink-300: #ff85b8;
+  --bloom-pink-400: #ff5da0;
+  --bloom-pink-500: #ff2d8a;
+  --bloom-pink-600: #e0196f;
+  --bloom-pink-700: #b81258;
+  --bloom-pink-800: #8f0c42;
+  --bloom-pink-900: #66072e;
+
+  // --------------------------------------------------------------------------
+  // Color Palette -- Secondary (Electric Blue)
+  // --------------------------------------------------------------------------
+  --bloom-blue-50: #eef6ff;
+  --bloom-blue-100: #d4e9ff;
+  --bloom-blue-200: #a8d2ff;
+  --bloom-blue-300: #6fb5ff;
+  --bloom-blue-400: #3d9aff;
+  --bloom-blue-500: #1a7fff;
+  --bloom-blue-600: #0066e0;
+  --bloom-blue-700: #004fb8;
+  --bloom-blue-800: #003b8f;
+  --bloom-blue-900: #002966;
+
+  // --------------------------------------------------------------------------
+  // Color Palette -- Accent: Lilac
+  // --------------------------------------------------------------------------
+  --bloom-lilac-50: #f5f0ff;
+  --bloom-lilac-100: #e8dbff;
+  --bloom-lilac-200: #d4b8ff;
+  --bloom-lilac-300: #be94ff;
+  --bloom-lilac-400: #a974ff;
+  --bloom-lilac-500: #9055e8;
+  --bloom-lilac-600: #7640c9;
+  --bloom-lilac-700: #5e30a5;
+  --bloom-lilac-800: #472380;
+  --bloom-lilac-900: #31185c;
+
+  // --------------------------------------------------------------------------
+  // Color Palette -- Accent: Lime Green
+  // --------------------------------------------------------------------------
+  --bloom-lime-50: #f0ffe4;
+  --bloom-lime-100: #dcffc4;
+  --bloom-lime-200: #b8ff8a;
+  --bloom-lime-300: #8ee94e;
+  --bloom-lime-400: #6ed628;
+  --bloom-lime-500: #56b812;
+  --bloom-lime-600: #419608;
+  --bloom-lime-700: #327305;
+  --bloom-lime-800: #245203;
+  --bloom-lime-900: #173602;
+
+  // --------------------------------------------------------------------------
+  // Color Palette -- Accent: Peach / Yellow
+  // --------------------------------------------------------------------------
+  --bloom-peach-50: #fff8ed;
+  --bloom-peach-100: #ffeccc;
+  --bloom-peach-200: #ffd699;
+  --bloom-peach-300: #ffbe66;
+  --bloom-peach-400: #ffa733;
+  --bloom-peach-500: #ff9100;
+  --bloom-peach-600: #cc7400;
+  --bloom-peach-700: #995700;
+  --bloom-peach-800: #663a00;
+  --bloom-peach-900: #4d2c00;
+
+  --bloom-yellow-50: #fffde6;
+  --bloom-yellow-100: #fff9b3;
+  --bloom-yellow-200: #fff380;
+  --bloom-yellow-300: #ffed4d;
+  --bloom-yellow-400: #ffe61a;
+  --bloom-yellow-500: #e6cc00;
+  --bloom-yellow-600: #b39e00;
+  --bloom-yellow-700: #807100;
+  --bloom-yellow-800: #4d4400;
+  --bloom-yellow-900: #332e00;
+
+  // --------------------------------------------------------------------------
+  // Neutral Palette
+  // --------------------------------------------------------------------------
+  --bloom-neutral-0: #ffffff;
+  --bloom-neutral-50: #faf8fc;
+  --bloom-neutral-100: #f3f0f7;
+  --bloom-neutral-200: #e8e3ef;
+  --bloom-neutral-300: #d6cee0;
+  --bloom-neutral-400: #b5abca;
+  --bloom-neutral-500: #8e82a6;
+  --bloom-neutral-600: #6b6085;
+  --bloom-neutral-700: #504866;
+  --bloom-neutral-800: #372f4a;
+  --bloom-neutral-900: #211a33;
+  --bloom-neutral-950: #120e1e;
+
+  // --------------------------------------------------------------------------
+  // Semantic Colors
+  // --------------------------------------------------------------------------
+  --bloom-primary: var(--bloom-pink-500);
+  --bloom-primary-light: var(--bloom-pink-200);
+  --bloom-primary-dark: var(--bloom-pink-700);
+
+  --bloom-secondary: var(--bloom-blue-500);
+  --bloom-secondary-light: var(--bloom-blue-200);
+  --bloom-secondary-dark: var(--bloom-blue-700);
+
+  --bloom-accent: var(--bloom-lilac-400);
+  --bloom-accent-light: var(--bloom-lilac-200);
+  --bloom-accent-dark: var(--bloom-lilac-600);
+
+  // --------------------------------------------------------------------------
+  // Status Colors
+  // --------------------------------------------------------------------------
+  --bloom-success: #34d399;
+  --bloom-success-light: #a7f3d0;
+  --bloom-success-dark: #059669;
+  --bloom-success-bg: #ecfdf5;
+
+  --bloom-warning: #fbbf24;
+  --bloom-warning-light: #fde68a;
+  --bloom-warning-dark: #d97706;
+  --bloom-warning-bg: #fffbeb;
+
+  --bloom-error: #f87171;
+  --bloom-error-light: #fecaca;
+  --bloom-error-dark: #dc2626;
+  --bloom-error-bg: #fef2f2;
+
+  --bloom-info: var(--bloom-blue-400);
+  --bloom-info-light: var(--bloom-blue-100);
+  --bloom-info-dark: var(--bloom-blue-600);
+  --bloom-info-bg: var(--bloom-blue-50);
+
+  // --------------------------------------------------------------------------
+  // Surface Colors
+  // --------------------------------------------------------------------------
+  --bloom-surface-base: var(--bloom-neutral-0);
+  --bloom-surface-raised: var(--bloom-neutral-50);
+  --bloom-surface-overlay: var(--bloom-neutral-0);
+  --bloom-surface-sunken: var(--bloom-neutral-100);
+  --bloom-surface-tinted: var(--bloom-pink-50);
+  --bloom-surface-body: #fdf6fc;
+
+  // --------------------------------------------------------------------------
+  // Text Colors
+  // --------------------------------------------------------------------------
+  --bloom-text-primary: var(--bloom-neutral-900);
+  --bloom-text-secondary: var(--bloom-neutral-600);
+  --bloom-text-tertiary: var(--bloom-neutral-500);
+  --bloom-text-disabled: var(--bloom-neutral-400);
+  --bloom-text-inverse: var(--bloom-neutral-0);
+  --bloom-text-link: var(--bloom-pink-600);
+  --bloom-text-link-hover: var(--bloom-pink-800);
+
+  // --------------------------------------------------------------------------
+  // Border Colors
+  // --------------------------------------------------------------------------
+  --bloom-border-default: var(--bloom-neutral-200);
+  --bloom-border-strong: var(--bloom-neutral-300);
+  --bloom-border-focus: var(--bloom-pink-400);
+  --bloom-border-error: var(--bloom-error);
+
+  // --------------------------------------------------------------------------
+  // Gradient Presets
+  // --------------------------------------------------------------------------
+  --bloom-gradient-primary: linear-gradient(135deg, #ff85b8 0%, #ff2d8a 100%);
+  --bloom-gradient-secondary: linear-gradient(135deg, #6fb5ff 0%, #1a7fff 100%);
+  --bloom-gradient-accent: linear-gradient(135deg, #d4b8ff 0%, #a974ff 100%);
+  --bloom-gradient-kawaii: linear-gradient(135deg, #ffd6e8 0%, #d4b8ff 50%, #a8d2ff 100%);
+  --bloom-gradient-sunset: linear-gradient(135deg, #ff85b8 0%, #ffbe66 100%);
+  --bloom-gradient-ocean: linear-gradient(135deg, #a974ff 0%, #3d9aff 100%);
+  --bloom-gradient-surface: linear-gradient(180deg, #fff0f6 0%, #f5f0ff 50%, #eef6ff 100%);
+  --bloom-gradient-gel-pink: linear-gradient(180deg, #ffadd2 0%, #ff2d8a 60%, #e0196f 100%);
+  --bloom-gradient-gel-blue: linear-gradient(180deg, #a8d2ff 0%, #1a7fff 60%, #0066e0 100%);
+  --bloom-gradient-gel-lilac: linear-gradient(180deg, #d4b8ff 0%, #9055e8 60%, #7640c9 100%);
+
+  // --------------------------------------------------------------------------
+  // Typography
+  // --------------------------------------------------------------------------
+  --bloom-font-family-display: 'Quicksand', 'Nunito', system-ui, -apple-system, sans-serif;
+  --bloom-font-family-body: 'Nunito', system-ui, -apple-system, sans-serif;
+  --bloom-font-family-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  // Font Sizes (modular scale ~1.25)
+  --bloom-text-xs: 0.75rem;     // 12px
+  --bloom-text-sm: 0.875rem;    // 14px
+  --bloom-text-base: 1rem;      // 16px
+  --bloom-text-md: 1.125rem;    // 18px
+  --bloom-text-lg: 1.25rem;     // 20px
+  --bloom-text-xl: 1.5rem;      // 24px
+  --bloom-text-2xl: 1.875rem;   // 30px
+  --bloom-text-3xl: 2.25rem;    // 36px
+  --bloom-text-4xl: 3rem;       // 48px
+
+  // Font Weights
+  --bloom-font-light: 300;
+  --bloom-font-regular: 400;
+  --bloom-font-medium: 500;
+  --bloom-font-semibold: 600;
+  --bloom-font-bold: 700;
+  --bloom-font-extrabold: 800;
+
+  // Line Heights
+  --bloom-leading-none: 1;
+  --bloom-leading-tight: 1.25;
+  --bloom-leading-snug: 1.375;
+  --bloom-leading-normal: 1.5;
+  --bloom-leading-relaxed: 1.625;
+  --bloom-leading-loose: 2;
+
+  // Letter Spacing
+  --bloom-tracking-tighter: -0.05em;
+  --bloom-tracking-tight: -0.025em;
+  --bloom-tracking-normal: 0em;
+  --bloom-tracking-wide: 0.025em;
+  --bloom-tracking-wider: 0.05em;
+  --bloom-tracking-widest: 0.1em;
+
+  // --------------------------------------------------------------------------
+  // Spacing (4px base grid)
+  // --------------------------------------------------------------------------
+  --bloom-space-0: 0;
+  --bloom-space-px: 1px;
+  --bloom-space-0-5: 0.125rem;  // 2px
+  --bloom-space-1: 0.25rem;     // 4px
+  --bloom-space-1-5: 0.375rem;  // 6px
+  --bloom-space-2: 0.5rem;      // 8px
+  --bloom-space-2-5: 0.625rem;  // 10px
+  --bloom-space-3: 0.75rem;     // 12px
+  --bloom-space-4: 1rem;        // 16px
+  --bloom-space-5: 1.25rem;     // 20px
+  --bloom-space-6: 1.5rem;      // 24px
+  --bloom-space-8: 2rem;        // 32px
+  --bloom-space-10: 2.5rem;     // 40px
+  --bloom-space-12: 3rem;       // 48px
+  --bloom-space-16: 4rem;       // 64px
+  --bloom-space-20: 5rem;       // 80px
+  --bloom-space-24: 6rem;       // 96px
+
+  // --------------------------------------------------------------------------
+  // Border Radius (kawaii rounded shapes)
+  // --------------------------------------------------------------------------
+  --bloom-radius-none: 0;
+  --bloom-radius-sm: 0.375rem;    // 6px
+  --bloom-radius-md: 0.625rem;    // 10px
+  --bloom-radius-lg: 1rem;        // 16px
+  --bloom-radius-xl: 1.25rem;     // 20px
+  --bloom-radius-2xl: 1.5rem;     // 24px
+  --bloom-radius-3xl: 2rem;       // 32px
+  --bloom-radius-pill: 9999px;
+  --bloom-radius-circle: 50%;
+
+  // --------------------------------------------------------------------------
+  // Shadows (soft kawaii shadows with colored tints)
+  // --------------------------------------------------------------------------
+  --bloom-shadow-xs: 0 1px 2px 0 rgb(33 26 51 / 0.04);
+  --bloom-shadow-sm: 0 2px 6px -1px rgb(33 26 51 / 0.06),
+                     0 1px 3px -1px rgb(33 26 51 / 0.04);
+  --bloom-shadow-md: 0 4px 12px -2px rgb(33 26 51 / 0.08),
+                     0 2px 6px -2px rgb(33 26 51 / 0.04);
+  --bloom-shadow-lg: 0 8px 24px -4px rgb(33 26 51 / 0.1),
+                     0 4px 8px -4px rgb(33 26 51 / 0.04);
+  --bloom-shadow-xl: 0 16px 40px -8px rgb(33 26 51 / 0.12),
+                     0 6px 12px -6px rgb(33 26 51 / 0.04);
+
+  // Kawaii colored glow shadows
+  --bloom-shadow-glow-pink: 0 4px 20px -4px rgb(255 45 138 / 0.3),
+                            0 2px 8px -2px rgb(255 45 138 / 0.15);
+  --bloom-shadow-glow-blue: 0 4px 20px -4px rgb(26 127 255 / 0.3),
+                            0 2px 8px -2px rgb(26 127 255 / 0.15);
+  --bloom-shadow-glow-lilac: 0 4px 20px -4px rgb(169 116 255 / 0.3),
+                             0 2px 8px -2px rgb(169 116 255 / 0.15);
+  --bloom-shadow-glow-lime: 0 4px 20px -4px rgb(86 184 18 / 0.3),
+                            0 2px 8px -2px rgb(86 184 18 / 0.15);
+
+  // Inner glow for gel effects
+  --bloom-shadow-inner-glow: inset 0 1px 0 0 rgb(255 255 255 / 0.4),
+                             inset 0 -1px 2px 0 rgb(0 0 0 / 0.06);
+
+  // --------------------------------------------------------------------------
+  // Transitions & Animation Timing
+  // --------------------------------------------------------------------------
+  --bloom-duration-instant: 75ms;
+  --bloom-duration-fast: 150ms;
+  --bloom-duration-normal: 250ms;
+  --bloom-duration-slow: 400ms;
+  --bloom-duration-slower: 600ms;
+
+  --bloom-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --bloom-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --bloom-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --bloom-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --bloom-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --bloom-ease-spring: cubic-bezier(0.22, 1.4, 0.36, 1);
+
+  --bloom-transition-fast: var(--bloom-duration-fast) var(--bloom-ease-default);
+  --bloom-transition-normal: var(--bloom-duration-normal) var(--bloom-ease-default);
+  --bloom-transition-slow: var(--bloom-duration-slow) var(--bloom-ease-default);
+  --bloom-transition-bounce: var(--bloom-duration-normal) var(--bloom-ease-bounce);
+  --bloom-transition-spring: var(--bloom-duration-normal) var(--bloom-ease-spring);
+
+  // --------------------------------------------------------------------------
+  // Z-index Scale
+  // --------------------------------------------------------------------------
+  --bloom-z-behind: -1;
+  --bloom-z-base: 0;
+  --bloom-z-raised: 10;
+  --bloom-z-dropdown: 100;
+  --bloom-z-sticky: 200;
+  --bloom-z-overlay: 300;
+  --bloom-z-modal: 400;
+  --bloom-z-popover: 500;
+  --bloom-z-toast: 600;
+  --bloom-z-tooltip: 700;
+
+  // --------------------------------------------------------------------------
+  // Breakpoints (used as reference -- actual breakpoints use @media)
+  // --------------------------------------------------------------------------
+  --bloom-bp-xs: 375px;
+  --bloom-bp-sm: 640px;
+  --bloom-bp-md: 768px;
+  --bloom-bp-lg: 1024px;
+  --bloom-bp-xl: 1280px;
+  --bloom-bp-2xl: 1536px;
+
+  // --------------------------------------------------------------------------
+  // Layout
+  // --------------------------------------------------------------------------
+  --bloom-container-sm: 640px;
+  --bloom-container-md: 768px;
+  --bloom-container-lg: 1024px;
+  --bloom-container-xl: 1200px;
+  --bloom-container-2xl: 1400px;
+
+  --bloom-nav-height: 4rem;
+  --bloom-sidebar-width: 16rem;
+}
+
+// ============================================================================
+// SCSS Variables for Breakpoints (usable in @media queries)
+// ============================================================================
+$bloom-bp-xs: 375px;
+$bloom-bp-sm: 640px;
+$bloom-bp-md: 768px;
+$bloom-bp-lg: 1024px;
+$bloom-bp-xl: 1280px;
+$bloom-bp-2xl: 1536px;
+
+// ============================================================================
+// Breakpoint Mixins
+// ============================================================================
+@mixin bp-xs { @media (min-width: $bloom-bp-xs) { @content; } }
+@mixin bp-sm { @media (min-width: $bloom-bp-sm) { @content; } }
+@mixin bp-md { @media (min-width: $bloom-bp-md) { @content; } }
+@mixin bp-lg { @media (min-width: $bloom-bp-lg) { @content; } }
+@mixin bp-xl { @media (min-width: $bloom-bp-xl) { @content; } }
+@mixin bp-2xl { @media (min-width: $bloom-bp-2xl) { @content; } }
+
+// Mobile-only (max-width)
+@mixin bp-mobile-only { @media (max-width: #{$bloom-bp-sm - 1px}) { @content; } }
+@mixin bp-tablet-only {
+  @media (min-width: $bloom-bp-sm) and (max-width: #{$bloom-bp-lg - 1px}) { @content; }
+}
+
+// ============================================================================
+// Reduced Motion Mixin
+// ============================================================================
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) { @content; }
+}
+
+// ============================================================================
+// Focus Ring Mixin (accessible + kawaii)
+// ============================================================================
+@mixin bloom-focus-ring($color: var(--bloom-pink-400), $offset: 2px) {
+  outline: 2px solid $color;
+  outline-offset: $offset;
+  border-radius: inherit;
+}
+
+// ============================================================================
+// Gel Button Shine Mixin
+// ============================================================================
+@mixin gel-shine {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.35) 0%,
+      rgb(255 255 255 / 0.1) 60%,
+      rgb(255 255 255 / 0) 100%
+    );
+    border-radius: inherit;
+    pointer-events: none;
+  }
+}
+
+// ============================================================================
+// Truncate Text Mixin
+// ============================================================================
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

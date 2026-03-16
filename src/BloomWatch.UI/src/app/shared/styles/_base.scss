@@ -1,0 +1,331 @@
+// ============================================================================
+// BloomWatch Base / Reset Styles
+// Kawaii / Y2K Design System
+// ============================================================================
+
+// --------------------------------------------------------------------------
+// Modern CSS Reset
+// --------------------------------------------------------------------------
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  tab-size: 4;
+
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--bloom-font-family-body);
+  font-size: var(--bloom-text-base);
+  font-weight: var(--bloom-font-regular);
+  line-height: var(--bloom-leading-normal);
+  color: var(--bloom-text-primary);
+  background-color: var(--bloom-surface-body);
+  background-image: var(--bloom-gradient-surface);
+  background-attachment: fixed;
+}
+
+// --------------------------------------------------------------------------
+// Element Resets
+// --------------------------------------------------------------------------
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-bold);
+  line-height: var(--bloom-leading-tight);
+  color: var(--bloom-text-primary);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--bloom-text-3xl);
+  letter-spacing: var(--bloom-tracking-tight);
+
+  @media (min-width: 768px) {
+    font-size: var(--bloom-text-4xl);
+  }
+}
+
+h2 {
+  font-size: var(--bloom-text-2xl);
+  letter-spacing: var(--bloom-tracking-tight);
+
+  @media (min-width: 768px) {
+    font-size: var(--bloom-text-3xl);
+  }
+}
+
+h3 {
+  font-size: var(--bloom-text-xl);
+}
+
+h4 {
+  font-size: var(--bloom-text-lg);
+}
+
+h5 {
+  font-size: var(--bloom-text-md);
+}
+
+h6 {
+  font-size: var(--bloom-text-base);
+  font-weight: var(--bloom-font-semibold);
+}
+
+p {
+  text-wrap: pretty;
+  line-height: var(--bloom-leading-relaxed);
+
+  + p {
+    margin-top: var(--bloom-space-4);
+  }
+}
+
+a {
+  color: var(--bloom-text-link);
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  transition: color var(--bloom-transition-fast),
+              text-decoration-color var(--bloom-transition-fast);
+
+  &:hover {
+    color: var(--bloom-text-link-hover);
+    text-decoration: underline;
+    text-decoration-color: var(--bloom-pink-300);
+    text-decoration-thickness: 2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bloom-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--bloom-radius-sm);
+  }
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+input,
+textarea,
+select {
+  background-color: var(--bloom-surface-base);
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+fieldset {
+  border: none;
+}
+
+legend {
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--bloom-border-default);
+  margin: var(--bloom-space-6) 0;
+}
+
+strong,
+b {
+  font-weight: var(--bloom-font-semibold);
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--bloom-font-family-mono);
+  font-size: 0.9em;
+}
+
+code {
+  background-color: var(--bloom-surface-sunken);
+  padding: var(--bloom-space-0-5) var(--bloom-space-1-5);
+  border-radius: var(--bloom-radius-sm);
+  font-size: var(--bloom-text-sm);
+}
+
+pre {
+  overflow-x: auto;
+  padding: var(--bloom-space-4);
+  background-color: var(--bloom-neutral-900);
+  color: var(--bloom-neutral-100);
+  border-radius: var(--bloom-radius-lg);
+
+  code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+}
+
+small {
+  font-size: var(--bloom-text-sm);
+}
+
+::placeholder {
+  color: var(--bloom-text-tertiary);
+  opacity: 1;
+}
+
+// --------------------------------------------------------------------------
+// Selection Colors (kawaii pink highlight)
+// --------------------------------------------------------------------------
+
+::selection {
+  background-color: var(--bloom-pink-200);
+  color: var(--bloom-pink-900);
+}
+
+::-moz-selection {
+  background-color: var(--bloom-pink-200);
+  color: var(--bloom-pink-900);
+}
+
+// --------------------------------------------------------------------------
+// Custom Scrollbar (kawaii themed)
+// --------------------------------------------------------------------------
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bloom-neutral-100);
+  border-radius: var(--bloom-radius-pill);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--bloom-pink-300), var(--bloom-lilac-300));
+  border-radius: var(--bloom-radius-pill);
+  border: 2px solid var(--bloom-neutral-100);
+
+  &:hover {
+    background: linear-gradient(180deg, var(--bloom-pink-400), var(--bloom-lilac-400));
+  }
+}
+
+// Firefox scrollbar
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bloom-pink-300) var(--bloom-neutral-100);
+}
+
+// --------------------------------------------------------------------------
+// Focus Styles (accessible + kawaii)
+// --------------------------------------------------------------------------
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--bloom-border-focus);
+  outline-offset: 2px;
+}
+
+// Skip link for accessibility
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--bloom-space-4);
+  z-index: var(--bloom-z-tooltip);
+  padding: var(--bloom-space-2) var(--bloom-space-4);
+  background-color: var(--bloom-primary);
+  color: var(--bloom-text-inverse);
+  font-weight: var(--bloom-font-semibold);
+  border-radius: 0 0 var(--bloom-radius-md) var(--bloom-radius-md);
+  transition: top var(--bloom-transition-fast);
+
+  &:focus {
+    top: 0;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Screen Reader Only
+// --------------------------------------------------------------------------
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable {
+  &:focus,
+  &:active {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+}

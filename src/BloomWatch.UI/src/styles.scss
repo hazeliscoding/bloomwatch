@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+// ============================================================================
+// BloomWatch Global Styles
+// Kawaii / Y2K Design System Entry Point
+// ============================================================================
+
+// Design System Partials (order matters)
+// @use rules must come before everything else
+@use 'app/shared/styles/tokens';       // CSS custom properties & SCSS mixins
+@use 'app/shared/styles/base';         // Reset & base element styles
+@use 'app/shared/styles/animations';   // Keyframes & animation utilities
+@use 'app/shared/styles/utilities';    // Layout & decorative utilities
+
+// Google Fonts Import
+// Quicksand: Rounded display font (kawaii headings)
+// Nunito: Rounded body font (readable, friendly)
+// JetBrains Mono: Monospace for code
+//
+// NOTE: The @import url() must come after @use per Sass spec,
+// but CSS @import in compiled output is hoisted to the top by the browser.
+// To guarantee load order, we place the font link in index.html as a
+// <link> tag and also keep this as a fallback.
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap');
