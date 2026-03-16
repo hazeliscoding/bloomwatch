@@ -32,7 +32,27 @@
       "Bash(git add:*)",
       "Bash(which git-cz:*)",
       "Bash(git-cz --non-interactive --type chore --subject \"initialize solution with architecture docs and gitignore\")",
-      "Bash(npx git-conventional-commits:*)"
+      "Bash(npx git-conventional-commits:*)",
+      "Bash(dotnet --version && dotnet nuget locals all --list)",
+      "Bash(dotnet package:*)",
+      "Read(//home/hazeliscoding/.nuget/packages/microsoft.aspnetcore.openapi/10.0.5/lib/net10.0/**)",
+      "Read(//home/hazeliscoding/.nuget/packages/microsoft.openapi/**)",
+      "Bash(dotnet nuget:*)",
+      "Read(//tmp/**)",
+      "Bash(dotnet-dump analyze:*)",
+      "Bash(cd /tmp/openapi_test && dotnet run 2>&1 | grep -i \"securityscheme\\\\|SecurityRequirement\\\\|OpenApiInfo\\\\|OpenApiSecurity\\\\|ReferenceType\\\\|SecuritySchemeType\")",
+      "Bash(cd /tmp/openapi_test && dotnet run 2>&1 | grep \"OpenApiReference\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(which ng:*)",
+      "Bash(ls:*)",
+      "Bash(cd:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(APP=/home/hazeliscoding/projects/bloomwatch/src/BloomWatch.UI/src/app && mkdir -p \"$APP/core/layout\" \"$APP/shared/ui\" \"$APP/shared/models\" \"$APP/features/auth\" \"$APP/features/dashboard\" \"$APP/features/watch-spaces\" \"$APP/features/settings\")",
+      "Bash(APP=/home/hazeliscoding/projects/bloomwatch/src/BloomWatch.UI/src/app && touch \"$APP/shared/ui/.gitkeep\" \"$APP/shared/models/.gitkeep\")",
+      "Bash(git:*)"
     ]
   }
 }
