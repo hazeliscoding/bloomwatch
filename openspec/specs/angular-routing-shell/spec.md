@@ -6,7 +6,7 @@ The Angular project SHALL use a feature-based directory structure with three top
 #### Scenario: Project directory structure exists
 - **WHEN** a developer inspects `src/BloomWatch.UI/src/app/`
 - **THEN** the directories `core/`, `shared/`, and `features/` SHALL exist
-- **AND** `features/` SHALL contain subdirectories: `auth/`, `dashboard/`, `watch-spaces/`, `settings/`
+- **AND** `features/` SHALL contain subdirectories: `auth/`, `dashboard/`, `watch-spaces/`, `settings/`, `landing/`
 
 ### Requirement: Lazy-loaded routing for all MVP pages
 The Angular app SHALL define lazy-loaded routes for all MVP pages. Each feature area SHALL have its own route configuration file loaded via `loadChildren` or `loadComponent` from the top-level `app.routes.ts`.
@@ -14,6 +14,7 @@ The Angular app SHALL define lazy-loaded routes for all MVP pages. Each feature 
 #### Scenario: All required routes are navigable
 - **WHEN** the app is running
 - **THEN** the following routes SHALL resolve without errors: `/`, `/login`, `/register`, `/watch-spaces`, `/watch-spaces/:id`, `/watch-spaces/:id/anime/:animeId`, `/settings`
+- **AND** the `/` route SHALL render the landing page component inside `MinimalLayout`
 
 #### Scenario: Feature routes are lazy-loaded
 - **WHEN** a user navigates to a feature route for the first time
@@ -31,7 +32,7 @@ A `ShellLayoutComponent` SHALL wrap all authenticated routes (`/`, `/watch-space
 - **THEN** the nav bar SHALL contain links to at least: Dashboard (`/`), Watch Spaces (`/watch-spaces`), and Settings (`/settings`)
 
 ### Requirement: Minimal layout for public pages
-A `MinimalLayoutComponent` SHALL wrap public routes (`/login`, `/register`). It SHALL render only a `<router-outlet>` without the navigation bar.
+A `MinimalLayoutComponent` SHALL wrap public routes (`/`, `/login`, `/register`). It SHALL render only a `<router-outlet>` without the navigation bar.
 
 #### Scenario: Public route displays minimal layout
 - **WHEN** a user navigates to `/login`
@@ -40,6 +41,11 @@ A `MinimalLayoutComponent` SHALL wrap public routes (`/login`, `/register`). It 
 #### Scenario: Register route uses minimal layout
 - **WHEN** a user navigates to `/register`
 - **THEN** the page SHALL NOT display a navigation bar
+
+#### Scenario: Landing page uses minimal layout
+- **WHEN** a user navigates to `/`
+- **THEN** the page SHALL render inside `MinimalLayout`
+- **AND** the page SHALL NOT display a navigation bar
 
 ### Requirement: App compiles and runs without errors
 The Angular application SHALL compile successfully with `ng build` and serve without errors with `ng serve`.
