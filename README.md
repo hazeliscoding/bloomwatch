@@ -113,14 +113,7 @@ export ConnectionStrings__DefaultConnection="Host=localhost;Database=bloomwatch;
 ### 3. Apply migrations
 
 ```bash
-dotnet ef database update --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure \
-                          --startup-project src/BloomWatch.Api
-
-dotnet ef database update --project src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure \
-                          --startup-project src/BloomWatch.Api
-
-dotnet ef database update --project src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Infrastructure \
-                          --startup-project src/BloomWatch.Api
+./scripts/apply-migrations.sh
 ```
 
 ### 4. Run the API
