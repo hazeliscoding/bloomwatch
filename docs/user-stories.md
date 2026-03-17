@@ -1,6 +1,6 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.1
+**Document version:** 1.2
 **Created:** 2026-03-13
 **Last updated:** 2026-03-17
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
@@ -14,8 +14,8 @@
 
 | Badge | Meaning |
 |---|---|
-| Done | Story is fully implemented and tested |
-| To Do | Story is not yet started |
+| ✅ Done | Story is fully implemented and tested |
+| 📋 To Do | Story is not yet started |
 
 ### Story point scale (Fibonacci)
 
@@ -58,9 +58,12 @@ Each story follows: `As a [user], I want to [action], so that [benefit].`
 
 ---
 
+<details>
+<summary>Story 1.1 — User Registration (Backend)</summary>
+
 ### Story 1.1 — User Registration (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Involves password hashing (BCrypt), email uniqueness validation, and structured domain/application/infrastructure layers — moderate complexity.
 
@@ -77,11 +80,16 @@ As a new user, I want to register for BloomWatch with my email, password, and di
 **Module:** Identity
 **Endpoints:** `POST /auth/register`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 1.2 — JWT Login (Backend)</summary>
 
 ### Story 1.2 — JWT Login (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Involves credential verification, BCrypt comparison, HS256 JWT generation with a 1-hour expiry, and proper error handling for bad credentials.
 
@@ -98,11 +106,16 @@ As a registered user, I want to log in with my email and password, so that I rec
 **Module:** Identity
 **Endpoints:** `POST /auth/login`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 1.3 — User Profile Endpoint (Backend)</summary>
 
 ### Story 1.3 — User Profile Endpoint (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Single authenticated GET endpoint returning the current user's profile data. No domain complexity beyond resolving the user ID from the JWT claim.
 
@@ -118,6 +131,8 @@ As an authenticated user, I want to fetch my own profile, so that the frontend c
 **Module:** Identity
 **Endpoints:** `GET /users/me`
 
+</details>
+
 ---
 
 ## Epic 2 — Watch Spaces Management
@@ -128,9 +143,12 @@ As an authenticated user, I want to fetch my own profile, so that the frontend c
 
 ---
 
+<details>
+<summary>Story 2.1 — Create a Watch Space (Backend)</summary>
+
 ### Story 2.1 — Create a Watch Space (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Involves creating the aggregate root, auto-assigning the creator as owner/member, and returning the new resource. Moderate domain setup.
 
@@ -147,11 +165,16 @@ As an authenticated user, I want to create a new watch space with a name, so tha
 **Module:** WatchSpaces
 **Endpoints:** `POST /watchspaces`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.2 — List My Watch Spaces (Backend)</summary>
 
 ### Story 2.2 — List My Watch Spaces (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Simple read endpoint that filters watch spaces by the authenticated user's membership. No significant domain logic.
 
@@ -166,11 +189,16 @@ As an authenticated user, I want to see a list of all watch spaces I belong to, 
 **Module:** WatchSpaces
 **Endpoints:** `GET /watchspaces`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.3 — Get a Watch Space by ID (Backend)</summary>
 
 ### Story 2.3 — Get a Watch Space by ID (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Single GET with membership authorization check. Returns space details and member list.
 
@@ -185,11 +213,16 @@ As a watch space member, I want to view the details of a watch space, so that I 
 **Module:** WatchSpaces
 **Endpoints:** `GET /watchspaces/{id}`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.4 — Rename a Watch Space (Backend)</summary>
 
 ### Story 2.4 — Rename a Watch Space (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Simple mutation guarded by owner-only authorization. No multi-step domain logic.
 
@@ -205,11 +238,16 @@ As a watch space owner, I want to rename my watch space, so that I can keep its 
 **Module:** WatchSpaces
 **Endpoints:** `PATCH /watchspaces/{id}`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.5 — Transfer Watch Space Ownership (Backend)</summary>
 
 ### Story 2.5 — Transfer Watch Space Ownership (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Domain rule: the space must always have exactly one owner. Requires role swap logic and validation that the target is an existing member.
 
@@ -224,11 +262,16 @@ As a watch space owner, I want to transfer ownership to another member, so that 
 
 **Module:** WatchSpaces
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.6 — Invite a Member by Email (Backend)</summary>
 
 ### Story 2.6 — Invite a Member by Email (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Generates a unique token, records the invitation with expiry, and applies owner-only and duplicate-invite guards.
 
@@ -245,11 +288,16 @@ As a watch space owner, I want to invite someone by their email address, so that
 **Module:** WatchSpaces
 **Endpoints:** `POST /watchspaces/{id}/invitations`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.7 — List Pending Invitations (Backend)</summary>
 
 ### Story 2.7 — List Pending Invitations (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 1
 **Sizing rationale:** Simple read endpoint, owner-only, filtered by pending status. Trivial domain logic.
 
@@ -263,11 +311,16 @@ As a watch space owner, I want to see all pending invitations for my space, so t
 
 **Module:** WatchSpaces
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.8 — Revoke a Pending Invitation (Backend)</summary>
 
 ### Story 2.8 — Revoke a Pending Invitation (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Mutation that updates invitation status. Owner-only guard. Simple validation.
 
@@ -281,11 +334,16 @@ As a watch space owner, I want to revoke a pending invitation, so that the invit
 
 **Module:** WatchSpaces
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.9 — Accept an Invitation (Backend)</summary>
 
 ### Story 2.9 — Accept an Invitation (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Token lookup with expiry validation, email match validation, and adding the user to the watch space as a Member. Multiple guard conditions.
 
@@ -302,11 +360,16 @@ As an invited user, I want to accept an invitation by its token, so that I becom
 **Module:** WatchSpaces
 **Endpoints:** `POST /watchspaces/invitations/{token}/accept`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.10 — Decline an Invitation (Backend)</summary>
 
 ### Story 2.10 — Decline an Invitation (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Similar to accept but simpler — just marks the invitation declined, no membership record created.
 
@@ -321,11 +384,16 @@ As an invited user, I want to decline an invitation, so that the inviter knows I
 
 **Module:** WatchSpaces
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.11 — Remove a Member (Backend)</summary>
 
 ### Story 2.11 — Remove a Member (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Owner-only operation with guard that the owner cannot remove themselves (use leave/transfer for that). Soft-deletes the membership record.
 
@@ -341,11 +409,16 @@ As a watch space owner, I want to remove a member from my watch space, so that I
 **Module:** WatchSpaces
 **Endpoints:** `DELETE /watchspaces/{id}/members/{userId}`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 2.12 — Leave a Watch Space (Backend)</summary>
 
 ### Story 2.12 — Leave a Watch Space (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Simple self-removal with guard that owners cannot leave without transferring first. No complex domain transitions.
 
@@ -359,6 +432,8 @@ As a non-owner member, I want to leave a watch space, so that I am no longer ass
 
 **Module:** WatchSpaces
 
+</details>
+
 ---
 
 ## Epic 3 — AniList Discovery
@@ -369,9 +444,12 @@ As a non-owner member, I want to leave a watch space, so that I am no longer ass
 
 ---
 
+<details>
+<summary>Story 3.1 — AniList Search Proxy (Backend)</summary>
+
 ### Story 3.1 — AniList Search Proxy (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 5
 **Sizing rationale:** Requires building a GraphQL client (HttpClient-based), writing the AniList search query, mapping the response to internal DTOs, and layering in a short-lived cache. Cross-cutting concern between AniListSync and the API layer.
 
@@ -389,11 +467,16 @@ As an authenticated user, I want to search for anime by name, so that I can find
 **Module:** AniListSync
 **Endpoints:** `GET /api/anilist/search?query=...`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 3.2 — AniList Media Detail (Backend)</summary>
 
 ### Story 3.2 — AniList Media Detail (Backend)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Single-record fetch by AniList media ID. Cache hit path is trivial; cache miss triggers AniList GraphQL call and writes to `anilist_sync.media_cache`.
 
@@ -410,19 +493,24 @@ As an authenticated user, I want to fetch full details for a specific AniList an
 **Module:** AniListSync
 **Endpoints:** `GET /api/anilist/media/{anilistMediaId}`
 
+</details>
+
 ---
 
 ## Epic 4 — Anime Tracking
 
 **Goal:** Members of a watch space can add anime, track shared status and progress, record individual ratings, and log watch sessions.
 **Module:** AnimeTracking
-**Backend status:** To Do
+**Backend status:** In Progress (1 Done, 6 To Do)
 
 ---
 
+<details>
+<summary>Story 4.1 — Add Anime to a Watch Space (Backend)</summary>
+
 ### Story 4.1 — Add Anime to a Watch Space (Backend)
 
-**Status:** To Do
+**Status:** ✅ Done
 **Points:** 5
 **Sizing rationale:** Cross-module: must confirm watch space membership (WatchSpaces), look up or fetch AniList metadata (AniListSync), enforce the no-duplicate-AniList-ID rule, create the WatchSpaceAnime aggregate with metadata snapshots, and create the caller's ParticipantEntry. Multiple interacting domain rules.
 
@@ -441,11 +529,13 @@ As a watch space member, I want to add an anime to my watch space by its AniList
 **Module:** AnimeTracking
 **Endpoints:** `POST /watchspaces/{id}/anime`
 
+</details>
+
 ---
 
 ### Story 4.2 — List Anime in a Watch Space (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Read endpoint with membership guard, returns a list of WatchSpaceAnime with their shared status and basic participant summaries. Filtering by status is a useful optional query parameter.
 
@@ -466,7 +556,7 @@ As a watch space member, I want to see all anime in my watch space, so that I ca
 
 ### Story 4.3 — Get Anime Detail in a Watch Space (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Single-record read with membership check. Returns full aggregate: shared state, all participant entries with ratings, and watch session list.
 
@@ -487,7 +577,7 @@ As a watch space member, I want to view full details for one anime in my watch s
 
 ### Story 4.4 — Update Shared Anime Status and Metadata (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Mutation of shared state on the WatchSpaceAnime aggregate. Requires membership check and validation of the status enum. Also covers optional mood/vibe/pitch fields.
 
@@ -509,7 +599,7 @@ As a watch space member, I want to update the shared status of an anime (e.g. mo
 
 ### Story 4.5 — Update Individual Participant Progress and Status (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Creates or updates the calling user's ParticipantEntry for the anime. Domain rules: episodes cannot exceed known count; status is an enum. Upsert semantics for the entry.
 
@@ -531,7 +621,7 @@ As a watch space member, I want to update my own progress and individual status 
 
 ### Story 4.6 — Submit or Update a Personal Rating (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Involves the 0.5–10 scale constraint, rounding/validation logic, and upsert of the rating fields on the caller's ParticipantEntry. The constraint and Scale value object add moderate domain complexity.
 
@@ -553,7 +643,7 @@ As a watch space member, I want to rate an anime with a score from 0.5 to 10 and
 
 ### Story 4.7 — Record a Watch Session (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Creates a WatchSession entity with episode range validation (start > 0, end >= start). The session date is provided by the caller (allows backdating). Requires membership check.
 
@@ -584,7 +674,7 @@ As a watch space member, I want to log a watch session with the episode range an
 
 ### Story 5.1 — Watch Space Dashboard Summary Endpoint (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 5
 **Sizing rationale:** Aggregates across multiple data sources: total shows by status, episodes watched together, in-progress anime, compatibility score, rating gap highlights, and backlog highlights. Cross-module read of AnimeTracking data. Result is a denormalized read model.
 
@@ -612,7 +702,7 @@ As a watch space member, I want to load a single dashboard endpoint, so that the
 
 ### Story 5.2 — Compatibility Score Endpoint (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 5
 **Sizing rationale:** Requires collecting all anime rated by at least two members, computing per-anime score gaps, averaging them, and applying the formula `max(0, round(100 - averageGap * 10))`. Graceful degradation when data is sparse. The formula is simple but the data aggregation across ParticipantEntry records is moderately involved.
 
@@ -636,7 +726,7 @@ As a watch space member, I want to see our compatibility score, so that I can un
 
 ### Story 5.3 — Rating Gaps Endpoint (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Read-model computation over ParticipantEntry data. Identifies anime where members' ratings diverge the most. Moderate data aggregation.
 
@@ -656,7 +746,7 @@ As a watch space member, I want to see which anime we rated most differently, so
 
 ### Story 5.4 — Shared Watch Stats Endpoint (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Aggregation over WatchSession and WatchSpaceAnime records. Computes counts and totals but is primarily a read-model over existing data.
 
@@ -679,7 +769,7 @@ As a watch space member, I want to see aggregate statistics about our watch hist
 
 ### Story 5.5 — Random Backlog Picker Endpoint (Backend)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 2
 **Sizing rationale:** Simple random selection from the backlog filtered set. No complex domain logic — just a filtered query with randomization.
 
@@ -705,9 +795,12 @@ As a watch space member, I want the system to pick a random anime from our backl
 
 ---
 
+<details>
+<summary>Story 6.1 — Angular Project Setup and Routing Shell</summary>
+
 ### Story 6.1 — Angular Project Setup and Routing Shell
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Initial Angular app setup with feature-based structure, lazy-loaded routes, and basic layout component. No domain logic, but a meaningful amount of configuration and structural work.
 
@@ -722,11 +815,16 @@ As a developer, I want a working Angular project with lazy-loaded feature routes
 
 **Tech notes:** Angular, Angular Router, feature modules or standalone components
 
+</details>
+
 ---
+
+<details>
+<summary>Story 6.2 — HTTP Client and Auth Interceptor</summary>
 
 ### Story 6.2 — HTTP Client and Auth Interceptor
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** API service layer with base URL configuration, JWT injection interceptor, and 401 redirect handling. Cross-cutting; affects every API call.
 
@@ -741,11 +839,16 @@ As a developer, I want all HTTP calls to the backend to automatically include th
 
 **Tech notes:** Angular `HttpClient`, `HTTP_INTERCEPTORS` or functional interceptors (Angular 15+)
 
+</details>
+
 ---
+
+<details>
+<summary>Story 6.3 — Theme System (Light and Dark Mode)</summary>
 
 ### Story 6.3 — Theme System (Light and Dark Mode)
 
-**Status:** Done
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** CSS custom property-based theme toggle. No backend dependency. UI-only with a small amount of state management for persistence.
 
@@ -758,18 +861,23 @@ As a user, I want to switch between a light pastel mode and a dark mode, so that
 - Both themes are visually consistent: text is readable, interactive elements are clearly visible
 - Theme tokens are defined as CSS custom properties so component styles reference them rather than hard-coding colors
 
+</details>
+
 ---
 
 ## Epic 7 — Auth Frontend
 
 **Goal:** Users can register and log in through the Angular frontend.
-**Frontend status:** To Do
+**Frontend status:** 1 Done, 3 To Do
 
 ---
 
+<details>
+<summary>Story 7.1 — Landing Page</summary>
+
 ### Story 7.1 — Landing Page
 
-**Status:** To Do
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Static marketing/intro page. No backend calls, no complex logic. Light UI work.
 
@@ -782,11 +890,13 @@ As a visitor, I want to see a landing page that explains what BloomWatch does, s
 - Responsive design works on mobile and desktop
 - Unauthenticated visitors are not redirected away from this page
 
+</details>
+
 ---
 
 ### Story 7.2 — Registration Page
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Form with client-side validation, API call to register endpoint, inline error handling, and redirect on success.
 
@@ -805,7 +915,7 @@ As a new user, I want to fill in a registration form with my display name, email
 
 ### Story 7.3 — Login Page
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 2
 **Sizing rationale:** Simpler than registration — two fields, one API call, straightforward error handling.
 
@@ -824,7 +934,7 @@ As a returning user, I want to enter my email and password to log in, so that I 
 
 ### Story 7.4 — Auth Route Guards
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 2
 **Sizing rationale:** Two guards (authenticated and unauthenticated) applied to route definitions. Standard Angular pattern, no domain logic.
 
@@ -847,7 +957,7 @@ As a developer, I want route guards that prevent unauthenticated users from acce
 
 ### Story 8.1 — Watch Space Selector Page
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** List view with API call, create dialog, and navigation to a specific space. A few UI states (empty, loading, populated).
 
@@ -866,7 +976,7 @@ As an authenticated user, I want to see all my watch spaces listed on a selector
 
 ### Story 8.2 — Watch Space Settings Panel
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Settings within a watch space: rename, view members, and for owners — remove members or transfer ownership. Multiple API calls and conditional UI by role.
 
@@ -885,7 +995,7 @@ As a watch space owner, I want a settings panel where I can rename the space, se
 
 ### Story 8.3 — Invitation Flow (Send and Manage)
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 5
 **Sizing rationale:** The invitation flow involves: invite form (email input, API call), pending invitation list, revoke action, and the accept/decline pages for invitees. Multiple screens and states; the most complex part of the WatchSpaces frontend.
 
@@ -912,7 +1022,7 @@ As a watch space owner, I want to invite someone by email and manage pending inv
 
 ### Story 9.1 — Anime Search Modal
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 5
 **Sizing rationale:** Debounced search input calling the AniList search proxy, result list with cover images and key metadata, and an "Add to Watch Space" action. Combines network state management, debouncing, and result rendering.
 
@@ -932,7 +1042,7 @@ As a watch space member, I want to search for anime by name and add a result to 
 
 ### Story 9.2 — Shared Anime List Page
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 5
 **Sizing rationale:** Tabbed or filtered list view grouped by status (backlog, watching, finished, paused, dropped), with cover images and participant progress indicators. Multiple UI states and filtering.
 
@@ -951,7 +1061,7 @@ As a watch space member, I want to browse our anime list filtered by status, so 
 
 ### Story 9.3 — Anime Detail Page
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 8
 **Sizing rationale:** The richest screen in the app. Shows full anime metadata, per-participant progress and ratings, shared status controls, rating input, watch session list, and a "Log Session" form. Multiple API calls and a complex UI with multiple interactive sections.
 
@@ -975,7 +1085,7 @@ As a watch space member, I want to see all details for one anime, so that I can 
 
 ### Story 9.4 — Inline Progress and Status Update Controls
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Reusable components for updating participant progress and shared status, usable from both the list view and the detail page. Requires local state management and debounced or on-blur API calls.
 
@@ -999,7 +1109,7 @@ As a watch space member, I want to quickly update my episode count or the shared
 
 ### Story 10.1 — Watch Space Dashboard Page
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 8
 **Sizing rationale:** The primary "home" of a watch space. Loads the dashboard summary endpoint and renders multiple sections: snapshot cards, currently watching list, compatibility score, backlog highlights, rating gap highlights, and recent sessions. Significant UI composition with multiple subsections.
 
@@ -1020,7 +1130,7 @@ As a watch space member, I want to see a dashboard with a summary of our watch s
 
 ### Story 10.2 — Compatibility Score Display Component
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** A standalone, visually distinct component that renders the compatibility score with a visual meter or ring, label, and contextual detail. Reusable on the dashboard and analytics page.
 
@@ -1038,7 +1148,7 @@ As a watch space member, I want to see our compatibility score displayed in a vi
 
 ### Story 10.3 — Analytics Page
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 5
 **Sizing rationale:** Dedicated analytics page that calls the rating-gaps, shared-stats, and compatibility endpoints and renders them with chart components. More detailed than the dashboard summary.
 
@@ -1058,7 +1168,7 @@ As a watch space member, I want a dedicated analytics page with charts and table
 
 ### Story 10.4 — Random Backlog Picker Component
 
-**Status:** To Do
+**Status:** 📋 To Do
 **Points:** 3
 **Sizing rationale:** Interactive widget that fetches a random pick, displays the result with anime details, and allows the user to "reroll". Straightforward but requires a polished interactive feel.
 
@@ -1081,24 +1191,24 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Epic | Status | Stories | Total Points |
 |---|---|---|---|
-| Epic 1 — Authentication and Identity (Backend) | 3 Done | 3 | 8 |
-| Epic 2 — Watch Spaces Management (Backend) | 12 Done | 12 | 28 |
-| Epic 3 — AniList Discovery (Backend) | 2 Done | 2 | 8 |
-| Epic 4 — Anime Tracking (Backend) | To Do | 7 | 23 |
-| Epic 5 — Analytics and Dashboard (Backend) | To Do | 5 | 18 |
-| Epic 6 — Angular Frontend Shell | 3 Done | 3 | 8 |
-| Epic 7 — Auth Frontend | To Do | 4 | 9 |
-| Epic 8 — Watch Spaces Frontend | To Do | 3 | 11 |
-| Epic 9 — Anime Tracking Frontend | To Do | 4 | 21 |
-| Epic 10 — Analytics and Dashboard Frontend | To Do | 4 | 19 |
+| Epic 1 — Authentication and Identity (Backend) | 3 ✅ Done | 3 | 8 |
+| Epic 2 — Watch Spaces Management (Backend) | 12 ✅ Done | 12 | 28 |
+| Epic 3 — AniList Discovery (Backend) | 2 ✅ Done | 2 | 8 |
+| Epic 4 — Anime Tracking (Backend) | 1 ✅ Done, 6 📋 To Do | 7 | 23 |
+| Epic 5 — Analytics and Dashboard (Backend) | 📋 To Do | 5 | 18 |
+| Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
+| Epic 7 — Auth Frontend | 1 ✅ Done, 3 📋 To Do | 4 | 9 |
+| Epic 8 — Watch Spaces Frontend | 📋 To Do | 3 | 11 |
+| Epic 9 — Anime Tracking Frontend | 📋 To Do | 4 | 21 |
+| Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
 | **Total** | | **47** | **153** |
 
 ### Completed vs remaining
 
 | Category | Points |
 |---|---|
-| Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell) | 52 |
-| To Do (remaining MVP) | 101 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Landing page + Add anime) | 59 |
+| 📋 To Do (remaining MVP) | 94 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1106,32 +1216,32 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 These groupings are not prescriptive. They suggest a natural sequencing to unblock dependent work quickly.
 
 **Sprint 1 — Angular shell** *(Complete)*
-- Story 6.1 — Angular Project Setup (3 pts) — Done
-- Story 6.2 — HTTP Client and Auth Interceptor (3 pts) — Done
-- Story 6.3 — Theme System (2 pts) — Done
+- Story 6.1 — Angular Project Setup (3 pts) — ✅ Done
+- Story 6.2 — HTTP Client and Auth Interceptor (3 pts) — ✅ Done
+- Story 6.3 — Theme System (2 pts) — ✅ Done
 - Total: 8 pts
 
 **Sprint 2 — Auth frontend + Watch Spaces frontend**
-- Story 7.1 — Landing Page (2 pts)
+- ~~Story 7.1 — Landing Page (2 pts) — ✅ Done~~
 - Story 7.2 — Registration Page (3 pts)
 - Story 7.3 — Login Page (2 pts)
 - Story 7.4 — Auth Route Guards (2 pts)
 - Story 8.1 — Watch Space Selector Page (3 pts)
-- Total: 12 pts
+- Total: 12 pts (10 pts remaining)
 
 **Sprint 3 — Watch Spaces frontend (management) + AniList backend**
 - Story 8.2 — Watch Space Settings Panel (3 pts)
 - Story 8.3 — Invitation Flow Frontend (5 pts)
-- ~~Story 3.1 — AniList Search Proxy (5 pts) — Done~~
-- ~~Story 3.2 — AniList Media Detail (3 pts) — Done~~
+- ~~Story 3.1 — AniList Search Proxy (5 pts) — ✅ Done~~
+- ~~Story 3.2 — AniList Media Detail (3 pts) — ✅ Done~~
 - Total: 16 pts (8 pts remaining)
 
 **Sprint 4 — Anime Tracking backend (core)**
-- Story 4.1 — Add Anime to a Watch Space (5 pts)
+- ~~Story 4.1 — Add Anime to a Watch Space (5 pts) — ✅ Done~~
 - Story 4.2 — List Anime in a Watch Space (3 pts)
 - Story 4.3 — Get Anime Detail (3 pts)
 - Story 4.4 — Update Shared Anime Status (3 pts)
-- Total: 14 pts
+- Total: 14 pts (9 pts remaining)
 
 **Sprint 5 — Anime Tracking backend (progress, ratings, sessions)**
 - Story 4.5 — Update Individual Participant Progress (3 pts)

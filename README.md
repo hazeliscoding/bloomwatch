@@ -23,7 +23,7 @@ A shared anime tracking platform for pairs and small groups. BloomWatch lets fri
 **Testing**
 
 - xUnit, NSubstitute, FluentAssertions (backend)
-- 72 automated tests across 7 test projects
+- 115 automated tests across 8 test projects
 
 ## Project Structure
 
@@ -35,7 +35,7 @@ src/
 │   └── src/
 │       ├── app/
 │       │   ├── core/layout/                 # Shell layout (nav bar) and minimal layout (auth pages)
-│       │   ├── features/                    # Feature modules: auth, dashboard, watch-spaces, settings, showcase
+│       │   ├── features/                    # Feature modules: landing, auth, dashboard, watch-spaces, settings, showcase
 │       │   └── shared/
 │       │       ├── styles/                  # Design tokens, base styles, animations, utilities
 │       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar)
@@ -51,23 +51,31 @@ src/
     │   ├── BloomWatch.Modules.WatchSpaces.Application/     # 12 use case handlers (create, invite, accept, leave, ...)
     │   ├── BloomWatch.Modules.WatchSpaces.Infrastructure/  # EF Core, email lookup, migrations
     │   └── BloomWatch.Modules.WatchSpaces.Contracts/       # Integration events for downstream modules
-    └── AniListSync/
-        ├── BloomWatch.Modules.AniListSync.Domain/          # (reserved for future domain entities)
-        ├── BloomWatch.Modules.AniListSync.Application/     # Search query handler, client abstraction
-        ├── BloomWatch.Modules.AniListSync.Infrastructure/  # AniList GraphQL client, in-memory caching
-        └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
+    ├── AniListSync/
+    │   ├── BloomWatch.Modules.AniListSync.Domain/          # MediaCacheEntry entity, persistent caching
+    │   ├── BloomWatch.Modules.AniListSync.Application/     # Search + media detail query handlers
+    │   ├── BloomWatch.Modules.AniListSync.Infrastructure/  # AniList GraphQL client, EF Core + in-memory caching
+    │   └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
+    └── AnimeTracking/
+        ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, tracking entities
+        ├── BloomWatch.Modules.AnimeTracking.Application/     # Add anime, cross-module media cache lookup
+        ├── BloomWatch.Modules.AnimeTracking.Infrastructure/  # EF Core, cross-module adapters
+        └── BloomWatch.Modules.AnimeTracking.Contracts/       # (reserved for integration events)
 
 tests/
-├── BloomWatch.Modules.Identity.UnitTests/              # Domain + use case unit tests (17 tests)
-├── BloomWatch.Modules.Identity.IntegrationTests/       # HTTP endpoint integration tests (9 tests)
-├── BloomWatch.Modules.WatchSpaces.UnitTests/           # Domain unit tests (23 tests)
-├── BloomWatch.Modules.WatchSpaces.IntegrationTests/    # HTTP endpoint integration tests (10 tests)
-├── BloomWatch.Modules.AniListSync.UnitTests/           # Handler + caching unit tests (6 tests)
-└── BloomWatch.Modules.AniListSync.IntegrationTests/    # HTTP endpoint integration tests (7 tests)
+├── BloomWatch.Modules.Identity.UnitTests/              # Domain + use case unit tests
+├── BloomWatch.Modules.Identity.IntegrationTests/       # HTTP endpoint integration tests
+├── BloomWatch.Modules.WatchSpaces.UnitTests/           # Domain unit tests
+├── BloomWatch.Modules.WatchSpaces.IntegrationTests/    # HTTP endpoint integration tests
+├── BloomWatch.Modules.AniListSync.UnitTests/           # Handler + caching unit tests
+├── BloomWatch.Modules.AniListSync.IntegrationTests/    # HTTP endpoint integration tests
+└── BloomWatch.Modules.AnimeTracking.UnitTests/         # Domain + use case unit tests
 
 docs/
 ├── architecture.md     # Full system design, module breakdown, and planned feature phases
-└── user-stories.md     # Product user stories and completion tracking
+├── ui-ux-doctrine.md   # Authoritative UI/UX design doctrine (kawaii/Y2K system, tokens, component patterns)
+├── user-stories.md     # Product user stories and completion tracking
+└── wireframes/         # HTML/CSS wireframes for all frontend stories
 
 openspec/               # Spec-driven change management (see below)
 ```
@@ -109,6 +117,9 @@ dotnet ef database update --project src/Modules/Identity/BloomWatch.Modules.Iden
                           --startup-project src/BloomWatch.Api
 
 dotnet ef database update --project src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure \
+                          --startup-project src/BloomWatch.Api
+
+dotnet ef database update --project src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Infrastructure \
                           --startup-project src/BloomWatch.Api
 ```
 
@@ -168,12 +179,13 @@ DELETE /watchspaces/{id}/members/{userId}                # Remove a member (owne
 DELETE /watchspaces/{id}/members/me                      # Leave a space
 ```
 
-### AniList Search
+### AniList
 
-Requires a valid JWT. Results are cached in memory for 5 minutes.
+Requires a valid JWT.
 
 ```http
-GET /api/anilist/search?query=cowboy+bebop              # Search for anime via AniList
+GET /api/anilist/search?query=cowboy+bebop              # Search for anime via AniList (cached in-memory, 5 min)
+GET /api/anilist/media/{anilistMediaId}                  # Get full media detail (cached in PostgreSQL)
 ```
 
 A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
@@ -186,9 +198,10 @@ The Angular frontend lives in `src/BloomWatch.UI/` and provides the user-facing 
 
 | Route | Layout | Description |
 |-------|--------|-------------|
+| `/` | Minimal | Landing page (public, no nav bar) |
 | `/login` | Minimal | Login page (no nav bar) |
 | `/register` | Minimal | Registration page (no nav bar) |
-| `/` | Shell | Dashboard |
+| `/dashboard` | Shell | Dashboard |
 | `/watch-spaces` | Shell | Watch space list and detail views |
 | `/settings` | Shell | User settings |
 | `/showcase` | Shell | Component library showcase |
@@ -205,6 +218,7 @@ The frontend includes a custom component library under `src/app/shared/ui/`, bui
 | Badge | `bloom-badge` | Status and category badges with color options |
 | Avatar | `bloom-avatar` | User avatar with status indicators |
 | Avatar Stack | `bloom-avatar-stack` | Overlapping avatar group display |
+| Theme Toggle | `bloom-theme-toggle` | Light/dark theme switcher |
 
 ### Design system
 
@@ -247,6 +261,7 @@ dotnet test tests/BloomWatch.Modules.WatchSpaces.UnitTests
 dotnet test tests/BloomWatch.Modules.WatchSpaces.IntegrationTests
 dotnet test tests/BloomWatch.Modules.AniListSync.UnitTests
 dotnet test tests/BloomWatch.Modules.AniListSync.IntegrationTests
+dotnet test tests/BloomWatch.Modules.AnimeTracking.UnitTests
 
 # Frontend tests
 cd src/BloomWatch.UI && npm test
@@ -281,11 +296,17 @@ openspec/
 │   ├── user-registration/
 │   ├── user-authentication/
 │   ├── user-profile/
+│   ├── auth-token-management/
 │   ├── watch-space-management/
 │   ├── watch-space-invitations/
 │   ├── watch-space-membership/
 │   ├── anilist-search/
-│   └── angular-routing-shell/
+│   ├── anilist-media-detail/
+│   ├── add-anime-to-watch-space/
+│   ├── angular-routing-shell/
+│   ├── http-client-setup/
+│   ├── auth-interceptor/
+│   └── theme-switching/
 └── changes/
     └── archive/                  # Completed changes
 ```
@@ -299,6 +320,10 @@ openspec/
 | `user-profile-endpoint` | 2026-03-13 | `GET /users/me` authenticated profile retrieval |
 | `anilist-search-proxy` | 2026-03-16 | `GET /api/anilist/search` with GraphQL proxy and in-memory caching |
 | `angular-project-setup-routing-shell` | 2026-03-16 | Angular 21 frontend scaffold, routing shell, kawaii/Y2K design system, component library |
+| `anilist-media-detail-backend` | 2026-03-16 | `GET /api/anilist/media/{id}` with persistent PostgreSQL caching |
+| `http-client-and-auth-interceptor` | 2026-03-16 | Angular HTTP client, API service, JWT auth interceptor |
+| `theme-system-light-dark-mode` | 2026-03-17 | Signal-based ThemeService with light/dark toggle and persistence |
+| `add-anime-to-watch-space` | 2026-03-17 | AnimeTracking module: add anime to watch space with media cache integration |
 
 ### Working with OpenSpec
 
