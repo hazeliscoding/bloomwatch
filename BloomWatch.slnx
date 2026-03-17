@@ -4,6 +4,12 @@
     <Project Path="src/BloomWatch.SharedKernel/BloomWatch.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/AnimeTracking/">
+    <Project Path="src/Modules/AnimeTracking/BloomWatch.Modules.AnimeTracking.Application/BloomWatch.Modules.AnimeTracking.Application.csproj" />
+    <Project Path="src/Modules/AnimeTracking/BloomWatch.Modules.AnimeTracking.Contracts/BloomWatch.Modules.AnimeTracking.Contracts.csproj" />
+    <Project Path="src/Modules/AnimeTracking/BloomWatch.Modules.AnimeTracking.Domain/BloomWatch.Modules.AnimeTracking.Domain.csproj" />
+    <Project Path="src/Modules/AnimeTracking/BloomWatch.Modules.AnimeTracking.Infrastructure/BloomWatch.Modules.AnimeTracking.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Identity/">
     <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Application/BloomWatch.Modules.Identity.Application.csproj" />
     <Project Path="src/Modules/Identity/BloomWatch.Modules.Identity.Contracts/BloomWatch.Modules.Identity.Contracts.csproj" />
@@ -25,6 +31,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/BloomWatch.Modules.AniListSync.IntegrationTests/BloomWatch.Modules.AniListSync.IntegrationTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.AniListSync.UnitTests/BloomWatch.Modules.AniListSync.UnitTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.AnimeTracking.UnitTests/BloomWatch.Modules.AnimeTracking.UnitTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.Identity.IntegrationTests/BloomWatch.Modules.Identity.IntegrationTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.Identity.UnitTests/BloomWatch.Modules.Identity.UnitTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.WatchSpaces.IntegrationTests/BloomWatch.Modules.WatchSpaces.IntegrationTests.csproj" />

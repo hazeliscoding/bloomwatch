@@ -1,7 +1,9 @@
 using BloomWatch.Api.Modules.AniListSync;
+using BloomWatch.Api.Modules.AnimeTracking;
 using BloomWatch.Api.Modules.Identity;
 using BloomWatch.Api.Modules.WatchSpaces;
 using BloomWatch.Modules.AniListSync.Infrastructure.Extensions;
+using BloomWatch.Modules.AnimeTracking.Infrastructure.Extensions;
 using BloomWatch.Modules.Identity.Infrastructure.Extensions;
 using BloomWatch.Modules.WatchSpaces.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddWatchSpacesModule(builder.Configuration);
 builder.Services.AddAniListSyncModule(builder.Configuration);
+builder.Services.AddAnimeTrackingModule(builder.Configuration);
 
 builder.Services.AddOpenApi(options =>
 {
@@ -78,6 +81,7 @@ app.UseAuthorization();
 app.MapIdentityEndpoints();
 app.MapWatchSpacesEndpoints();
 app.MapAniListSyncEndpoints();
+app.MapAnimeTrackingEndpoints();
 
 app.Run();
 
