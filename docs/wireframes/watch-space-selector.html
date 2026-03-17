@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Watch Space Selector (Story 8.1)</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">&#10024; BloomWatch</div>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="dashboard.html">&#9673; Dashboard</a></li>
+        <li><a class="nav-link nav-link--active" href="#">&#9673; Watch Spaces</a></li>
+        <li><a class="nav-link" href="#">&#9881; Settings</a></li>
+      </ul>
+      <button class="nav-theme">&#9788;</button>
+    </div>
+  </nav>
+
+  <!-- Page -->
+  <div class="page">
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-display">My Watch Spaces</h1>
+      <button class="btn btn--primary btn--sm">+ Create New</button>
+    </div>
+
+    <!-- Watch Space Grid -->
+    <div class="grid grid-auto-md gap-6">
+
+      <!-- Space Card 1 - Owner -->
+      <div class="card">
+        <div class="card__header">
+          <h3 class="text-lg font-display font-bold" style="padding-top:0.5rem">Anime Night</h3>
+        </div>
+        <div class="card__body">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="avatar-stack">
+              <div class="avatar avatar--sm">HA</div>
+              <div class="avatar avatar--sm">SA</div>
+            </div>
+            <span class="text-sm text-secondary">2 members</span>
+          </div>
+          <span class="badge badge--pink">Owner</span>
+        </div>
+        <div class="card__footer">
+          <button class="btn btn--ghost btn--sm" onclick="window.location='dashboard.html'">Enter &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Space Card 2 - Member -->
+      <div class="card">
+        <div class="card__header">
+          <h3 class="text-lg font-display font-bold" style="padding-top:0.5rem">Studio Ghibli Marathon</h3>
+        </div>
+        <div class="card__body">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="avatar-stack">
+              <div class="avatar avatar--sm">YU</div>
+              <div class="avatar avatar--sm">HA</div>
+              <div class="avatar avatar--sm">KI</div>
+            </div>
+            <span class="text-sm text-secondary">3 members</span>
+          </div>
+          <span class="badge badge--blue">Member</span>
+        </div>
+        <div class="card__footer">
+          <button class="btn btn--ghost btn--sm">Enter &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Space Card 3 - Highlighted -->
+      <div class="card card--highlighted">
+        <div class="card__header">
+          <h3 class="text-lg font-display font-bold" style="padding-top:0.5rem">Seasonal Watch Party</h3>
+        </div>
+        <div class="card__body">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="avatar-stack">
+              <div class="avatar avatar--sm">HA</div>
+              <div class="avatar avatar--sm">MI</div>
+            </div>
+            <span class="text-sm text-secondary">2 members</span>
+          </div>
+          <div class="flex gap-2">
+            <span class="badge badge--pink">Owner</span>
+            <span class="badge badge--green"><span class="badge-dot"></span> Active</span>
+          </div>
+        </div>
+        <div class="card__footer">
+          <button class="btn btn--ghost btn--sm">Enter &rarr;</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty State Example -->
+    <div class="mt-8">
+      <h2 class="text-lg font-display text-secondary mb-4">Empty State:</h2>
+      <div class="card card--no-hover">
+        <div class="card__body py-8 text-center">
+          <span style="font-size:2.5rem; display:block; margin-bottom:0.75rem" aria-hidden="true">&#10047;</span>
+          <h3 class="text-lg font-display mb-2">No Watch Spaces Yet</h3>
+          <p class="text-sm text-secondary mb-4">Create your first Watch Space to start tracking anime with friends.</p>
+          <button class="btn btn--primary btn--md">+ Create Watch Space</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div class="mt-8">
+      <h2 class="text-lg font-display text-secondary mb-4">Create Modal:</h2>
+      <div class="modal-backdrop" style="position:relative; background:rgba(18,14,30,0.1); border-radius:24px; min-height:300px;">
+        <div class="card card--no-hover modal" style="max-width:28rem;">
+          <div class="card__header">
+            <h3 class="text-lg font-display font-bold" style="padding-top:0.5rem">Create a Watch Space</h3>
+          </div>
+          <div class="card__body">
+            <div class="input-group">
+              <label class="input-label">Space Name <span class="required">*</span></label>
+              <div class="input-wrapper">
+                <input class="input-field" type="text" placeholder='e.g. "Anime Night"'>
+              </div>
+            </div>
+          </div>
+          <div class="card__footer" style="justify-content:flex-end">
+            <button class="btn btn--ghost btn--md">Cancel</button>
+            <button class="btn btn--primary btn--md">Create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wireframe-label">Story 8.1 — Watch Space Selector</div>
+</body>
+</html>

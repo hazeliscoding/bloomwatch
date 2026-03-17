@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Invitation (Story 8.3)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; gap: 3rem; }
+    .invite-card { max-width: 26rem; width: 100%; }
+    .invite-header { text-align: center; padding-top: 0.75rem; }
+    .invite-header h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .invite-body { text-align: center; }
+    .space-name-highlight {
+      display: inline-block;
+      background: var(--bloom-pink-50);
+      border: 1px solid var(--bloom-pink-200);
+      border-radius: 16px;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--bloom-font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--bloom-pink-600);
+      margin: 1rem 0;
+    }
+    .invite-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+    .state-label {
+      font-family: var(--bloom-font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--bloom-text-tertiary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Happy Path: Valid Invitation -->
+  <div>
+    <div class="state-label mb-4">Valid Invitation</div>
+    <div class="card card--no-hover invite-card">
+      <div class="card__header">
+        <div class="invite-header">
+          <h1 class="font-display gradient-text">You're Invited!</h1>
+        </div>
+      </div>
+      <div class="card__body invite-body">
+        <p class="text-secondary">hazel invited you to join</p>
+        <div class="space-name-highlight">Anime Night</div>
+        <div class="invite-actions">
+          <button class="btn btn--primary btn--md">Accept &amp; Join</button>
+          <button class="btn btn--ghost btn--md">Decline</button>
+        </div>
+      </div>
+      <div class="card__footer" style="justify-content:center">
+        <p class="text-xs text-tertiary">Not you? <a href="login.html" class="text-link">Sign in with a different account</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accepted State -->
+  <div>
+    <div class="state-label mb-4">After Accepting</div>
+    <div class="card card--no-hover invite-card">
+      <div class="card__header">
+        <div class="invite-header">
+          <h1 class="font-display" style="color:var(--bloom-success-dark)">You're In!</h1>
+        </div>
+      </div>
+      <div class="card__body invite-body">
+        <p class="text-secondary">Welcome to</p>
+        <div class="space-name-highlight">Anime Night</div>
+        <p class="text-sm text-secondary mt-2">You've been added as a member.</p>
+        <div class="invite-actions">
+          <button class="btn btn--primary btn--md" onclick="window.location='dashboard.html'">Go to Watch Space &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Declined State -->
+  <div>
+    <div class="state-label mb-4">After Declining</div>
+    <div class="card card--no-hover invite-card">
+      <div class="card__body invite-body py-8">
+        <h2 class="text-lg font-display mb-2">Invitation Declined</h2>
+        <p class="text-sm text-secondary">You've declined the invitation to join <strong>Anime Night</strong>.</p>
+        <div class="invite-actions">
+          <button class="btn btn--ghost btn--md" onclick="window.location='watch-space-selector.html'">Go to My Spaces</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error States -->
+  <div>
+    <div class="state-label mb-4">Expired Invitation</div>
+    <div class="card card--no-hover invite-card">
+      <div class="card__body invite-body py-8">
+        <span style="font-size:2rem; display:block; margin-bottom:0.75rem" aria-hidden="true">&#8987;</span>
+        <h2 class="text-lg font-display mb-2" style="color:var(--bloom-error-dark)">Invitation Expired</h2>
+        <p class="text-sm text-secondary mb-4">This invitation is no longer valid. Ask the space owner to send a new one.</p>
+        <button class="btn btn--ghost btn--md">Go Home</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="state-label mb-4">Already Used</div>
+    <div class="card card--no-hover invite-card">
+      <div class="card__body invite-body py-8">
+        <span style="font-size:2rem; display:block; margin-bottom:0.75rem" aria-hidden="true">&#10003;</span>
+        <h2 class="text-lg font-display mb-2">Already Used</h2>
+        <p class="text-sm text-secondary mb-4">This invitation has already been accepted or declined.</p>
+        <button class="btn btn--ghost btn--md">Go to My Spaces</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wireframe-label">Story 8.3 — Invitation Flow</div>
+</body>
+</html>

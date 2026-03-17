@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Anime List (Story 9.2)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .anime-card-inner {
+      display: flex;
+      gap: 1rem;
+    }
+    .anime-card-cover {
+      width: 90px;
+      height: 130px;
+      flex-shrink: 0;
+    }
+    .anime-card-details { flex: 1; min-width: 0; }
+    .anime-card-title {
+      font-family: var(--bloom-font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+    .anime-card-meta {
+      font-size: 0.75rem;
+      color: var(--bloom-text-tertiary);
+      margin-bottom: 0.5rem;
+    }
+    .participant-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+    }
+    .participant-row + .participant-row { margin-top: 0.25rem; }
+    .ep-count {
+      font-family: var(--bloom-font-display);
+      font-weight: 600;
+      color: var(--bloom-text-primary);
+    }
+    .plus-btn {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      border: 1px solid var(--bloom-border-default);
+      background: var(--bloom-surface-base);
+      font-size: 0.875rem;
+      color: var(--bloom-text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+    }
+    .plus-btn:hover { background: var(--bloom-pink-50); border-color: var(--bloom-pink-200); color: var(--bloom-pink-500); }
+    .shared-progress {
+      font-size: 0.8125rem;
+      color: var(--bloom-text-secondary);
+      margin-top: 0.375rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">&#10024; BloomWatch</div>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="dashboard.html">&#9673; Dashboard</a></li>
+        <li><a class="nav-link nav-link--active" href="watch-space-selector.html">&#9673; Watch Spaces</a></li>
+        <li><a class="nav-link" href="#">&#9881; Settings</a></li>
+      </ul>
+      <button class="nav-theme">&#9788;</button>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <a href="dashboard.html" class="text-sm text-link">&larr; Back to Dashboard</a>
+
+    <div class="flex items-center justify-between mt-4 mb-6">
+      <h1 class="text-2xl font-display">Anime List &mdash; Anime Night</h1>
+      <button class="btn btn--primary btn--sm" onclick="window.location='anime-search.html'">&#128269; Add Anime</button>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="tabs mb-6">
+      <button class="tab tab--active">All <span class="tab-count">(28)</span></button>
+      <button class="tab">Backlog <span class="tab-count">(12)</span></button>
+      <button class="tab">Watching <span class="tab-count">(3)</span></button>
+      <button class="tab">Finished <span class="tab-count">(11)</span></button>
+      <button class="tab">Paused <span class="tab-count">(1)</span></button>
+      <button class="tab">Dropped <span class="tab-count">(1)</span></button>
+    </div>
+
+    <!-- Anime Cards -->
+    <div class="grid grid-auto-md gap-4">
+
+      <!-- Watching -->
+      <div class="card">
+        <div class="card__body">
+          <div class="anime-card-inner">
+            <div class="cover-placeholder anime-card-cover">&#127912;</div>
+            <div class="anime-card-details">
+              <div class="anime-card-title">Frieren: Beyond Journey's End</div>
+              <div class="anime-card-meta">TV &middot; 28 eps &middot; Fall 2023</div>
+
+              <select class="status-select status-select--watching">
+                <option selected>Watching</option>
+                <option>Backlog</option>
+                <option>Finished</option>
+                <option>Paused</option>
+                <option>Dropped</option>
+              </select>
+
+              <div class="shared-progress">
+                Shared: Ep 5 / 28
+              </div>
+              <div class="progress mt-1" style="max-width:180px">
+                <div class="progress__fill progress__fill--lime" style="width:17.8%"></div>
+              </div>
+
+              <div class="mt-3">
+                <div class="participant-row">
+                  <div class="avatar avatar--xs">HA</div>
+                  <span class="text-secondary text-sm">You:</span>
+                  <span class="ep-count">Ep 7</span>
+                  <button class="plus-btn" title="Increment">+</button>
+                </div>
+                <div class="participant-row">
+                  <div class="avatar avatar--xs">SA</div>
+                  <span class="text-secondary text-sm">sakura:</span>
+                  <span class="ep-count">Ep 5</span>
+                  <button class="plus-btn" title="Increment">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card__footer">
+          <button class="btn btn--ghost btn--sm" onclick="window.location='anime-detail.html'">View Details &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Watching 2 -->
+      <div class="card">
+        <div class="card__body">
+          <div class="anime-card-inner">
+            <div class="cover-placeholder anime-card-cover">&#127912;</div>
+            <div class="anime-card-details">
+              <div class="anime-card-title">Dandadan</div>
+              <div class="anime-card-meta">TV &middot; 12 eps &middot; Fall 2024</div>
+              <select class="status-select status-select--watching">
+                <option selected>Watching</option>
+              </select>
+              <div class="shared-progress">Shared: Ep 12 / 12</div>
+              <div class="progress mt-1" style="max-width:180px">
+                <div class="progress__fill progress__fill--lime" style="width:100%"></div>
+              </div>
+              <div class="mt-3">
+                <div class="participant-row">
+                  <div class="avatar avatar--xs">HA</div>
+                  <span class="text-secondary text-sm">You:</span>
+                  <span class="ep-count">Ep 12</span>
+                </div>
+                <div class="participant-row">
+                  <div class="avatar avatar--xs">SA</div>
+                  <span class="text-secondary text-sm">sakura:</span>
+                  <span class="ep-count">Ep 10</span>
+                  <button class="plus-btn">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card__footer">
+          <button class="btn btn--ghost btn--sm">View Details &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Backlog -->
+      <div class="card">
+        <div class="card__body">
+          <div class="anime-card-inner">
+            <div class="cover-placeholder anime-card-cover">&#127912;</div>
+            <div class="anime-card-details">
+              <div class="anime-card-title">Vinland Saga</div>
+              <div class="anime-card-meta">TV &middot; 24 eps &middot; Summer 2019</div>
+              <select class="status-select status-select--backlog">
+                <option selected>Backlog</option>
+              </select>
+              <div class="shared-progress mt-2">Shared: Ep 0 / 24</div>
+              <div class="flex gap-2 mt-2 flex-wrap">
+                <span class="badge badge--lilac" style="font-size:0.6875rem">Mood: Epic</span>
+                <span class="badge badge--blue" style="font-size:0.6875rem">Vibe: Historical</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card__footer">
+          <button class="btn btn--ghost btn--sm">View Details &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Finished -->
+      <div class="card">
+        <div class="card__body">
+          <div class="anime-card-inner">
+            <div class="cover-placeholder anime-card-cover">&#127912;</div>
+            <div class="anime-card-details">
+              <div class="anime-card-title">Bloom Into You</div>
+              <div class="anime-card-meta">TV &middot; 13 eps &middot; Fall 2018</div>
+              <select class="status-select status-select--finished">
+                <option selected>Finished</option>
+              </select>
+              <div class="shared-progress">Shared: Ep 13 / 13</div>
+              <div class="progress mt-1" style="max-width:180px">
+                <div class="progress__fill progress__fill--lime" style="width:100%"></div>
+              </div>
+              <div class="mt-2 flex gap-3">
+                <span class="text-sm"><span class="stars stars--sm">&#9733;</span> 10.0</span>
+                <span class="text-sm text-tertiary">&middot;</span>
+                <span class="text-sm"><span class="stars stars--sm">&#9733;</span> 9.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card__footer">
+          <button class="btn btn--ghost btn--sm">View Details &rarr;</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="wireframe-label">Story 9.2 — Anime List</div>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — UI Wireframes Index</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+    .index-card { max-width: 640px; width: 100%; }
+    .page-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .page-list a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 16px;
+      border: 1px solid var(--bloom-border-default);
+      background: var(--bloom-surface-base);
+      text-decoration: none;
+      color: var(--bloom-text-primary);
+      transition: all 0.2s ease;
+    }
+    .page-list a:hover {
+      background: var(--bloom-pink-50);
+      border-color: var(--bloom-pink-200);
+      transform: translateY(-2px);
+      box-shadow: var(--bloom-shadow-md);
+    }
+    .page-list .story-id {
+      font-family: var(--bloom-font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--bloom-pink-600);
+      background: var(--bloom-pink-50);
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+    .page-list .page-name {
+      font-family: var(--bloom-font-display);
+      font-weight: 600;
+      font-size: 0.9375rem;
+    }
+    .page-list .page-desc {
+      font-size: 0.75rem;
+      color: var(--bloom-text-tertiary);
+    }
+    .section-label {
+      font-family: var(--bloom-font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--bloom-text-tertiary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 1rem;
+      margin-bottom: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card card--no-hover index-card">
+    <div class="card__header">
+      <h1 class="text-2xl gradient-text" style="padding-top:0.5rem">BloomWatch Wireframes</h1>
+      <p class="text-sm text-secondary mt-2">Interactive HTML/CSS mockups using the real design token system</p>
+    </div>
+    <div class="card__body">
+
+      <div class="section-label">Epic 7 — Auth Frontend</div>
+      <ul class="page-list">
+        <li>
+          <a href="landing.html">
+            <span class="story-id">7.1</span>
+            <div>
+              <div class="page-name">Landing Page</div>
+              <div class="page-desc">Public marketing page with CTAs</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="register.html">
+            <span class="story-id">7.2</span>
+            <div>
+              <div class="page-name">Registration Page</div>
+              <div class="page-desc">Sign up form with validation</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="login.html">
+            <span class="story-id">7.3</span>
+            <div>
+              <div class="page-name">Login Page</div>
+              <div class="page-desc">Email + password sign in</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <div class="section-label">Epic 8 — Watch Spaces Frontend</div>
+      <ul class="page-list">
+        <li>
+          <a href="watch-space-selector.html">
+            <span class="story-id">8.1</span>
+            <div>
+              <div class="page-name">Watch Space Selector</div>
+              <div class="page-desc">List of spaces + create new</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="watch-space-settings.html">
+            <span class="story-id">8.2</span>
+            <div>
+              <div class="page-name">Watch Space Settings</div>
+              <div class="page-desc">Members, rename, ownership</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="invitation.html">
+            <span class="story-id">8.3</span>
+            <div>
+              <div class="page-name">Invitation Flow</div>
+              <div class="page-desc">Accept / decline invitation</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <div class="section-label">Epic 9 — Anime Tracking Frontend</div>
+      <ul class="page-list">
+        <li>
+          <a href="anime-search.html">
+            <span class="story-id">9.1</span>
+            <div>
+              <div class="page-name">Anime Search Modal</div>
+              <div class="page-desc">Search AniList + add to space</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="anime-list.html">
+            <span class="story-id">9.2</span>
+            <div>
+              <div class="page-name">Shared Anime List</div>
+              <div class="page-desc">Filtered list by status</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="anime-detail.html">
+            <span class="story-id">9.3</span>
+            <div>
+              <div class="page-name">Anime Detail Page</div>
+              <div class="page-desc">Full detail with progress, ratings, sessions</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <div class="section-label">Epic 10 — Analytics &amp; Dashboard</div>
+      <ul class="page-list">
+        <li>
+          <a href="dashboard.html">
+            <span class="story-id">10.1</span>
+            <div>
+              <div class="page-name">Watch Space Dashboard</div>
+              <div class="page-desc">Stats, compatibility, currently watching</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="analytics.html">
+            <span class="story-id">10.3</span>
+            <div>
+              <div class="page-name">Analytics Page</div>
+              <div class="page-desc">Rating gaps, charts, shared stats</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+    </div>
+    <div class="card__footer" style="justify-content:center">
+      <span class="text-xs text-tertiary">BloomWatch Wireframes v1.0 — All tokens match _tokens.scss</span>
+    </div>
+  </div>
+
+  <div class="wireframe-label">Wireframe Index</div>
+</body>
+</html>

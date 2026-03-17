@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Watch Space Settings (Story 8.2 + 8.3)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .settings-panel { max-width: 36rem; margin: 0 auto; }
+    .member-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--bloom-border-default);
+      border-radius: 16px;
+      background: var(--bloom-surface-base);
+    }
+    .member-info { flex: 1; }
+    .member-name { font-family: var(--bloom-font-display); font-weight: 600; font-size: 0.9375rem; }
+    .member-email { font-size: 0.75rem; color: var(--bloom-text-tertiary); }
+    .member-date { font-size: 0.75rem; color: var(--bloom-text-tertiary); }
+    .member-actions { display: flex; gap: 0.375rem; }
+    .section-title {
+      font-family: var(--bloom-font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--bloom-text-tertiary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .invite-row { display: flex; gap: 0.5rem; align-items: flex-end; }
+    .invite-row .input-group { flex: 1; }
+    .pending-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.625rem 1rem;
+      border: 1px solid var(--bloom-border-default);
+      border-radius: 16px;
+      font-size: 0.875rem;
+    }
+    .pending-dates { font-size: 0.75rem; color: var(--bloom-text-tertiary); }
+    .danger-zone {
+      border: 1px solid #fecaca;
+      background: var(--bloom-error-bg);
+      border-radius: 16px;
+      padding: 1rem;
+    }
+    .inline-edit {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: 1px dashed var(--bloom-border-default);
+      border-radius: 16px;
+      font-family: var(--bloom-font-display);
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+    .edit-icon {
+      font-size: 0.875rem;
+      color: var(--bloom-text-tertiary);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">&#10024; BloomWatch</div>
+      <ul class="nav-links">
+        <li><a class="nav-link" href="dashboard.html">&#9673; Dashboard</a></li>
+        <li><a class="nav-link nav-link--active" href="watch-space-selector.html">&#9673; Watch Spaces</a></li>
+        <li><a class="nav-link" href="#">&#9881; Settings</a></li>
+      </ul>
+      <button class="nav-theme">&#9788;</button>
+    </div>
+  </nav>
+
+  <div class="page">
+    <a href="dashboard.html" class="text-sm text-link">&larr; Back to Dashboard</a>
+
+    <div class="settings-panel mt-6">
+      <div class="card card--no-hover">
+        <div class="card__header">
+          <h1 class="text-xl font-display font-bold" style="padding-top:0.5rem">Watch Space Settings</h1>
+        </div>
+        <div class="card__body flex-col gap-6" style="display:flex; flex-direction:column; gap:1.5rem;">
+
+          <!-- Space Name -->
+          <div>
+            <div class="section-title">Space Name</div>
+            <div class="inline-edit">
+              <span>Anime Night</span>
+              <span class="edit-icon" title="Rename">&#9998;</span>
+            </div>
+            <span class="text-xs text-tertiary mt-1" style="display:block">Only the owner can rename this space</span>
+          </div>
+
+          <!-- Members -->
+          <div>
+            <div class="section-title">Members (2)</div>
+            <div class="flex-col gap-3" style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div class="member-row">
+                <div class="avatar avatar--sm">HA</div>
+                <div class="member-info">
+                  <div class="member-name">hazel</div>
+                  <div class="member-email">hazel@email.com</div>
+                  <div class="member-date">Joined Mar 13, 2026</div>
+                </div>
+                <span class="badge badge--pink">Owner</span>
+              </div>
+              <div class="member-row">
+                <div class="avatar avatar--sm">SA</div>
+                <div class="member-info">
+                  <div class="member-name">sakura</div>
+                  <div class="member-email">sakura@email.com</div>
+                  <div class="member-date">Joined Mar 14, 2026</div>
+                </div>
+                <span class="badge badge--blue">Member</span>
+                <div class="member-actions">
+                  <button class="btn btn--ghost btn--sm" title="Transfer Ownership">Transfer</button>
+                  <button class="btn btn--danger btn--sm" title="Remove Member">Remove</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Invitations -->
+          <div>
+            <div class="section-title">Invite a Member</div>
+            <div class="invite-row">
+              <div class="input-group">
+                <div class="input-wrapper">
+                  <input class="input-field" type="email" placeholder="friend@example.com">
+                </div>
+              </div>
+              <button class="btn btn--primary btn--md">Send</button>
+            </div>
+          </div>
+
+          <!-- Pending Invitations -->
+          <div>
+            <div class="section-title">Pending Invitations</div>
+            <div class="flex-col gap-3" style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div class="pending-row">
+                <div>
+                  <div class="font-semibold text-sm">friend@email.com</div>
+                  <div class="pending-dates">Sent: Mar 16, 2026 &middot; Expires: Mar 23, 2026</div>
+                </div>
+                <button class="btn btn--danger btn--sm">Revoke</button>
+              </div>
+              <div class="pending-row">
+                <div>
+                  <div class="font-semibold text-sm">alex@email.com</div>
+                  <div class="pending-dates">Sent: Mar 15, 2026 &middot; Expires: Mar 22, 2026</div>
+                </div>
+                <button class="btn btn--danger btn--sm">Revoke</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danger Zone (for non-owners) -->
+          <div>
+            <div class="section-title">Danger Zone</div>
+            <div class="danger-zone">
+              <p class="text-sm mb-4" style="color:var(--bloom-error-dark)">Leaving this space will remove your membership. You'll need a new invitation to rejoin.</p>
+              <button class="btn btn--danger btn--md btn--full">Leave Watch Space</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wireframe-label">Story 8.2 + 8.3 — Settings &amp; Invitations</div>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Anime Search Modal (Story 9.1)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
+    .search-modal { max-width: 36rem; width: 100%; }
+    .search-result {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border: 1px solid var(--bloom-border-default);
+      border-radius: 16px;
+      transition: all 0.15s ease;
+      align-items: center;
+    }
+    .search-result:hover {
+      background: var(--bloom-pink-50);
+      border-color: var(--bloom-pink-200);
+    }
+    .search-result--added {
+      opacity: 0.55;
+      background: var(--bloom-success-bg);
+      border-color: #a7f3d0;
+    }
+    .search-result--added:hover {
+      opacity: 0.55;
+      background: var(--bloom-success-bg);
+    }
+    .result-cover { width: 50px; height: 70px; flex-shrink: 0; }
+    .result-info { flex: 1; min-width: 0; }
+    .result-title { font-family: var(--bloom-font-display); font-weight: 700; font-size: 0.9375rem; }
+    .result-subtitle { font-size: 0.75rem; color: var(--bloom-text-tertiary); }
+    .result-meta { font-size: 0.75rem; color: var(--bloom-text-secondary); margin-top: 0.25rem; }
+    .result-genres { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.375rem; }
+    .add-details { background: var(--bloom-surface-raised); border-radius: 16px; padding: 1.25rem; margin-top: 0.75rem; }
+    .add-details-title { font-family: var(--bloom-font-display); font-weight: 700; font-size: 0.9375rem; margin-bottom: 0.75rem; }
+    .shimmer {
+      height: 1rem;
+      background: linear-gradient(90deg, var(--bloom-neutral-100) 25%, var(--bloom-neutral-200) 50%, var(--bloom-neutral-100) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 2s linear infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Modal shown over the page (here as standalone) -->
+  <div class="modal-backdrop" style="position:relative; border-radius:24px;">
+    <div class="card card--no-hover search-modal">
+      <div class="card__header">
+        <div class="flex items-center justify-between" style="padding-top:0.5rem">
+          <h2 class="text-lg font-display font-bold">Search Anime</h2>
+          <button class="btn btn--ghost btn--sm" style="border:none">&times;</button>
+        </div>
+      </div>
+      <div class="card__body">
+
+        <!-- Search Input -->
+        <div class="input-group mb-4">
+          <div class="input-wrapper">
+            <span class="input-prefix">&#128269;</span>
+            <input class="input-field" type="text" placeholder="Search by title..." value="Frieren">
+          </div>
+          <span class="input-hint">Results update as you type (400ms debounce)</span>
+        </div>
+
+        <!-- Search Results -->
+        <div class="flex-col gap-3" style="display:flex; flex-direction:column; gap:0.75rem;">
+
+          <!-- Result 1: Available -->
+          <div class="search-result">
+            <div class="cover-placeholder result-cover" style="font-size:0.75rem">&#127912;</div>
+            <div class="result-info">
+              <div class="result-title">Frieren: Beyond Journey's End</div>
+              <div class="result-subtitle">Sousou no Frieren</div>
+              <div class="result-meta">TV &middot; 28 eps &middot; Fall 2023</div>
+              <div class="result-genres">
+                <span class="badge badge--lilac" style="font-size:0.625rem; padding:0.125rem 0.5rem">Fantasy</span>
+                <span class="badge badge--blue" style="font-size:0.625rem; padding:0.125rem 0.5rem">Adventure</span>
+                <span class="badge badge--pink" style="font-size:0.625rem; padding:0.125rem 0.5rem">Drama</span>
+              </div>
+            </div>
+            <button class="btn btn--primary btn--sm">+ Add</button>
+          </div>
+
+          <!-- Result 2: Already added -->
+          <div class="search-result search-result--added">
+            <div class="cover-placeholder result-cover" style="font-size:0.75rem">&#127912;</div>
+            <div class="result-info">
+              <div class="result-title">Frieren at the Funeral</div>
+              <div class="result-subtitle">OVA</div>
+              <div class="result-meta">OVA &middot; 1 ep</div>
+            </div>
+            <span class="badge badge--green" style="font-size:0.6875rem">&#10003; Added</span>
+          </div>
+
+          <!-- Result 3 -->
+          <div class="search-result">
+            <div class="cover-placeholder result-cover" style="font-size:0.75rem">&#127912;</div>
+            <div class="result-info">
+              <div class="result-title">Frieren: Road of Magic</div>
+              <div class="result-subtitle">Light Novel</div>
+              <div class="result-meta">Novel &middot; Ongoing</div>
+            </div>
+            <button class="btn btn--primary btn--sm">+ Add</button>
+          </div>
+        </div>
+
+        <!-- Add Details Step (shown after clicking "+ Add") -->
+        <div class="add-details mt-6">
+          <div class="add-details-title">Adding: Frieren: Beyond Journey's End</div>
+          <div class="flex-col gap-3" style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div class="input-group">
+              <label class="input-label">Mood <span class="text-tertiary text-xs">(optional)</span></label>
+              <div class="input-wrapper">
+                <input class="input-field" type="text" placeholder='e.g. "Cozy", "Hype", "Emotional"'>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Vibe <span class="text-tertiary text-xs">(optional)</span></label>
+              <div class="input-wrapper">
+                <input class="input-field" type="text" placeholder='e.g. "Sunday evening vibes"'>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Pitch <span class="text-tertiary text-xs">(optional)</span></label>
+              <div class="input-wrapper">
+                <input class="input-field" type="text" placeholder='"Why should we watch this?"'>
+              </div>
+            </div>
+            <div class="flex gap-3 mt-2" style="justify-content:flex-end">
+              <button class="btn btn--ghost btn--md">Cancel</button>
+              <button class="btn btn--primary btn--md">Add to Space</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading skeleton state -->
+        <div class="mt-6">
+          <div class="text-xs text-tertiary font-semibold mb-3" style="text-transform:uppercase; letter-spacing:0.05em">Loading State</div>
+          <div class="flex-col gap-3" style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div class="search-result" style="border-style:dashed">
+              <div style="width:50px; height:70px; border-radius:10px" class="shimmer"></div>
+              <div class="result-info" style="gap:0.5rem; display:flex; flex-direction:column">
+                <div class="shimmer" style="width:70%"></div>
+                <div class="shimmer" style="width:50%; height:0.75rem"></div>
+                <div class="shimmer" style="width:40%; height:0.75rem"></div>
+              </div>
+            </div>
+            <div class="search-result" style="border-style:dashed">
+              <div style="width:50px; height:70px; border-radius:10px" class="shimmer"></div>
+              <div class="result-info" style="gap:0.5rem; display:flex; flex-direction:column">
+                <div class="shimmer" style="width:60%"></div>
+                <div class="shimmer" style="width:45%; height:0.75rem"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="mt-6 text-center py-8">
+          <div class="text-xs text-tertiary font-semibold mb-3" style="text-transform:uppercase; letter-spacing:0.05em">Empty State</div>
+          <span style="font-size:1.5rem" aria-hidden="true">&#128270;</span>
+          <p class="text-sm text-secondary mt-2">No results for "xyzabc". Try a different search term.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="wireframe-label">Story 9.1 — Search Modal</div>
+</body>
+</html>

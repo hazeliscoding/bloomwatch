@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Landing Page (Story 7.1)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; text-align: center; }
+    .hero { max-width: 640px; margin-bottom: 3rem; }
+    .hero-title { font-size: 3rem; line-height: 1.1; margin-bottom: 0.75rem; }
+    .hero-subtitle { font-size: 1.25rem; color: var(--bloom-text-secondary); margin-bottom: 2rem; max-width: 32rem; margin-left: auto; margin-right: auto; }
+    .hero-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .features { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; max-width: 720px; width: 100%; }
+    .feature-card { text-align: center; padding: 1.5rem 1rem; }
+    .feature-icon { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+    .feature-title { font-family: var(--bloom-font-display); font-weight: 700; font-size: 1rem; margin-bottom: 0.375rem; }
+    .feature-desc { font-size: 0.875rem; color: var(--bloom-text-secondary); line-height: 1.5; }
+    .footer-text { margin-top: 3rem; font-size: 0.75rem; color: var(--bloom-text-tertiary); }
+
+    @media (max-width: 640px) {
+      .hero-title { font-size: 2.25rem; }
+      .hero-subtitle { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <h1 class="hero-title font-display gradient-text">BloomWatch</h1>
+    <p class="hero-subtitle">Track anime together. Rate, compare, and bloom with your watch partner.</p>
+    <div class="hero-actions">
+      <button class="btn btn--primary btn--lg">Create Account</button>
+      <button class="btn btn--ghost btn--lg">Sign In</button>
+    </div>
+  </section>
+
+  <hr class="divider-kawaii" style="max-width:200px; width:100%">
+
+  <section class="features mt-8">
+    <div class="card card--no-hover feature-card">
+      <span class="feature-icon" aria-hidden="true">&#9825;</span>
+      <h3 class="feature-title">Shared Backlog</h3>
+      <p class="feature-desc">Manage a joint anime list with your partner or friend group.</p>
+    </div>
+    <div class="card card--no-hover feature-card">
+      <span class="feature-icon" aria-hidden="true">&#9733;</span>
+      <h3 class="feature-title">Rate &amp; Compare</h3>
+      <p class="feature-desc">See your compatibility score and discover where your tastes diverge.</p>
+    </div>
+    <div class="card card--no-hover feature-card">
+      <span class="feature-icon" aria-hidden="true">&#10047;</span>
+      <h3 class="feature-title">Discover Together</h3>
+      <p class="feature-desc">Random backlog picker breaks decision paralysis instantly.</p>
+    </div>
+  </section>
+
+  <p class="footer-text">Built for couples &amp; small groups who love anime</p>
+
+  <div class="wireframe-label">Story 7.1 — Landing Page</div>
+</body>
+</html>

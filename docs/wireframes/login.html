@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Login (Story 7.3)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
+    .auth-card { max-width: 26rem; width: 100%; }
+    .auth-header { text-align: center; padding-top: 0.75rem; }
+    .auth-header h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .auth-header p { font-size: 0.875rem; color: var(--bloom-text-secondary); }
+    .auth-form { display: flex; flex-direction: column; gap: 1rem; }
+    .auth-footer { text-align: center; }
+    .auth-footer p { font-size: 0.875rem; color: var(--bloom-text-secondary); }
+    .error-banner {
+      background: var(--bloom-error-bg);
+      border: 1px solid #fecaca;
+      border-radius: 16px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--bloom-error-dark);
+    }
+    .error-banner-icon { font-size: 1.125rem; }
+  </style>
+</head>
+<body>
+
+  <div class="card card--no-hover auth-card">
+    <div class="card__header">
+      <div class="auth-header">
+        <h1 class="font-display gradient-text">Welcome Back</h1>
+        <p>Sign in to your BloomWatch account</p>
+      </div>
+    </div>
+    <div class="card__body">
+      <form class="auth-form">
+        <div class="input-group">
+          <label class="input-label">Email <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input class="input-field" type="email" placeholder="you@example.com" autocomplete="email">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Password <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input class="input-field" type="password" placeholder="Your password" autocomplete="current-password">
+          </div>
+        </div>
+
+        <!-- Form-level error (shown after failed login) -->
+        <div class="error-banner" role="alert">
+          <span class="error-banner-icon">&#9888;</span>
+          <span>Invalid email or password. Please try again.</span>
+        </div>
+
+        <button class="btn btn--primary btn--md btn--full" type="submit">Sign In</button>
+      </form>
+    </div>
+    <div class="card__footer auth-footer" style="justify-content:center">
+      <p>Don't have an account? <a href="register.html" class="text-link">Sign up</a></p>
+    </div>
+  </div>
+
+  <div class="wireframe-label">Story 7.3 — Login</div>
+</body>
+</html>

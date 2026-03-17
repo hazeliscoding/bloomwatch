@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Registration (Story 7.2)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
+    .auth-card { max-width: 26rem; width: 100%; }
+    .auth-header { text-align: center; padding-top: 0.75rem; }
+    .auth-header h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+    .auth-header p { font-size: 0.875rem; color: var(--bloom-text-secondary); }
+    .auth-form { display: flex; flex-direction: column; gap: 1rem; }
+    .auth-footer { text-align: center; }
+    .auth-footer p { font-size: 0.875rem; color: var(--bloom-text-secondary); }
+  </style>
+</head>
+<body>
+
+  <div class="card card--no-hover auth-card">
+    <div class="card__header">
+      <div class="auth-header">
+        <h1 class="font-display gradient-text">Create Your Account</h1>
+        <p>Join BloomWatch and start tracking anime together</p>
+      </div>
+    </div>
+    <div class="card__body">
+      <form class="auth-form">
+        <div class="input-group">
+          <label class="input-label">Display Name <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input class="input-field" type="text" placeholder="Your display name" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Email <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input class="input-field" type="email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <span class="input-hint">We'll never share your email</span>
+        </div>
+
+        <!-- Example with error state -->
+        <div class="input-group">
+          <label class="input-label" style="color:var(--bloom-error-dark)">Email (error state) <span class="required">*</span></label>
+          <div class="input-wrapper input-wrapper--error">
+            <input class="input-field" type="email" value="taken@example.com" autocomplete="email">
+          </div>
+          <span class="input-error">This email is already registered</span>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Password <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input class="input-field" type="password" placeholder="Minimum 8 characters" autocomplete="new-password">
+          </div>
+          <span class="input-hint">Minimum 8 characters</span>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">Confirm Password <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <input class="input-field" type="password" placeholder="Re-enter your password" autocomplete="new-password">
+          </div>
+        </div>
+
+        <button class="btn btn--primary btn--md btn--full mt-2" type="submit">Create Account</button>
+
+        <!-- Loading state example -->
+        <div class="text-center">
+          <button class="btn btn--primary btn--md btn--full" type="button" disabled style="opacity:0.8; cursor:wait;">
+            <span style="display:flex;gap:4px;align-items:center;">
+              <span style="width:6px;height:6px;border-radius:50%;background:white;animation:pulse-dot 0.6s ease-in-out infinite;"></span>
+              <span style="width:6px;height:6px;border-radius:50%;background:white;animation:pulse-dot 0.6s ease-in-out 0.15s infinite;"></span>
+              <span style="width:6px;height:6px;border-radius:50%;background:white;animation:pulse-dot 0.6s ease-in-out 0.3s infinite;"></span>
+            </span>
+          </button>
+          <span class="text-xs text-tertiary mt-1" style="display:block">(loading state)</span>
+        </div>
+      </form>
+    </div>
+    <div class="card__footer auth-footer" style="justify-content:center">
+      <p>Already have an account? <a href="login.html" class="text-link">Sign in</a></p>
+    </div>
+  </div>
+
+  <div class="wireframe-label">Story 7.2 — Registration</div>
+</body>
+</html>

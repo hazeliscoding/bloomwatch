@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomWatch — Dashboard (Story 10.1)</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .currently-watching-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+    .anime-thumb { text-align: center; }
+    .anime-thumb .cover-placeholder { width: 100%; height: 180px; margin-bottom: 0.5rem; }
+    .anime-thumb-title { font-family: var(--bloom-font-display); font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; }
+    .anime-thumb-ep { font-size: 0.75rem; color: var(--bloom-text-tertiary); margin-top: 0.25rem; }
+    .gap-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--bloom-border-default);
+      border-radius: 16px;
+    }
+    .gap-title { font-family: var(--bloom-font-display); font-weight: 600; font-size: 0.875rem; flex: 1; }
+    .gap-scores { display: flex; gap: 1rem; font-size: 0.875rem; }
+    .gap-delta { font-weight: 700; color: var(--bloom-pink-500); font-size: 0.875rem; white-space: nowrap; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 768px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-brand">&#10024; BloomWatch</div>
+      <ul class="nav-links">
+        <li><a class="nav-link nav-link--active" href="#">&#9673; Dashboard</a></li>
+        <li><a class="nav-link" href="watch-space-selector.html">&#9673; Watch Spaces</a></li>
+        <li><a class="nav-link" href="#">&#9881; Settings</a></li>
+      </ul>
+      <button class="nav-theme">&#9788;</button>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-2">
+      <div>
+        <a href="watch-space-selector.html" class="text-sm text-link">&larr; Back to Watch Spaces</a>
+        <h1 class="text-3xl font-display mt-2">Anime Night</h1>
+        <div class="flex items-center gap-3 mt-2">
+          <div class="avatar-stack">
+            <div class="avatar avatar--sm">HA</div>
+            <div class="avatar avatar--sm">SA</div>
+          </div>
+          <span class="text-sm text-secondary">2 members</span>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn btn--ghost btn--sm" onclick="window.location='watch-space-settings.html'">&#9881; Settings</button>
+        <button class="btn btn--primary btn--sm" onclick="window.location='anime-search.html'">+ Add Anime</button>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-4 gap-4 mt-8 mb-8">
+      <div class="card card--no-hover stat-card">
+        <div class="stat-card__number text-pink">27</div>
+        <div class="stat-card__label">Total Shows</div>
+      </div>
+      <div class="card card--no-hover stat-card">
+        <div class="stat-card__number" style="color:var(--bloom-lime-500)">3</div>
+        <div class="stat-card__label">Watching</div>
+      </div>
+      <div class="card card--no-hover stat-card">
+        <div class="stat-card__number" style="color:var(--bloom-blue-500)">11</div>
+        <div class="stat-card__label">Finished</div>
+      </div>
+      <div class="card card--no-hover stat-card">
+        <div class="stat-card__number" style="color:var(--bloom-lilac-500)">184</div>
+        <div class="stat-card__label">Episodes Together</div>
+      </div>
+    </div>
+
+    <!-- Compatibility + Random Pick -->
+    <div class="two-col mb-8">
+
+      <!-- Compatibility Score -->
+      <div class="card card--no-hover">
+        <div class="card__header">
+          <h3 class="text-lg font-display font-bold" style="padding-top:0.5rem">Compatibility Score</h3>
+        </div>
+        <div class="card__body">
+          <div class="compat-ring">
+            <svg class="compat-ring__svg" viewBox="0 0 140 140">
+              <circle class="compat-ring__track" cx="70" cy="70" r="56" />
+              <circle class="compat-ring__fill" cx="70" cy="70" r="56"
+                stroke="#34d399"
+                stroke-dasharray="351.86"
+                stroke-dashoffset="45.74" />
+              <text class="compat-ring__score" x="70" y="70" fill="#211a33">87</text>
+            </svg>
+            <div class="compat-ring__label">Very synced, with a little spice</div>
+            <div class="compat-ring__context">Based on 9 shared ratings</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Random Pick -->
+      <div class="card card--highlighted">
+        <div class="card__header">
+          <h3 class="text-lg font-display font-bold" style="padding-top:0.5rem">&#127922; Pick Something to Watch</h3>
+        </div>
+        <div class="card__body">
+          <div class="flex gap-4 items-start">
+            <div class="cover-placeholder" style="width:80px; height:110px; font-size:1rem">&#127916;</div>
+            <div>
+              <h4 class="font-display font-bold text-md">Spy x Family</h4>
+              <p class="text-sm text-secondary">25 episodes &middot; TV &middot; Fall 2022</p>
+              <div class="flex gap-2 mt-2 flex-wrap">
+                <span class="badge badge--lilac">Mood: Cozy</span>
+                <span class="badge badge--blue">Vibe: Weekend binge</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button class="btn btn--secondary btn--sm">&#127922; Reroll</button>
+            <button class="btn btn--ghost btn--sm">View Details &rarr;</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Currently Watching -->
+    <h2 class="text-xl font-display mb-4">Currently Watching</h2>
+    <div class="currently-watching-grid mb-8">
+      <div class="anime-thumb">
+        <div class="cover-placeholder" style="width:100%; height:200px">&#127912;</div>
+        <div class="anime-thumb-title">Frieren</div>
+        <div class="progress" style="margin-top:0.375rem">
+          <div class="progress__fill progress__fill--lime" style="width:17.8%"></div>
+        </div>
+        <div class="anime-thumb-ep">Ep 5 / 28</div>
+      </div>
+      <div class="anime-thumb">
+        <div class="cover-placeholder" style="width:100%; height:200px">&#127912;</div>
+        <div class="anime-thumb-title">Dandadan</div>
+        <div class="progress" style="margin-top:0.375rem">
+          <div class="progress__fill progress__fill--lime" style="width:100%"></div>
+        </div>
+        <div class="anime-thumb-ep">Ep 12 / 12</div>
+      </div>
+      <div class="anime-thumb">
+        <div class="cover-placeholder" style="width:100%; height:200px">&#127912;</div>
+        <div class="anime-thumb-title">Blue Lock</div>
+        <div class="progress" style="margin-top:0.375rem">
+          <div class="progress__fill progress__fill--lime" style="width:8.3%"></div>
+        </div>
+        <div class="anime-thumb-ep">Ep 2 / 24</div>
+      </div>
+    </div>
+
+    <!-- Backlog Highlights -->
+    <h2 class="text-xl font-display mb-4">Backlog Highlights</h2>
+    <div class="currently-watching-grid mb-8">
+      <div class="anime-thumb">
+        <div class="cover-placeholder" style="width:100%; height:200px">&#127912;</div>
+        <div class="anime-thumb-title">Vinland Saga</div>
+        <span class="badge badge--yellow" style="margin-top:0.25rem">Backlog</span>
+      </div>
+      <div class="anime-thumb">
+        <div class="cover-placeholder" style="width:100%; height:200px">&#127912;</div>
+        <div class="anime-thumb-title">Bocchi the Rock!</div>
+        <span class="badge badge--yellow" style="margin-top:0.25rem">Backlog</span>
+      </div>
+      <div class="anime-thumb">
+        <div class="cover-placeholder" style="width:100%; height:200px">&#127912;</div>
+        <div class="anime-thumb-title">Mob Psycho 100</div>
+        <span class="badge badge--yellow" style="margin-top:0.25rem">Backlog</span>
+      </div>
+    </div>
+
+    <!-- Rating Gap Highlights -->
+    <h2 class="text-xl font-display mb-4">Biggest Rating Gaps</h2>
+    <div class="card card--no-hover mb-8">
+      <div class="card__body flex-col gap-3" style="display:flex; flex-direction:column; gap:0.75rem;">
+        <div class="gap-card">
+          <div class="cover-placeholder" style="width:40px; height:40px; border-radius:10px; font-size:0.75rem">&#127912;</div>
+          <div class="gap-title">Jujutsu Kaisen</div>
+          <div class="gap-scores">
+            <span class="text-sm"><span class="text-secondary">hazel:</span> <span class="stars stars--sm">&#9733;</span> 9.5</span>
+            <span class="text-sm"><span class="text-secondary">sakura:</span> <span class="stars stars--sm">&#9733;</span> 6.0</span>
+          </div>
+          <div class="gap-delta">&Delta; 3.5</div>
+        </div>
+        <div class="gap-card">
+          <div class="cover-placeholder" style="width:40px; height:40px; border-radius:10px; font-size:0.75rem">&#127912;</div>
+          <div class="gap-title">Chainsaw Man</div>
+          <div class="gap-scores">
+            <span class="text-sm"><span class="text-secondary">hazel:</span> <span class="stars stars--sm">&#9733;</span> 8.0</span>
+            <span class="text-sm"><span class="text-secondary">sakura:</span> <span class="stars stars--sm">&#9733;</span> 5.5</span>
+          </div>
+          <div class="gap-delta">&Delta; 2.5</div>
+        </div>
+        <div class="gap-card">
+          <div class="cover-placeholder" style="width:40px; height:40px; border-radius:10px; font-size:0.75rem">&#127912;</div>
+          <div class="gap-title">Oshi no Ko</div>
+          <div class="gap-scores">
+            <span class="text-sm"><span class="text-secondary">hazel:</span> <span class="stars stars--sm">&#9733;</span> 7.0</span>
+            <span class="text-sm"><span class="text-secondary">sakura:</span> <span class="stars stars--sm">&#9733;</span> 9.0</span>
+          </div>
+          <div class="gap-delta">&Delta; 2.0</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wireframe-label">Story 10.1 — Dashboard</div>
+</body>
+</html>
