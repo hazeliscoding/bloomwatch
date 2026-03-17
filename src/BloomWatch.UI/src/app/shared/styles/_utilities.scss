@@ -483,10 +483,10 @@ $spacing-map: (
 
 // Glass / Frosted Effect
 .bloom-glass {
-  background: rgb(255 255 255 / 0.7);
+  background: var(--bloom-nav-bg);
   backdrop-filter: blur(12px) saturate(1.5);
   -webkit-backdrop-filter: blur(12px) saturate(1.5);
-  border: 1px solid rgb(255 255 255 / 0.3);
+  border: 1px solid var(--bloom-border-default);
 }
 
 .bloom-glass-pink {

@@ -22,3 +22,6 @@ export type { BloomBadgeColor, BloomBadgeSize } from './badge/bloom-badge';
 // Avatar
 export { BloomAvatarComponent, BloomAvatarStackComponent } from './avatar/bloom-avatar';
 export type { BloomAvatarSize, BloomAvatarStatus } from './avatar/bloom-avatar';
+
+// Theme Toggle
+export { BloomThemeToggleComponent } from './theme-toggle/bloom-theme-toggle';

@@ -1,14 +1,17 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ThemeService } from '../../theme/theme.service';
+import { BloomThemeToggleComponent } from '../../../shared/ui/theme-toggle/bloom-theme-toggle';
 
 @Component({
   selector: 'app-shell-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, BloomThemeToggleComponent],
   templateUrl: './shell-layout.html',
   styleUrl: './shell-layout.scss',
 })
 export class ShellLayout {
+  private readonly themeService = inject(ThemeService);
   readonly mobileOpen = signal(false);
 
   toggleMobile(): void {

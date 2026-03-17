@@ -11,10 +11,10 @@
   position: sticky;
   top: 0;
   z-index: var(--bloom-z-sticky);
-  background: rgb(255 255 255 / 0.85);
+  background: var(--bloom-nav-bg);
   backdrop-filter: blur(16px) saturate(1.8);
   -webkit-backdrop-filter: blur(16px) saturate(1.8);
-  border-bottom: 2px solid var(--bloom-pink-100);
+  border-bottom: 2px solid var(--bloom-nav-border);
   box-shadow:
     0 2px 12px -2px rgb(255 45 138 / 0.08),
     0 1px 4px -1px rgb(169 116 255 / 0.06);
@@ -82,6 +82,17 @@
 }
 
 // --------------------------------------------------------------------------
+// Nav Actions (theme toggle, etc.)
+// --------------------------------------------------------------------------
+
+.shell-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-2);
+  margin-left: auto;
+}
+
+// --------------------------------------------------------------------------
 // Mobile Toggle (hamburger)
 // --------------------------------------------------------------------------
 
@@ -94,17 +105,17 @@
   width: 2.5rem;
   height: 2.5rem;
   padding: var(--bloom-space-2);
-  border: 2px solid var(--bloom-pink-200);
+  border: 2px solid var(--bloom-ghost-hover-border);
   border-radius: var(--bloom-radius-lg);
-  background: var(--bloom-pink-50);
+  background: var(--bloom-ghost-hover-bg);
   cursor: pointer;
   transition:
     background-color var(--bloom-duration-fast) var(--bloom-ease-default),
     border-color var(--bloom-duration-fast) var(--bloom-ease-default);
 
   &:hover {
-    background: var(--bloom-pink-100);
-    border-color: var(--bloom-pink-300);
+    background: var(--bloom-ghost-active-bg);
+    border-color: var(--bloom-border-strong);
   }
 
   &:focus-visible {
@@ -162,10 +173,10 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: rgb(255 255 255 / 0.95);
+    background: var(--bloom-nav-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 2px solid var(--bloom-pink-100);
+    border-bottom: 2px solid var(--bloom-nav-border);
     padding: var(--bloom-space-3) var(--bloom-space-4);
     box-shadow: var(--bloom-shadow-lg);
     animation: bloom-nav-slide-down var(--bloom-duration-normal) var(--bloom-ease-out);
@@ -210,9 +221,9 @@
     transform var(--bloom-duration-fast) var(--bloom-ease-bounce);
 
   &:hover {
-    color: var(--bloom-pink-600);
-    background-color: var(--bloom-pink-50);
-    border-color: var(--bloom-pink-100);
+    color: var(--bloom-ghost-hover-text);
+    background-color: var(--bloom-ghost-hover-bg);
+    border-color: var(--bloom-ghost-hover-border);
     text-decoration: none;
     transform: translateY(-1px);
   }

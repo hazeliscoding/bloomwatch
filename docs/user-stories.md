@@ -1,7 +1,8 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.0
+**Document version:** 1.1
 **Created:** 2026-03-13
+**Last updated:** 2026-03-17
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
 **Tech stack:** .NET 10 / ASP.NET Core Minimal APIs, PostgreSQL, EF Core, Angular, AniList GraphQL
 
@@ -66,7 +67,7 @@ Each story follows: `As a [user], I want to [action], so that [benefit].`
 As a new user, I want to register for BloomWatch with my email, password, and display name, so that I can create an account and access the platform.
 
 **Acceptance criteria:**
-- `POST /api/auth/register` accepts `{ email, password, displayName }`
+- `POST /auth/register` accepts `{ email, password, displayName }`
 - Password is hashed with BCrypt before storage
 - Duplicate email returns a 409 Conflict with a descriptive error message
 - Invalid inputs (missing fields, malformed email, short password) return 400 Bad Request
@@ -74,7 +75,7 @@ As a new user, I want to register for BloomWatch with my email, password, and di
 - User is stored in `identity.users` with `is_active = true`
 
 **Module:** Identity
-**Endpoints:** `POST /api/auth/register`
+**Endpoints:** `POST /auth/register`
 
 ---
 
@@ -87,7 +88,7 @@ As a new user, I want to register for BloomWatch with my email, password, and di
 As a registered user, I want to log in with my email and password, so that I receive a JWT token I can use to authenticate subsequent requests.
 
 **Acceptance criteria:**
-- `POST /api/auth/login` accepts `{ email, password }`
+- `POST /auth/login` accepts `{ email, password }`
 - Returns a signed HS256 JWT with a 1-hour expiry on success
 - JWT payload contains at minimum the user's ID and display name
 - Invalid credentials return 401 Unauthorized
@@ -95,7 +96,7 @@ As a registered user, I want to log in with my email and password, so that I rec
 - Token can be verified by protected endpoints using the same signing key
 
 **Module:** Identity
-**Endpoints:** `POST /api/auth/login`
+**Endpoints:** `POST /auth/login`
 
 ---
 
@@ -136,7 +137,7 @@ As an authenticated user, I want to fetch my own profile, so that the frontend c
 As an authenticated user, I want to create a new watch space with a name, so that I have a shared space to track anime with friends.
 
 **Acceptance criteria:**
-- `POST /api/watch-spaces` accepts `{ name }`
+- `POST /watchspaces` accepts `{ name }`
 - The requesting user is automatically assigned as the Owner of the new space
 - The user is simultaneously added as a member
 - Returns 201 Created with the new watch space ID and name
@@ -144,7 +145,7 @@ As an authenticated user, I want to create a new watch space with a name, so tha
 - The space is stored in `watch_spaces.watch_spaces`
 
 **Module:** WatchSpaces
-**Endpoints:** `POST /api/watch-spaces`
+**Endpoints:** `POST /watchspaces`
 
 ---
 
@@ -157,13 +158,13 @@ As an authenticated user, I want to create a new watch space with a name, so tha
 As an authenticated user, I want to see a list of all watch spaces I belong to, so that I can navigate between them.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces` returns only spaces the current user is a member of
+- `GET /watchspaces` returns only spaces the current user is a member of
 - Response includes at minimum: watch space ID, name, the user's role, and member count
 - An empty list returns 200 OK with an empty array (not 404)
 - Spaces are ordered consistently (e.g., by creation date descending)
 
 **Module:** WatchSpaces
-**Endpoints:** `GET /api/watch-spaces`
+**Endpoints:** `GET /watchspaces`
 
 ---
 
@@ -176,13 +177,13 @@ As an authenticated user, I want to see a list of all watch spaces I belong to, 
 As a watch space member, I want to view the details of a watch space, so that I can see its members and metadata.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}` returns space details for members only
+- `GET /watchspaces/{id}` returns space details for members only
 - Response includes: ID, name, list of members (user ID, display name, role, joined date), pending invitation count
 - Non-members receive 403 Forbidden
 - Non-existent space returns 404 Not Found
 
 **Module:** WatchSpaces
-**Endpoints:** `GET /api/watch-spaces/{id}`
+**Endpoints:** `GET /watchspaces/{id}`
 
 ---
 
@@ -195,14 +196,14 @@ As a watch space member, I want to view the details of a watch space, so that I 
 As a watch space owner, I want to rename my watch space, so that I can keep its name meaningful as the group evolves.
 
 **Acceptance criteria:**
-- `PATCH /api/watch-spaces/{id}` (or dedicated rename endpoint) accepts `{ name }`
+- `PATCH /watchspaces/{id}` (or dedicated rename endpoint) accepts `{ name }`
 - Only the Owner of the space can rename it; Members receive 403
 - Name validation applies (non-empty, max length)
 - Returns 200 OK with the updated space details
 - Returns 404 if the space does not exist
 
 **Module:** WatchSpaces
-**Endpoints:** `PATCH /api/watch-spaces/{id}`
+**Endpoints:** `PATCH /watchspaces/{id}`
 
 ---
 
@@ -234,7 +235,7 @@ As a watch space owner, I want to transfer ownership to another member, so that 
 As a watch space owner, I want to invite someone by their email address, so that they can join my watch space.
 
 **Acceptance criteria:**
-- `POST /api/watch-spaces/{id}/invitations` accepts `{ email }`
+- `POST /watchspaces/{id}/invitations` accepts `{ email }`
 - Only the Owner can send invitations
 - A unique invitation token is generated and stored with an expiry timestamp
 - Inviting an email that is already a member returns a 409 Conflict
@@ -242,7 +243,7 @@ As a watch space owner, I want to invite someone by their email address, so that
 - Returns 201 Created with the invitation ID (token is not returned in the response body)
 
 **Module:** WatchSpaces
-**Endpoints:** `POST /api/watch-spaces/{id}/invitations`
+**Endpoints:** `POST /watchspaces/{id}/invitations`
 
 ---
 
@@ -291,7 +292,7 @@ As a watch space owner, I want to revoke a pending invitation, so that the invit
 As an invited user, I want to accept an invitation by its token, so that I become a member of the watch space.
 
 **Acceptance criteria:**
-- `POST /api/watch-spaces/invitations/{token}/accept` is an authenticated endpoint
+- `POST /watchspaces/invitations/{token}/accept` is an authenticated endpoint
 - The authenticated user's email must match the invitation's invited email
 - Expired tokens return 400 or 410 Gone
 - Tokens already used (accepted/declined/revoked) return 409
@@ -299,7 +300,7 @@ As an invited user, I want to accept an invitation by its token, so that I becom
 - Returns 200 OK with the watch space ID and name
 
 **Module:** WatchSpaces
-**Endpoints:** `POST /api/watch-spaces/invitations/{token}/accept`
+**Endpoints:** `POST /watchspaces/invitations/{token}/accept`
 
 ---
 
@@ -331,14 +332,14 @@ As an invited user, I want to decline an invitation, so that the inviter knows I
 As a watch space owner, I want to remove a member from my watch space, so that I can manage membership.
 
 **Acceptance criteria:**
-- `DELETE /api/watch-spaces/{id}/members/{userId}` is owner-only
+- `DELETE /watchspaces/{id}/members/{userId}` is owner-only
 - Owner cannot remove themselves (must transfer ownership first)
 - Attempting to remove a non-member returns 404
 - On success, the member no longer appears in the member list
 - Returns 200 OK or 204 No Content
 
 **Module:** WatchSpaces
-**Endpoints:** `DELETE /api/watch-spaces/{id}/members/{userId}`
+**Endpoints:** `DELETE /watchspaces/{id}/members/{userId}`
 
 ---
 
@@ -364,7 +365,7 @@ As a non-owner member, I want to leave a watch space, so that I am no longer ass
 
 **Goal:** The backend can search AniList for anime metadata and serve it to clients. Metadata is cached locally.
 **Module:** AniListSync (discovery portion)
-**Backend status:** Partial (1 of 2 stories done)
+**Backend status:** Complete
 
 ---
 
@@ -428,7 +429,7 @@ As an authenticated user, I want to fetch full details for a specific AniList an
 As a watch space member, I want to add an anime to my watch space by its AniList ID, so that the group can track it together.
 
 **Acceptance criteria:**
-- `POST /api/watch-spaces/{id}/anime` accepts `{ anilistMediaId, mood?, vibe?, pitch? }`
+- `POST /watchspaces/{id}/anime` accepts `{ anilistMediaId, mood?, vibe?, pitch? }`
 - Caller must be a member of the watch space (403 otherwise)
 - If the AniList media ID is already in the watch space, returns 409 Conflict
 - AniList metadata is fetched (or retrieved from cache) and snapshots are stored: `preferredTitle`, `episodeCountSnapshot`, `coverImageUrlSnapshot`, `format`, `season`, `seasonYear`
@@ -438,7 +439,7 @@ As a watch space member, I want to add an anime to my watch space by its AniList
 - Returns 201 Created with the new `WatchSpaceAnimeId` and metadata snapshot
 
 **Module:** AnimeTracking
-**Endpoints:** `POST /api/watch-spaces/{id}/anime`
+**Endpoints:** `POST /watchspaces/{id}/anime`
 
 ---
 
@@ -451,7 +452,7 @@ As a watch space member, I want to add an anime to my watch space by its AniList
 As a watch space member, I want to see all anime in my watch space, so that I can browse the backlog, currently watching, and finished lists.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}/anime` is member-only (403 for non-members)
+- `GET /watchspaces/{id}/anime` is member-only (403 for non-members)
 - Supports optional `?status=` filter (backlog, watching, finished, paused, dropped)
 - Returns per anime: `watchSpaceAnimeId`, `anilistMediaId`, `preferredTitle`, `coverImageUrlSnapshot`, `episodeCountSnapshot`, `sharedStatus`, `sharedEpisodesWatched`, `addedAtUtc`
 - Also returns a summary of participant entries per anime: each participant's `individualStatus` and `episodesWatched`
@@ -459,7 +460,7 @@ As a watch space member, I want to see all anime in my watch space, so that I ca
 - Results are ordered consistently (e.g. by `addedAtUtc` descending within each status group)
 
 **Module:** AnimeTracking
-**Endpoints:** `GET /api/watch-spaces/{id}/anime`
+**Endpoints:** `GET /watchspaces/{id}/anime`
 
 ---
 
@@ -472,7 +473,7 @@ As a watch space member, I want to see all anime in my watch space, so that I ca
 As a watch space member, I want to view full details for one anime in my watch space, so that I can see everyone's progress, ratings, and session history.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}` is member-only
+- `GET /watchspaces/{id}/anime/{watchSpaceAnimeId}` is member-only
 - Response includes all `WatchSpaceAnime` fields: shared status, shared progress, mood/vibe/pitch, metadata snapshots
 - Response includes all `ParticipantEntry` records: userId, displayName, individualStatus, episodesWatched, ratingScore, ratingNotes, lastUpdatedAtUtc
 - Response includes all `WatchSession` records: sessionId, sessionDateUtc, startEpisode, endEpisode, notes, createdByUserId
@@ -480,7 +481,7 @@ As a watch space member, I want to view full details for one anime in my watch s
 - Returns 403 if the caller is not a member
 
 **Module:** AnimeTracking
-**Endpoints:** `GET /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}`
+**Endpoints:** `GET /watchspaces/{id}/anime/{watchSpaceAnimeId}`
 
 ---
 
@@ -493,7 +494,7 @@ As a watch space member, I want to view full details for one anime in my watch s
 As a watch space member, I want to update the shared status of an anime (e.g. move it from backlog to watching), so that the group's shared state stays current.
 
 **Acceptance criteria:**
-- `PATCH /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}` accepts partial update body: `{ sharedStatus?, sharedEpisodesWatched?, mood?, vibe?, pitch? }`
+- `PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}` accepts partial update body: `{ sharedStatus?, sharedEpisodesWatched?, mood?, vibe?, pitch? }`
 - Caller must be a member of the watch space
 - `sharedStatus` must be one of: `Backlog`, `Watching`, `Finished`, `Paused`, `Dropped`
 - `sharedEpisodesWatched` must be >= 0 and, when `episodeCountSnapshot` is known, <= `episodeCountSnapshot`
@@ -502,7 +503,7 @@ As a watch space member, I want to update the shared status of an anime (e.g. mo
 - Returns 400 for invalid status values or episode count violations
 
 **Module:** AnimeTracking
-**Endpoints:** `PATCH /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}`
+**Endpoints:** `PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}`
 
 ---
 
@@ -515,7 +516,7 @@ As a watch space member, I want to update the shared status of an anime (e.g. mo
 As a watch space member, I want to update my own progress and individual status for an anime, so that others can see how far I have gotten.
 
 **Acceptance criteria:**
-- `PATCH /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}/participant-progress` accepts `{ episodesWatched, individualStatus }`
+- `PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-progress` accepts `{ episodesWatched, individualStatus }`
 - Caller must be a member; the operation applies only to the caller's own ParticipantEntry
 - Creates the ParticipantEntry if it does not already exist (upsert)
 - `individualStatus` must be one of the valid enum values
@@ -524,7 +525,7 @@ As a watch space member, I want to update my own progress and individual status 
 - `lastUpdatedAtUtc` is updated on every successful call
 
 **Module:** AnimeTracking
-**Endpoints:** `PATCH /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}/participant-progress`
+**Endpoints:** `PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-progress`
 
 ---
 
@@ -537,7 +538,7 @@ As a watch space member, I want to update my own progress and individual status 
 As a watch space member, I want to rate an anime with a score from 0.5 to 10 and an optional note, so that my taste is recorded and contributes to compatibility analytics.
 
 **Acceptance criteria:**
-- `PATCH /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}/participant-rating` accepts `{ ratingScore, ratingNotes? }`
+- `PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-rating` accepts `{ ratingScore, ratingNotes? }`
 - Caller must be a member; applies to the caller's own ParticipantEntry only
 - `ratingScore` must be between 0.5 and 10 inclusive, in 0.5 increments
 - Scores outside this range return 400 Bad Request
@@ -546,7 +547,7 @@ As a watch space member, I want to rate an anime with a score from 0.5 to 10 and
 - Returns 200 OK with the updated participant entry including the new rating
 
 **Module:** AnimeTracking
-**Endpoints:** `PATCH /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}/participant-rating`
+**Endpoints:** `PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-rating`
 
 ---
 
@@ -559,7 +560,7 @@ As a watch space member, I want to rate an anime with a score from 0.5 to 10 and
 As a watch space member, I want to log a watch session with the episode range and date, so that the group has a shared history of what was watched and when.
 
 **Acceptance criteria:**
-- `POST /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}/sessions` accepts `{ sessionDateUtc, startEpisode, endEpisode, notes? }`
+- `POST /watchspaces/{id}/anime/{watchSpaceAnimeId}/sessions` accepts `{ sessionDateUtc, startEpisode, endEpisode, notes? }`
 - Caller must be a member of the watch space
 - `startEpisode` must be >= 1
 - `endEpisode` must be >= `startEpisode`
@@ -569,7 +570,7 @@ As a watch space member, I want to log a watch session with the episode range an
 - Returns 201 Created with the new session ID and details
 
 **Module:** AnimeTracking
-**Endpoints:** `POST /api/watch-spaces/{id}/anime/{watchSpaceAnimeId}/sessions`
+**Endpoints:** `POST /watchspaces/{id}/anime/{watchSpaceAnimeId}/sessions`
 
 ---
 
@@ -590,7 +591,7 @@ As a watch space member, I want to log a watch session with the episode range an
 As a watch space member, I want to load a single dashboard endpoint, so that the frontend can display a complete overview without multiple round trips.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}/dashboard` is member-only
+- `GET /watchspaces/{id}/dashboard` is member-only
 - Response includes:
   - `stats.totalShows` — total anime count across all statuses
   - `stats.currentlyWatching` — count with `sharedStatus = Watching`
@@ -605,7 +606,7 @@ As a watch space member, I want to load a single dashboard endpoint, so that the
 - Returns 403 for non-members
 
 **Module:** Analytics
-**Endpoints:** `GET /api/watch-spaces/{id}/dashboard`
+**Endpoints:** `GET /watchspaces/{id}/dashboard`
 
 ---
 
@@ -618,7 +619,7 @@ As a watch space member, I want to load a single dashboard endpoint, so that the
 As a watch space member, I want to see our compatibility score, so that I can understand how aligned our anime tastes are.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}/analytics/compatibility` is member-only
+- `GET /watchspaces/{id}/analytics/compatibility` is member-only
 - Considers only anime where at least 2 members have submitted a rating
 - Per-anime gap = absolute difference between each pair of members' rating scores
 - `averageGap` = mean of all per-anime gaps across qualifying anime
@@ -629,7 +630,7 @@ As a watch space member, I want to see our compatibility score, so that I can un
 - Score label examples: 90–100 = "Very synced", 70–89 = "Pretty aligned", 50–69 = "Some differences", below 50 = "Wildly different tastes"
 
 **Module:** Analytics
-**Endpoints:** `GET /api/watch-spaces/{id}/analytics/compatibility`
+**Endpoints:** `GET /watchspaces/{id}/analytics/compatibility`
 
 ---
 
@@ -642,14 +643,14 @@ As a watch space member, I want to see our compatibility score, so that I can un
 As a watch space member, I want to see which anime we rated most differently, so that we can discuss our taste differences.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}/analytics/rating-gaps` is member-only
+- `GET /watchspaces/{id}/analytics/rating-gaps` is member-only
 - Returns all anime where at least 2 members have submitted ratings, sorted by descending gap magnitude
 - Per result includes: `watchSpaceAnimeId`, `preferredTitle`, `coverImageUrlSnapshot`, and each member's `displayName` and `ratingScore`
 - If fewer than 2 members have rated any anime, returns an empty array with a `"Not enough data"` flag
 - Ties in gap magnitude are broken by title alphabetically
 
 **Module:** Analytics
-**Endpoints:** `GET /api/watch-spaces/{id}/analytics/rating-gaps`
+**Endpoints:** `GET /watchspaces/{id}/analytics/rating-gaps`
 
 ---
 
@@ -662,7 +663,7 @@ As a watch space member, I want to see which anime we rated most differently, so
 As a watch space member, I want to see aggregate statistics about our watch history, so that I can appreciate how much we have watched together.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}/analytics/shared-stats` is member-only
+- `GET /watchspaces/{id}/analytics/shared-stats` is member-only
 - Response includes:
   - `totalEpisodesWatchedTogether` — sum of `sharedEpisodesWatched` across all anime
   - `totalFinished` — count of anime with `sharedStatus = Finished`
@@ -672,7 +673,7 @@ As a watch space member, I want to see aggregate statistics about our watch hist
 - Returns 403 for non-members
 
 **Module:** Analytics
-**Endpoints:** `GET /api/watch-spaces/{id}/analytics/shared-stats`
+**Endpoints:** `GET /watchspaces/{id}/analytics/shared-stats`
 
 ---
 
@@ -685,7 +686,7 @@ As a watch space member, I want to see aggregate statistics about our watch hist
 As a watch space member, I want the system to pick a random anime from our backlog, so that we can break decision paralysis when choosing what to watch next.
 
 **Acceptance criteria:**
-- `GET /api/watch-spaces/{id}/analytics/random-pick` is member-only
+- `GET /watchspaces/{id}/analytics/random-pick` is member-only
 - Selects one anime at random from those with `sharedStatus = Backlog`
 - Response includes: `watchSpaceAnimeId`, `preferredTitle`, `coverImageUrlSnapshot`, `episodeCountSnapshot`, `mood`, `vibe`, `pitch`
 - If the backlog is empty, returns 200 with `null` and a `"Backlog is empty"` message (not 404)
@@ -693,14 +694,14 @@ As a watch space member, I want the system to pick a random anime from our backl
 - Each call may return a different result (no sticky selection)
 
 **Module:** Analytics
-**Endpoints:** `GET /api/watch-spaces/{id}/analytics/random-pick`
+**Endpoints:** `GET /watchspaces/{id}/analytics/random-pick`
 
 ---
 
 ## Epic 6 — Angular Frontend Shell
 
 **Goal:** The Angular application has a working shell with routing, authentication guards, HTTP interceptors, and a responsive layout.
-**Frontend status:** Partial (1 of 3 stories done)
+**Frontend status:** Complete
 
 ---
 
@@ -744,7 +745,7 @@ As a developer, I want all HTTP calls to the backend to automatically include th
 
 ### Story 6.3 — Theme System (Light and Dark Mode)
 
-**Status:** To Do
+**Status:** Done
 **Points:** 2
 **Sizing rationale:** CSS custom property-based theme toggle. No backend dependency. UI-only with a small amount of state management for persistence.
 
@@ -795,7 +796,7 @@ As a new user, I want to fill in a registration form with my display name, email
 - Route: `/register`
 - Form fields: display name, email, password, confirm password
 - Client-side validation: all fields required, email format, password minimum length, passwords must match
-- Submitting the form calls `POST /api/auth/register`
+- Submitting the form calls `POST /auth/register`
 - On success, the user is automatically logged in (token stored) and redirected to `/watch-spaces`
 - Server-side errors (e.g. email already taken) are displayed inline near the relevant field or as a form-level alert
 - Already-authenticated users are redirected away from this page (auth guard)
@@ -813,7 +814,7 @@ As a returning user, I want to enter my email and password to log in, so that I 
 **Acceptance criteria:**
 - Route: `/login`
 - Form fields: email, password
-- Submitting calls `POST /api/auth/login`
+- Submitting calls `POST /auth/login`
 - On success, JWT is stored and the user is redirected to `/watch-spaces`
 - Invalid credentials display a clear error message without revealing whether the email exists
 - Loading state is shown while the request is in flight
@@ -857,7 +858,7 @@ As an authenticated user, I want to see all my watch spaces listed on a selector
 - Fetches and displays all watch spaces the user belongs to
 - Each space card shows: name, member count, the user's role, and a link to enter the space
 - A "Create Watch Space" action opens a modal or inline form with a name field
-- Form submits to `POST /api/watch-spaces`; on success, the new space appears in the list immediately
+- Form submits to `POST /watchspaces`; on success, the new space appears in the list immediately
 - Loading and empty states are handled gracefully
 - Creating a space with a blank name shows a validation error before submitting
 
@@ -891,12 +892,12 @@ As a watch space owner, I want a settings panel where I can rename the space, se
 As a watch space owner, I want to invite someone by email and manage pending invitations, so that I can grow my watch space membership.
 
 **Acceptance criteria:**
-- Invite form (owner only) accepts an email address and submits to `POST /api/watch-spaces/{id}/invitations`
+- Invite form (owner only) accepts an email address and submits to `POST /watchspaces/{id}/invitations`
 - Success shows a confirmation; error (e.g. already a member) shows inline feedback
 - Pending invitations list shows each invitation's email, sent date, and expiry
 - Owner can revoke any pending invitation with a confirmation step
 - Invitee experience: navigating to an invitation accept link shows a confirmation page with the space name
-- Accepting calls `POST /api/watch-spaces/invitations/{token}/accept` and redirects to the watch space
+- Accepting calls `POST /watchspaces/invitations/{token}/accept` and redirects to the watch space
 - Declining calls the decline endpoint and shows a "declined" confirmation page
 - Expired or invalid tokens show a user-friendly error page (not a blank 400 error)
 
@@ -922,7 +923,7 @@ As a watch space member, I want to search for anime by name and add a result to 
 - Results display: cover image, title (romaji and English if available), episode count, status, format, genres
 - Anime already in the watch space are visually marked and cannot be added again
 - Selecting a result shows an optional "Add details" step: mood, vibe, pitch free-text fields
-- Submitting calls `POST /api/watch-spaces/{id}/anime`
+- Submitting calls `POST /watchspaces/{id}/anime`
 - On success, the modal closes and the anime appears in the watch space list
 - Loading, empty, and error states are handled gracefully
 - The modal can be dismissed without adding anything
@@ -944,7 +945,7 @@ As a watch space member, I want to browse our anime list filtered by status, so 
 - Clicking an anime card navigates to the anime detail page
 - An "Add Anime" button opens the search modal (Story 9.1)
 - Empty state for each status tab is handled with a friendly message
-- Page fetches from `GET /api/watch-spaces/{id}/anime` with the appropriate `?status=` filter
+- Page fetches from `GET /watchspaces/{id}/anime` with the appropriate `?status=` filter
 
 ---
 
@@ -1006,7 +1007,7 @@ As a watch space member, I want to see a dashboard with a summary of our watch s
 
 **Acceptance criteria:**
 - Route: `/watch-spaces/:id` (dashboard as the default view)
-- Fetches `GET /api/watch-spaces/{id}/dashboard` on load
+- Fetches `GET /watchspaces/{id}/dashboard` on load
 - Snapshot card row: Total Shows, Currently Watching, Finished, Episodes Watched Together
 - Compatibility score section: large numeric score, label text, and `ratedTogetherCount` context; shows "Not enough ratings yet" gracefully when null
 - Currently Watching section: up to 5 anime cards with cover image, title, and a progress bar showing `sharedEpisodesWatched / episodeCountSnapshot`
@@ -1065,7 +1066,7 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 **Acceptance criteria:**
 - Component appears on the dashboard (and optionally the anime list page)
-- "Pick for me" button calls `GET /api/watch-spaces/{id}/analytics/random-pick`
+- "Pick for me" button calls `GET /watchspaces/{id}/analytics/random-pick`
 - Result displays: cover image, title, episode count, mood/vibe/pitch if set
 - A "Reroll" button fetches a new random result
 - If the backlog is empty, the component shows "Your backlog is empty — add some anime first!"
@@ -1082,10 +1083,10 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 |---|---|---|---|
 | Epic 1 — Authentication and Identity (Backend) | 3 Done | 3 | 8 |
 | Epic 2 — Watch Spaces Management (Backend) | 12 Done | 12 | 28 |
-| Epic 3 — AniList Discovery (Backend) | 1 Done / 1 To Do | 2 | 8 |
+| Epic 3 — AniList Discovery (Backend) | 2 Done | 2 | 8 |
 | Epic 4 — Anime Tracking (Backend) | To Do | 7 | 23 |
 | Epic 5 — Analytics and Dashboard (Backend) | To Do | 5 | 18 |
-| Epic 6 — Angular Frontend Shell | 1 Done / 2 To Do | 3 | 8 |
+| Epic 6 — Angular Frontend Shell | 3 Done | 3 | 8 |
 | Epic 7 — Auth Frontend | To Do | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | To Do | 3 | 11 |
 | Epic 9 — Anime Tracking Frontend | To Do | 4 | 21 |
@@ -1096,18 +1097,18 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| Done (Identity backend + WatchSpaces backend + AniList search + Angular shell) | 46 |
-| To Do (remaining MVP) | 107 |
+| Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell) | 52 |
+| To Do (remaining MVP) | 101 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
 
 These groupings are not prescriptive. They suggest a natural sequencing to unblock dependent work quickly.
 
-**Sprint 1 — Angular shell**
-- Story 6.1 — Angular Project Setup (3 pts)
-- Story 6.2 — HTTP Client and Auth Interceptor (3 pts)
-- Story 6.3 — Theme System (2 pts)
+**Sprint 1 — Angular shell** *(Complete)*
+- Story 6.1 — Angular Project Setup (3 pts) — Done
+- Story 6.2 — HTTP Client and Auth Interceptor (3 pts) — Done
+- Story 6.3 — Theme System (2 pts) — Done
 - Total: 8 pts
 
 **Sprint 2 — Auth frontend + Watch Spaces frontend**
@@ -1121,9 +1122,9 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 **Sprint 3 — Watch Spaces frontend (management) + AniList backend**
 - Story 8.2 — Watch Space Settings Panel (3 pts)
 - Story 8.3 — Invitation Flow Frontend (5 pts)
-- Story 3.1 — AniList Search Proxy (5 pts)
-- Story 3.2 — AniList Media Detail (3 pts)
-- Total: 16 pts
+- ~~Story 3.1 — AniList Search Proxy (5 pts) — Done~~
+- ~~Story 3.2 — AniList Media Detail (3 pts) — Done~~
+- Total: 16 pts (8 pts remaining)
 
 **Sprint 4 — Anime Tracking backend (core)**
 - Story 4.1 — Add Anime to a Watch Space (5 pts)

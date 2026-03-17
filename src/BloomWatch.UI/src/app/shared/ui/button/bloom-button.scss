@@ -199,14 +199,14 @@
   }
 
   &:hover:not(:disabled) {
-    background-color: var(--bloom-pink-50);
-    border-color: var(--bloom-pink-200);
-    color: var(--bloom-pink-600);
+    background-color: var(--bloom-ghost-hover-bg);
+    border-color: var(--bloom-ghost-hover-border);
+    color: var(--bloom-ghost-hover-text);
     box-shadow: var(--bloom-shadow-xs);
   }
 
   &:active:not(:disabled) {
-    background-color: var(--bloom-pink-100);
+    background-color: var(--bloom-ghost-active-bg);
     box-shadow: none;
   }
 }

@@ -342,6 +342,102 @@
 
   --bloom-nav-height: 4rem;
   --bloom-sidebar-width: 16rem;
+
+  // --------------------------------------------------------------------------
+  // Semantic Aliases for Theme-Aware Overrides
+  // --------------------------------------------------------------------------
+  --bloom-selection-bg: var(--bloom-pink-200);
+  --bloom-selection-text: var(--bloom-pink-900);
+  --bloom-scrollbar-track: var(--bloom-neutral-100);
+  --bloom-scrollbar-thumb: var(--bloom-pink-300);
+  --bloom-scrollbar-thumb-hover: var(--bloom-pink-400);
+  --bloom-nav-bg: rgb(255 255 255 / 0.85);
+  --bloom-nav-border: var(--bloom-pink-100);
+  --bloom-ghost-hover-bg: var(--bloom-pink-50);
+  --bloom-ghost-hover-border: var(--bloom-pink-200);
+  --bloom-ghost-hover-text: var(--bloom-pink-600);
+  --bloom-ghost-active-bg: var(--bloom-pink-100);
+}
+
+// ============================================================================
+// Dark Theme Overrides
+// Deep purple surfaces with muted neon accents (kawaii dark mode)
+// ============================================================================
+
+html[data-theme='dark'] {
+  // --------------------------------------------------------------------------
+  // Surface Colors
+  // --------------------------------------------------------------------------
+  --bloom-surface-base: var(--bloom-neutral-900);
+  --bloom-surface-raised: var(--bloom-neutral-800);
+  --bloom-surface-overlay: var(--bloom-neutral-800);
+  --bloom-surface-sunken: var(--bloom-neutral-950);
+  --bloom-surface-tinted: #2a1f3d;
+  --bloom-surface-body: var(--bloom-neutral-950);
+
+  // --------------------------------------------------------------------------
+  // Text Colors
+  // --------------------------------------------------------------------------
+  --bloom-text-primary: var(--bloom-neutral-50);
+  --bloom-text-secondary: var(--bloom-neutral-300);
+  --bloom-text-tertiary: var(--bloom-neutral-400);
+  --bloom-text-disabled: var(--bloom-neutral-600);
+  --bloom-text-inverse: var(--bloom-neutral-900);
+  --bloom-text-link: var(--bloom-pink-300);
+  --bloom-text-link-hover: var(--bloom-pink-200);
+
+  // --------------------------------------------------------------------------
+  // Border Colors
+  // --------------------------------------------------------------------------
+  --bloom-border-default: var(--bloom-neutral-700);
+  --bloom-border-strong: var(--bloom-neutral-600);
+  --bloom-border-focus: var(--bloom-pink-400);
+  --bloom-border-error: var(--bloom-error);
+
+  // --------------------------------------------------------------------------
+  // Gradient Presets
+  // --------------------------------------------------------------------------
+  --bloom-gradient-surface: linear-gradient(180deg, #1a1228 0%, #150f20 50%, #120e1e 100%);
+  --bloom-gradient-kawaii: linear-gradient(135deg, #4a2040 0%, #2e1f4a 50%, #1a2848 100%);
+
+  // --------------------------------------------------------------------------
+  // Shadows (darker, more transparent for dark surfaces)
+  // --------------------------------------------------------------------------
+  --bloom-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --bloom-shadow-sm: 0 2px 6px -1px rgb(0 0 0 / 0.3),
+                     0 1px 3px -1px rgb(0 0 0 / 0.2);
+  --bloom-shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.35),
+                     0 2px 6px -2px rgb(0 0 0 / 0.2);
+  --bloom-shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.4),
+                     0 4px 8px -4px rgb(0 0 0 / 0.2);
+  --bloom-shadow-xl: 0 16px 40px -8px rgb(0 0 0 / 0.45),
+                     0 6px 12px -6px rgb(0 0 0 / 0.2);
+
+  --bloom-shadow-inner-glow: inset 0 1px 0 0 rgb(255 255 255 / 0.08),
+                             inset 0 -1px 2px 0 rgb(0 0 0 / 0.2);
+
+  // --------------------------------------------------------------------------
+  // Status Backgrounds (dark-appropriate tints)
+  // --------------------------------------------------------------------------
+  --bloom-success-bg: #0d2818;
+  --bloom-warning-bg: #2a1f08;
+  --bloom-error-bg: #2a0f0f;
+  --bloom-info-bg: #0f1a2a;
+
+  // --------------------------------------------------------------------------
+  // Theme-Aware Semantic Aliases
+  // --------------------------------------------------------------------------
+  --bloom-selection-bg: var(--bloom-pink-800);
+  --bloom-selection-text: var(--bloom-pink-100);
+  --bloom-scrollbar-track: var(--bloom-neutral-800);
+  --bloom-scrollbar-thumb: var(--bloom-neutral-600);
+  --bloom-scrollbar-thumb-hover: var(--bloom-neutral-500);
+  --bloom-nav-bg: rgb(18 14 30 / 0.9);
+  --bloom-nav-border: var(--bloom-neutral-700);
+  --bloom-ghost-hover-bg: var(--bloom-neutral-800);
+  --bloom-ghost-hover-border: var(--bloom-neutral-600);
+  --bloom-ghost-hover-text: var(--bloom-pink-300);
+  --bloom-ghost-active-bg: var(--bloom-neutral-700);
 }
 
 // ============================================================================

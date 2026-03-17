@@ -230,13 +230,13 @@ small {
 // --------------------------------------------------------------------------
 
 ::selection {
-  background-color: var(--bloom-pink-200);
-  color: var(--bloom-pink-900);
+  background-color: var(--bloom-selection-bg);
+  color: var(--bloom-selection-text);
 }
 
 ::-moz-selection {
-  background-color: var(--bloom-pink-200);
-  color: var(--bloom-pink-900);
+  background-color: var(--bloom-selection-bg);
+  color: var(--bloom-selection-text);
 }
 
 // --------------------------------------------------------------------------
@@ -249,24 +249,24 @@ small {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bloom-neutral-100);
+  background: var(--bloom-scrollbar-track);
   border-radius: var(--bloom-radius-pill);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--bloom-pink-300), var(--bloom-lilac-300));
+  background: var(--bloom-scrollbar-thumb);
   border-radius: var(--bloom-radius-pill);
-  border: 2px solid var(--bloom-neutral-100);
+  border: 2px solid var(--bloom-scrollbar-track);
 
   &:hover {
-    background: linear-gradient(180deg, var(--bloom-pink-400), var(--bloom-lilac-400));
+    background: var(--bloom-scrollbar-thumb-hover);
   }
 }
 
 // Firefox scrollbar
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--bloom-pink-300) var(--bloom-neutral-100);
+  scrollbar-color: var(--bloom-scrollbar-thumb) var(--bloom-scrollbar-track);
 }
 
 // --------------------------------------------------------------------------
