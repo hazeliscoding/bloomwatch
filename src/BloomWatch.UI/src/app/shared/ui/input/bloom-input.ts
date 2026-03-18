@@ -88,6 +88,7 @@ export class BloomInputComponent implements ControlValueAccessor {
   readonly autocomplete = input<string>('off');
 
   readonly valueChange = output<string>();
+  readonly blurred = output<void>();
 
   readonly value = signal('');
   readonly isFocused = signal(false);
@@ -136,5 +137,6 @@ export class BloomInputComponent implements ControlValueAccessor {
   onBlur(): void {
     this.isFocused.set(false);
     this.onTouched();
+    this.blurred.emit();
   }
 }
