@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { ShellLayout } from './core/layout/shell-layout/shell-layout';
 import { MinimalLayout } from './core/layout/minimal-layout/minimal-layout';
+import { authGuard } from './core/auth/guards/auth.guard';
+import { guestGuard } from './core/auth/guards/guest.guard';
 
 export const routes: Routes = [
   // Public routes (minimal layout — no nav bar)
@@ -9,14 +11,15 @@ export const routes: Routes = [
     component: MinimalLayout,
     children: [
       { path: '', loadComponent: () => import('./features/landing/landing').then(m => m.Landing), pathMatch: 'full' },
-      { path: 'login', loadComponent: () => import('./features/auth/login').then(m => m.Login) },
-      { path: 'register', loadComponent: () => import('./features/auth/register').then(m => m.Register) },
+      { path: 'login', canActivate: [guestGuard], loadComponent: () => import('./features/auth/login').then(m => m.Login) },
+      { path: 'register', canActivate: [guestGuard], loadComponent: () => import('./features/auth/register').then(m => m.Register) },
     ],
   },
   // Authenticated routes (shell layout — with nav bar)
   {
     path: '',
     component: ShellLayout,
+    canActivate: [authGuard],
     children: [
       { path: '', loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => m.dashboardRoutes) },
       { path: 'watch-spaces', loadChildren: () => import('./features/watch-spaces/watch-spaces.routes').then(m => m.watchSpacesRoutes) },
