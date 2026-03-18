@@ -3,6 +3,7 @@ using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.RecordWatchSession;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRating;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
@@ -83,6 +84,17 @@ public static class AnimeTrackingEndpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict);
+
+        group.MapPost("/{watchSpaceAnimeId:guid}/sessions", RecordWatchSessionAsync)
+            .WithName("RecordWatchSession")
+            .WithSummary("Record a watch session for an anime in a watch space")
+            .WithDescription(
+                "Creates a new watch session with an episode range and date for an anime " +
+                "in the specified watch space. The caller must be a member of the watch space.")
+            .Produces<RecordWatchSessionResult>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound);
 
         return app;
     }
@@ -276,6 +288,45 @@ public static class AnimeTrackingEndpoints
             return result is null
                 ? Results.NotFound(new { error = "Anime not found in this watch space." })
                 : Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+        catch (AnimeTrackingDomainException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> RecordWatchSessionAsync(
+        Guid watchSpaceId,
+        Guid watchSpaceAnimeId,
+        [FromBody] RecordWatchSessionRequest request,
+        ClaimsPrincipal user,
+        RecordWatchSessionCommandHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new RecordWatchSessionCommand(
+                    watchSpaceId,
+                    watchSpaceAnimeId,
+                    userId,
+                    request.SessionDateUtc,
+                    request.StartEpisode,
+                    request.EndEpisode,
+                    request.Notes),
+                ct);
+
+            return result is null
+                ? Results.NotFound(new { error = "Anime not found in this watch space." })
+                : Results.Created(
+                    $"/watchspaces/{watchSpaceId}/anime/{watchSpaceAnimeId}/sessions/{result.Id}",
+                    result);
         }
         catch (NotAWatchSpaceMemberException)
         {

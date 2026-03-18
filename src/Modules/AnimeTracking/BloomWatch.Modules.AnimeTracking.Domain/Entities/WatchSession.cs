@@ -18,4 +18,21 @@ public sealed class WatchSession
 
     // Required by EF Core
     private WatchSession() { }
+
+    internal WatchSession(
+        WatchSpaceAnimeId watchSpaceAnimeId,
+        DateTime sessionDateUtc,
+        int startEpisode,
+        int endEpisode,
+        string? notes,
+        Guid createdByUserId)
+    {
+        Id = Guid.NewGuid();
+        WatchSpaceAnimeId = watchSpaceAnimeId;
+        SessionDateUtc = sessionDateUtc;
+        StartEpisode = startEpisode;
+        EndEpisode = endEpisode;
+        Notes = notes;
+        CreatedByUserId = createdByUserId;
+    }
 }

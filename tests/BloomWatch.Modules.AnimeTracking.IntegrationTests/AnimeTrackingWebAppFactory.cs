@@ -1,0 +1,110 @@
+using BloomWatch.Modules.AnimeTracking.Infrastructure.CrossModule;
+using BloomWatch.Modules.AnimeTracking.Infrastructure.Persistence;
+using BloomWatch.Modules.Identity.Infrastructure.Persistence;
+using BloomWatch.Modules.WatchSpaces.Infrastructure.CrossModule;
+using BloomWatch.Modules.WatchSpaces.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace BloomWatch.Modules.AnimeTracking.IntegrationTests;
+
+/// <summary>
+/// Uses four named SQLite in-memory databases:
+/// - "identity_db": IdentityDbContext + IdentityReadDbContext
+/// - "watchspaces_db": WatchSpacesDbContext + WatchSpaceMembershipReadDbContext
+/// - "animetracking_db": AnimeTrackingDbContext
+/// - "anilistsync_db": AniListMediaCacheReadDbContext
+/// </summary>
+public sealed class AnimeTrackingWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
+{
+    private SqliteConnection? _identityConnection;
+    private SqliteConnection? _watchSpacesConnection;
+    private SqliteConnection? _animeTrackingConnection;
+    private SqliteConnection? _aniListSyncConnection;
+    private readonly string _dbSuffix = Guid.NewGuid().ToString("N");
+
+    public async Task InitializeAsync()
+    {
+        _identityConnection = new SqliteConnection($"Data Source=identity_{_dbSuffix};Mode=Memory;Cache=Shared");
+        _watchSpacesConnection = new SqliteConnection($"Data Source=watchspaces_{_dbSuffix};Mode=Memory;Cache=Shared");
+        _animeTrackingConnection = new SqliteConnection($"Data Source=animetracking_{_dbSuffix};Mode=Memory;Cache=Shared");
+        _aniListSyncConnection = new SqliteConnection($"Data Source=anilistsync_{_dbSuffix};Mode=Memory;Cache=Shared");
+
+        await _identityConnection.OpenAsync();
+        await _watchSpacesConnection.OpenAsync();
+        await _animeTrackingConnection.OpenAsync();
+        await _aniListSyncConnection.OpenAsync();
+    }
+
+    public new async Task DisposeAsync()
+    {
+        if (_identityConnection is not null) await _identityConnection.DisposeAsync();
+        if (_watchSpacesConnection is not null) await _watchSpacesConnection.DisposeAsync();
+        if (_animeTrackingConnection is not null) await _animeTrackingConnection.DisposeAsync();
+        if (_aniListSyncConnection is not null) await _aniListSyncConnection.DisposeAsync();
+
+        await base.DisposeAsync();
+    }
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =>
+        {
+            RemoveDbContext<IdentityDbContext>(services);
+            RemoveDbContext<IdentityReadDbContext>(services);
+            RemoveDbContext<WatchSpacesDbContext>(services);
+            RemoveDbContext<AnimeTrackingDbContext>(services);
+            RemoveDbContext<WatchSpaceMembershipReadDbContext>(services);
+            RemoveDbContext<AniListMediaCacheReadDbContext>(services);
+
+            services.AddDbContext<IdentityDbContext>(o => o.UseSqlite(_identityConnection!));
+            services.AddDbContext<IdentityReadDbContext>(o => o.UseSqlite(_identityConnection!));
+            services.AddDbContext<WatchSpacesDbContext>(o => o.UseSqlite(_watchSpacesConnection!));
+            services.AddDbContext<AnimeTrackingDbContext>(o => o.UseSqlite(_animeTrackingConnection!));
+            services.AddDbContext<WatchSpaceMembershipReadDbContext>(o => o.UseSqlite(_watchSpacesConnection!));
+            services.AddDbContext<AniListMediaCacheReadDbContext>(o => o.UseSqlite(_aniListSyncConnection!));
+        });
+
+        builder.UseEnvironment("Testing");
+    }
+
+    public void EnsureSchemaCreated()
+    {
+        using var scope = Services.CreateScope();
+        scope.ServiceProvider.GetRequiredService<IdentityDbContext>().Database.EnsureCreated();
+        scope.ServiceProvider.GetRequiredService<WatchSpacesDbContext>().Database.EnsureCreated();
+        scope.ServiceProvider.GetRequiredService<AnimeTrackingDbContext>().Database.EnsureCreated();
+        scope.ServiceProvider.GetRequiredService<AniListMediaCacheReadDbContext>().Database.EnsureCreated();
+    }
+
+    /// <summary>
+    /// Seeds a media cache row so that AddAnimeToWatchSpace can resolve the AniList media ID.
+    /// </summary>
+    public void SeedMediaCache(int aniListMediaId, string title = "Test Anime", int? episodes = 24)
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AniListMediaCacheReadDbContext>();
+        db.Database.ExecuteSqlRaw(
+            "INSERT OR IGNORE INTO media_cache (anilist_media_id, title_english, title_romaji, title_native, cover_image_url, episodes, format, season, season_year) VALUES ({0}, {1}, {2}, NULL, NULL, {3}, 'TV', 'WINTER', 2026)",
+            aniListMediaId, title, title, episodes ?? (object)DBNull.Value);
+    }
+
+    private static void RemoveDbContext<T>(IServiceCollection services) where T : DbContext
+    {
+        var toRemove = services
+            .Where(d =>
+                d.ServiceType == typeof(DbContextOptions<T>) ||
+                d.ServiceType == typeof(T) ||
+                (d.ServiceType.IsGenericType &&
+                 d.ServiceType.GetGenericTypeDefinition().Name.Contains("DbContextOptionsConfiguration") &&
+                 d.ServiceType.GenericTypeArguments.Length == 1 &&
+                 d.ServiceType.GenericTypeArguments[0] == typeof(T)))
+            .ToList();
+
+        foreach (var descriptor in toRemove)
+            services.Remove(descriptor);
+    }
+}

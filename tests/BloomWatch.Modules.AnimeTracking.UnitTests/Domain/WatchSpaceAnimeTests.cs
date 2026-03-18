@@ -384,6 +384,91 @@ public sealed class WatchSpaceAnimeTests
         entry.RatingNotes.Should().Be("Keep these notes");
     }
 
+    // --- RecordWatchSession tests ---
+
+    [Fact]
+    public void RecordWatchSession_ValidInput_CreatesSessionAndAddsToCollection()
+    {
+        var anime = CreateDefault();
+        var sessionDate = new DateTime(2026, 3, 15, 20, 0, 0, DateTimeKind.Utc);
+
+        var session = anime.RecordWatchSession(sessionDate, 1, 3, "Great first session!", _userId);
+
+        session.Id.Should().NotBeEmpty();
+        session.WatchSpaceAnimeId.Should().Be(anime.Id);
+        session.SessionDateUtc.Should().Be(sessionDate);
+        session.StartEpisode.Should().Be(1);
+        session.EndEpisode.Should().Be(3);
+        session.Notes.Should().Be("Great first session!");
+        session.CreatedByUserId.Should().Be(_userId);
+        anime.WatchSessions.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void RecordWatchSession_SingleEpisode_Succeeds()
+    {
+        var anime = CreateDefault();
+
+        var session = anime.RecordWatchSession(DateTime.UtcNow, 7, 7, null, _userId);
+
+        session.StartEpisode.Should().Be(7);
+        session.EndEpisode.Should().Be(7);
+    }
+
+    [Fact]
+    public void RecordWatchSession_NullNotes_Succeeds()
+    {
+        var anime = CreateDefault();
+
+        var session = anime.RecordWatchSession(DateTime.UtcNow, 1, 2, null, _userId);
+
+        session.Notes.Should().BeNull();
+    }
+
+    [Fact]
+    public void RecordWatchSession_StartEpisodeZero_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.RecordWatchSession(DateTime.UtcNow, 0, 3, null, _userId);
+
+        act.Should().Throw<InvalidWatchSessionException>()
+            .WithMessage("*at least 1*");
+    }
+
+    [Fact]
+    public void RecordWatchSession_StartEpisodeNegative_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.RecordWatchSession(DateTime.UtcNow, -1, 3, null, _userId);
+
+        act.Should().Throw<InvalidWatchSessionException>()
+            .WithMessage("*at least 1*");
+    }
+
+    [Fact]
+    public void RecordWatchSession_EndEpisodeLessThanStart_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.RecordWatchSession(DateTime.UtcNow, 5, 3, null, _userId);
+
+        act.Should().Throw<InvalidWatchSessionException>()
+            .WithMessage("*greater than or equal*");
+    }
+
+    [Fact]
+    public void RecordWatchSession_MultipleSessions_AllAdded()
+    {
+        var anime = CreateDefault();
+
+        anime.RecordWatchSession(DateTime.UtcNow, 1, 3, null, _userId);
+        anime.RecordWatchSession(DateTime.UtcNow, 4, 6, null, _userId);
+
+        anime.WatchSessions.Should().HaveCount(2);
+    }
+
     private WatchSpaceAnime CreateDefault() => WatchSpaceAnime.Create(
         watchSpaceId: _watchSpaceId,
         aniListMediaId: 154587,

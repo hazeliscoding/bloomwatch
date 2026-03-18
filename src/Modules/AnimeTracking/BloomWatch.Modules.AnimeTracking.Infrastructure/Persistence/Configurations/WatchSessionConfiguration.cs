@@ -14,7 +14,8 @@ internal sealed class WatchSessionConfiguration : IEntityTypeConfiguration<Watch
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Id)
-            .HasColumnName("id");
+            .HasColumnName("id")
+            .ValueGeneratedNever();
 
         builder.Property(s => s.WatchSpaceAnimeId)
             .HasColumnName("watch_space_anime_id")
