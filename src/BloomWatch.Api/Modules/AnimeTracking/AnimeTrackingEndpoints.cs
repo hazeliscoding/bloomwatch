@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
@@ -23,6 +24,16 @@ public static class AnimeTrackingEndpoints
                 "Supports optional status filtering. The caller must be a member of the watch space.")
             .Produces<ListWatchSpaceAnimeResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status403Forbidden);
+
+        group.MapGet("/{watchSpaceAnimeId:guid}", GetAnimeDetailAsync)
+            .WithName("GetWatchSpaceAnimeDetail")
+            .WithSummary("Get full detail for a single anime in a watch space")
+            .WithDescription(
+                "Returns the full aggregate for a single tracked anime including all participant entries " +
+                "(with ratings) and watch session history. The caller must be a member of the watch space.")
+            .Produces<GetWatchSpaceAnimeDetailResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound);
 
         group.MapPost("/", AddAnimeAsync)
             .WithName("AddAnimeToWatchSpace")
@@ -89,6 +100,29 @@ public static class AnimeTrackingEndpoints
                 new ListWatchSpaceAnimeQuery(watchSpaceId, status, userId), ct);
 
             return Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+    }
+
+    private static async Task<IResult> GetAnimeDetailAsync(
+        Guid watchSpaceId,
+        Guid watchSpaceAnimeId,
+        ClaimsPrincipal user,
+        GetWatchSpaceAnimeDetailQueryHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+        try
+        {
+            var result = await handler.HandleAsync(
+                new GetWatchSpaceAnimeDetailQuery(watchSpaceId, watchSpaceAnimeId, userId), ct);
+
+            return result is null
+                ? Results.NotFound(new { error = "Anime not found in this watch space." })
+                : Results.Ok(result);
         }
         catch (NotAWatchSpaceMemberException)
         {

@@ -1,4 +1,5 @@
 using BloomWatch.Modules.AnimeTracking.Domain.Aggregates;
+using BloomWatch.Modules.AnimeTracking.Domain.Entities;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,5 +17,6 @@ public sealed class AnimeTrackingDbContext(DbContextOptions<AnimeTrackingDbConte
         modelBuilder.HasDefaultSchema("anime_tracking");
         modelBuilder.ApplyConfiguration(new WatchSpaceAnimeConfiguration());
         modelBuilder.ApplyConfiguration(new ParticipantEntryConfiguration());
+        modelBuilder.ApplyConfiguration(new WatchSessionConfiguration());
     }
 }

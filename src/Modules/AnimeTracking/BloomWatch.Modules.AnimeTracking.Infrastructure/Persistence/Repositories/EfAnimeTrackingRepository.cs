@@ -1,6 +1,7 @@
 using BloomWatch.Modules.AnimeTracking.Domain.Aggregates;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
+using BloomWatch.Modules.AnimeTracking.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace BloomWatch.Modules.AnimeTracking.Infrastructure.Persistence.Repositories;
@@ -17,6 +18,15 @@ internal sealed class EfAnimeTrackingRepository(AnimeTrackingDbContext dbContext
         => dbContext.WatchSpaceAnimes.AnyAsync(
             a => a.WatchSpaceId == watchSpaceId && a.AniListMediaId == aniListMediaId,
             cancellationToken);
+
+    public Task<WatchSpaceAnime?> GetByIdAsync(
+        Guid watchSpaceId, WatchSpaceAnimeId id, CancellationToken cancellationToken = default)
+        => dbContext.WatchSpaceAnimes
+            .Include(a => a.ParticipantEntries)
+            .Include(a => a.WatchSessions)
+            .FirstOrDefaultAsync(
+                a => a.WatchSpaceId == watchSpaceId && a.Id == id,
+                cancellationToken);
 
     public async Task<IReadOnlyList<WatchSpaceAnime>> ListByWatchSpaceAsync(
         Guid watchSpaceId, AnimeStatus? statusFilter, CancellationToken cancellationToken = default)

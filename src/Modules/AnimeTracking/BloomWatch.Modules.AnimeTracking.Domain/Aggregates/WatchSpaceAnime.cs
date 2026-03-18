@@ -10,6 +10,7 @@ namespace BloomWatch.Modules.AnimeTracking.Domain.Aggregates;
 public sealed class WatchSpaceAnime
 {
     private readonly List<ParticipantEntry> _participantEntries = [];
+    private readonly List<WatchSession> _watchSessions = [];
 
     public WatchSpaceAnimeId Id { get; private set; }
     public Guid WatchSpaceId { get; private set; }
@@ -29,6 +30,7 @@ public sealed class WatchSpaceAnime
     public DateTime AddedAtUtc { get; private set; }
 
     public IReadOnlyList<ParticipantEntry> ParticipantEntries => _participantEntries.AsReadOnly();
+    public IReadOnlyList<WatchSession> WatchSessions => _watchSessions.AsReadOnly();
 
     // Required by EF Core
     private WatchSpaceAnime() { }

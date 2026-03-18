@@ -1,5 +1,6 @@
 using BloomWatch.Modules.AnimeTracking.Application.Abstractions;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.CrossModule;
@@ -41,6 +42,7 @@ public static class ServiceCollectionExtensions
 
         // Query handlers
         services.AddScoped<ListWatchSpaceAnimeQueryHandler>();
+        services.AddScoped<GetWatchSpaceAnimeDetailQueryHandler>();
 
         return services;
     }
