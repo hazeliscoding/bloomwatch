@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
+using BloomWatch.Modules.AnimeTracking.Domain.Enums;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +14,15 @@ public static class AnimeTrackingEndpoints
         var group = app.MapGroup("/watchspaces/{watchSpaceId:guid}/anime")
             .WithTags("AnimeTracking")
             .RequireAuthorization();
+
+        group.MapGet("/", ListAnimeAsync)
+            .WithName("ListWatchSpaceAnime")
+            .WithSummary("List all anime in a watch space")
+            .WithDescription(
+                "Returns all anime tracked in the specified watch space with participant summaries. " +
+                "Supports optional status filtering. The caller must be a member of the watch space.")
+            .Produces<ListWatchSpaceAnimeResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden);
 
         group.MapPost("/", AddAnimeAsync)
             .WithName("AddAnimeToWatchSpace")
@@ -61,6 +72,27 @@ public static class AnimeTrackingEndpoints
         catch (MediaNotFoundException)
         {
             return Results.NotFound(new { error = "AniList media not found in cache." });
+        }
+    }
+
+    private static async Task<IResult> ListAnimeAsync(
+        Guid watchSpaceId,
+        [FromQuery] AnimeStatus? status,
+        ClaimsPrincipal user,
+        ListWatchSpaceAnimeQueryHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+        try
+        {
+            var result = await handler.HandleAsync(
+                new ListWatchSpaceAnimeQuery(watchSpaceId, status, userId), ct);
+
+            return Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
         }
     }
 
