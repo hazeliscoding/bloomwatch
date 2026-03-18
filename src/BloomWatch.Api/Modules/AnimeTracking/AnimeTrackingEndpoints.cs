@@ -2,6 +2,7 @@ using System.Security.Claims;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
@@ -44,6 +45,17 @@ public static class AnimeTrackingEndpoints
                 "for an anime in the specified watch space. Only provided fields are updated. " +
                 "The caller must be a member of the watch space.")
             .Produces<GetWatchSpaceAnimeDetailResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound);
+
+        group.MapPatch("/{watchSpaceAnimeId:guid}/participant-progress", UpdateParticipantProgressAsync)
+            .WithName("UpdateParticipantProgress")
+            .WithSummary("Update the caller's individual progress for an anime in a watch space")
+            .WithDescription(
+                "Updates the requesting user's individual status and episodes watched for an anime " +
+                "in the specified watch space. Creates the participant entry if it does not already exist.")
+            .Produces<UpdateParticipantProgressResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound);
@@ -173,6 +185,44 @@ public static class AnimeTrackingEndpoints
                     request.Mood,
                     request.Vibe,
                     request.Pitch),
+                ct);
+
+            return result is null
+                ? Results.NotFound(new { error = "Anime not found in this watch space." })
+                : Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+        catch (AnimeTrackingDomainException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> UpdateParticipantProgressAsync(
+        Guid watchSpaceId,
+        Guid watchSpaceAnimeId,
+        [FromBody] UpdateParticipantProgressRequest request,
+        ClaimsPrincipal user,
+        UpdateParticipantProgressCommandHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        if (!Enum.TryParse<AnimeStatus>(request.IndividualStatus, ignoreCase: true, out var parsedStatus))
+            return Results.BadRequest(new { error = $"Invalid status value '{request.IndividualStatus}'." });
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new UpdateParticipantProgressCommand(
+                    watchSpaceId,
+                    watchSpaceAnimeId,
+                    userId,
+                    parsedStatus,
+                    request.EpisodesWatched),
                 ct);
 
             return result is null

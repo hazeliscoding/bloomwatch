@@ -211,6 +211,79 @@ public sealed class WatchSpaceAnimeTests
         anime.SharedEpisodesWatched.Should().Be(28);
     }
 
+    [Fact]
+    public void UpdateParticipantProgress_ExistingEntry_UpdatesAndReturnsIt()
+    {
+        var anime = CreateDefault(); // creates initial entry for _userId
+        var before = DateTime.UtcNow;
+
+        var entry = anime.UpdateParticipantProgress(_userId, AnimeStatus.Watching, 7);
+
+        entry.UserId.Should().Be(_userId);
+        entry.IndividualStatus.Should().Be(AnimeStatus.Watching);
+        entry.EpisodesWatched.Should().Be(7);
+        entry.LastUpdatedAtUtc.Should().BeOnOrAfter(before);
+        anime.ParticipantEntries.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void UpdateParticipantProgress_NoExistingEntry_CreatesNewEntry()
+    {
+        var anime = CreateDefault();
+        var otherUserId = Guid.NewGuid();
+
+        var entry = anime.UpdateParticipantProgress(otherUserId, AnimeStatus.Watching, 3);
+
+        entry.UserId.Should().Be(otherUserId);
+        entry.IndividualStatus.Should().Be(AnimeStatus.Watching);
+        entry.EpisodesWatched.Should().Be(3);
+        anime.ParticipantEntries.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void UpdateParticipantProgress_NegativeEpisodeCount_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.UpdateParticipantProgress(_userId, AnimeStatus.Watching, -1);
+
+        act.Should().Throw<InvalidParticipantProgressException>()
+            .WithMessage("*non-negative*");
+    }
+
+    [Fact]
+    public void UpdateParticipantProgress_EpisodeCountExceedsSnapshot_Throws()
+    {
+        var anime = CreateDefault(); // episodeCountSnapshot = 28
+
+        var act = () => anime.UpdateParticipantProgress(_userId, AnimeStatus.Watching, 29);
+
+        act.Should().Throw<InvalidParticipantProgressException>()
+            .WithMessage("*cannot exceed*");
+    }
+
+    [Fact]
+    public void UpdateParticipantProgress_EpisodeCountWhenSnapshotNull_Accepted()
+    {
+        var anime = WatchSpaceAnime.Create(
+            watchSpaceId: _watchSpaceId,
+            aniListMediaId: 100,
+            preferredTitle: "Ongoing",
+            episodeCountSnapshot: null,
+            coverImageUrlSnapshot: null,
+            format: null,
+            season: null,
+            seasonYear: null,
+            mood: null,
+            vibe: null,
+            pitch: null,
+            addedByUserId: _userId);
+
+        var entry = anime.UpdateParticipantProgress(_userId, AnimeStatus.Watching, 100);
+
+        entry.EpisodesWatched.Should().Be(100);
+    }
+
     private WatchSpaceAnime CreateDefault() => WatchSpaceAnime.Create(
         watchSpaceId: _watchSpaceId,
         aniListMediaId: 154587,

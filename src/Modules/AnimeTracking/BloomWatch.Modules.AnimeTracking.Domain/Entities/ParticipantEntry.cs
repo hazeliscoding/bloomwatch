@@ -33,4 +33,28 @@ public sealed class ParticipantEntry
         EpisodesWatched = 0;
         LastUpdatedAtUtc = now;
     }
+
+    internal static ParticipantEntry Create(
+        WatchSpaceAnimeId watchSpaceAnimeId,
+        Guid userId,
+        AnimeStatus individualStatus,
+        int episodesWatched)
+    {
+        return new ParticipantEntry
+        {
+            Id = Guid.NewGuid(),
+            WatchSpaceAnimeId = watchSpaceAnimeId,
+            UserId = userId,
+            IndividualStatus = individualStatus,
+            EpisodesWatched = episodesWatched,
+            LastUpdatedAtUtc = DateTime.UtcNow
+        };
+    }
+
+    internal void Update(AnimeStatus individualStatus, int episodesWatched)
+    {
+        IndividualStatus = individualStatus;
+        EpisodesWatched = episodesWatched;
+        LastUpdatedAtUtc = DateTime.UtcNow;
+    }
 }

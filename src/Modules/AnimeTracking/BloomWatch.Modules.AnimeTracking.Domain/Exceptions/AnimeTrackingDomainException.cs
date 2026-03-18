@@ -29,3 +29,10 @@ public sealed class MediaNotFoundException(int aniListMediaId)
 /// </summary>
 public sealed class InvalidSharedStateException(string message)
     : AnimeTrackingDomainException(message);
+
+/// <summary>
+/// Thrown when participant progress mutation violates domain constraints
+/// (e.g. invalid episode count).
+/// </summary>
+public sealed class InvalidParticipantProgressException(string message)
+    : AnimeTrackingDomainException(message);

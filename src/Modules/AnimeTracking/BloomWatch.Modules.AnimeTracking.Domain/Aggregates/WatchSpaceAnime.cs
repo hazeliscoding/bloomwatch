@@ -117,4 +117,35 @@ public sealed class WatchSpaceAnime
         if (pitch is not null)
             Pitch = pitch;
     }
+
+    /// <summary>
+    /// Updates (or creates) the requesting user's participant progress.
+    /// Returns the updated <see cref="ParticipantEntry"/>.
+    /// </summary>
+    public ParticipantEntry UpdateParticipantProgress(
+        Guid userId,
+        AnimeStatus individualStatus,
+        int episodesWatched)
+    {
+        if (episodesWatched < 0)
+            throw new InvalidParticipantProgressException("Episodes watched must be non-negative.");
+
+        if (EpisodeCountSnapshot.HasValue && episodesWatched > EpisodeCountSnapshot.Value)
+            throw new InvalidParticipantProgressException(
+                $"Episodes watched ({episodesWatched}) cannot exceed total episode count ({EpisodeCountSnapshot.Value}).");
+
+        var entry = _participantEntries.FirstOrDefault(e => e.UserId == userId);
+
+        if (entry is not null)
+        {
+            entry.Update(individualStatus, episodesWatched);
+        }
+        else
+        {
+            entry = ParticipantEntry.Create(Id, userId, individualStatus, episodesWatched);
+            _participantEntries.Add(entry);
+        }
+
+        return entry;
+    }
 }
