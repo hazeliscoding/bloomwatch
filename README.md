@@ -23,7 +23,7 @@ A shared anime tracking platform for pairs and small groups. BloomWatch lets fri
 **Testing**
 
 - xUnit, NSubstitute, FluentAssertions (backend)
-- 115 automated tests across 8 test projects
+- 188 automated tests (113 backend across 7 xUnit projects + 75 frontend via Vitest)
 
 ## Project Structure
 
@@ -35,7 +35,7 @@ src/
 │   └── src/
 │       ├── app/
 │       │   ├── core/layout/                 # Shell layout (nav bar) and minimal layout (auth pages)
-│       │   ├── features/                    # Feature modules: landing, auth, dashboard, watch-spaces, settings, showcase
+│       │   ├── features/                    # Feature modules: landing, auth (register, login), dashboard, watch-spaces, settings, showcase
 │       │   └── shared/
 │       │       ├── styles/                  # Design tokens, base styles, animations, utilities
 │       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar)
@@ -57,8 +57,8 @@ src/
     │   ├── BloomWatch.Modules.AniListSync.Infrastructure/  # AniList GraphQL client, EF Core + in-memory caching
     │   └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
     └── AnimeTracking/
-        ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, tracking entities
-        ├── BloomWatch.Modules.AnimeTracking.Application/     # Add anime, cross-module media cache lookup
+        ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, ParticipantEntry, WatchSession entities
+        ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail use cases; cross-module media cache lookup
         ├── BloomWatch.Modules.AnimeTracking.Infrastructure/  # EF Core, cross-module adapters
         └── BloomWatch.Modules.AnimeTracking.Contracts/       # (reserved for integration events)
 
@@ -181,6 +181,16 @@ GET /api/anilist/search?query=cowboy+bebop              # Search for anime via A
 GET /api/anilist/media/{anilistMediaId}                  # Get full media detail (cached in PostgreSQL)
 ```
 
+### AnimeTracking
+
+All AnimeTracking endpoints require a valid JWT and watch space membership.
+
+```http
+POST /watchspaces/{id}/anime                               # Add an anime by AniList media ID
+GET  /watchspaces/{id}/anime                               # List anime in a watch space (optional ?status= filter)
+GET  /watchspaces/{id}/anime/{watchSpaceAnimeId}            # Get full anime detail with participants and sessions
+```
+
 A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
 
 ## Frontend
@@ -296,10 +306,15 @@ openspec/
 │   ├── anilist-search/
 │   ├── anilist-media-detail/
 │   ├── add-anime-to-watch-space/
+│   ├── list-watch-space-anime/
+│   ├── watch-space-anime-detail/
 │   ├── angular-routing-shell/
 │   ├── http-client-setup/
 │   ├── auth-interceptor/
-│   └── theme-switching/
+│   ├── theme-switching/
+│   ├── landing-page/
+│   ├── registration-form/
+│   └── login-form/
 └── changes/
     └── archive/                  # Completed changes
 ```
@@ -317,6 +332,11 @@ openspec/
 | `http-client-and-auth-interceptor` | 2026-03-16 | Angular HTTP client, API service, JWT auth interceptor |
 | `theme-system-light-dark-mode` | 2026-03-17 | Signal-based ThemeService with light/dark toggle and persistence |
 | `add-anime-to-watch-space` | 2026-03-17 | AnimeTracking module: add anime to watch space with media cache integration |
+| `landing-page` | 2026-03-17 | Landing page with hero section, feature cards, and CTAs |
+| `list-anime-in-watch-space-backend` | 2026-03-17 | `GET /watchspaces/{id}/anime` with status filter and participant summaries |
+| `registration-page-frontend` | 2026-03-17 | Registration form with validation, auto-login, and error handling |
+| `get-anime-detail-backend` | 2026-03-18 | `GET /watchspaces/{id}/anime/{animeId}` with full aggregate detail |
+| `login-page` | 2026-03-18 | Login form with validation and error handling |
 
 ### Working with OpenSpec
 

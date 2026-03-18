@@ -57,7 +57,10 @@
       "Bash(npx ng:*)",
       "Bash(openspec list:*)",
       "Bash(openspec:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npm test:*)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }

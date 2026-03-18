@@ -2,7 +2,7 @@
 
 **Document version:** 1.3
 **Created:** 2026-03-13
-**Last updated:** 2026-03-17
+**Last updated:** 2026-03-18
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
 **Tech stack:** .NET 10 / ASP.NET Core Minimal APIs, PostgreSQL, EF Core, Angular, AniList GraphQL
 
@@ -501,7 +501,7 @@ As an authenticated user, I want to fetch full details for a specific AniList an
 
 **Goal:** Members of a watch space can add anime, track shared status and progress, record individual ratings, and log watch sessions.
 **Module:** AnimeTracking
-**Backend status:** In Progress (2 Done, 5 To Do)
+**Backend status:** In Progress (3 Done, 4 To Do)
 
 ---
 
@@ -533,6 +533,9 @@ As a watch space member, I want to add an anime to my watch space by its AniList
 
 ---
 
+<details>
+<summary>Story 4.2 — List Anime in a Watch Space (Backend)</summary>
+
 ### Story 4.2 — List Anime in a Watch Space (Backend)
 
 **Status:** ✅ Done
@@ -552,11 +555,16 @@ As a watch space member, I want to see all anime in my watch space, so that I ca
 **Module:** AnimeTracking
 **Endpoints:** `GET /watchspaces/{id}/anime`
 
+</details>
+
 ---
+
+<details>
+<summary>Story 4.3 — Get Anime Detail in a Watch Space (Backend)</summary>
 
 ### Story 4.3 — Get Anime Detail in a Watch Space (Backend)
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Single-record read with membership check. Returns full aggregate: shared state, all participant entries with ratings, and watch session list.
 
@@ -572,6 +580,8 @@ As a watch space member, I want to view full details for one anime in my watch s
 
 **Module:** AnimeTracking
 **Endpoints:** `GET /watchspaces/{id}/anime/{watchSpaceAnimeId}`
+
+</details>
 
 ---
 
@@ -868,7 +878,7 @@ As a user, I want to switch between a light pastel mode and a dark mode, so that
 ## Epic 7 — Auth Frontend
 
 **Goal:** Users can register and log in through the Angular frontend.
-**Frontend status:** 2 Done, 2 To Do
+**Frontend status:** 3 Done, 1 To Do
 
 ---
 
@@ -894,6 +904,9 @@ As a visitor, I want to see a landing page that explains what BloomWatch does, s
 
 ---
 
+<details>
+<summary>Story 7.2 — Registration Page</summary>
+
 ### Story 7.2 — Registration Page
 
 **Status:** ✅ Done
@@ -911,11 +924,16 @@ As a new user, I want to fill in a registration form with my display name, email
 - Server-side errors (e.g. email already taken) are displayed inline near the relevant field or as a form-level alert
 - Already-authenticated users are redirected away from this page (auth guard)
 
+</details>
+
 ---
+
+<details>
+<summary>Story 7.3 — Login Page</summary>
 
 ### Story 7.3 — Login Page
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Simpler than registration — two fields, one API call, straightforward error handling.
 
@@ -929,6 +947,8 @@ As a returning user, I want to enter my email and password to log in, so that I 
 - Invalid credentials display a clear error message without revealing whether the email exists
 - Loading state is shown while the request is in flight
 - Already-authenticated users are redirected away from this page (auth guard)
+
+</details>
 
 ---
 
@@ -1194,10 +1214,10 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 1 — Authentication and Identity (Backend) | 3 ✅ Done | 3 | 8 |
 | Epic 2 — Watch Spaces Management (Backend) | 12 ✅ Done | 12 | 28 |
 | Epic 3 — AniList Discovery (Backend) | 2 ✅ Done | 2 | 8 |
-| Epic 4 — Anime Tracking (Backend) | 2 ✅ Done, 5 📋 To Do | 7 | 23 |
+| Epic 4 — Anime Tracking (Backend) | 3 ✅ Done, 4 📋 To Do | 7 | 23 |
 | Epic 5 — Analytics and Dashboard (Backend) | 📋 To Do | 5 | 18 |
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
-| Epic 7 — Auth Frontend | 2 ✅ Done, 2 📋 To Do | 4 | 9 |
+| Epic 7 — Auth Frontend | 3 ✅ Done, 1 📋 To Do | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 📋 To Do | 3 | 11 |
 | Epic 9 — Anime Tracking Frontend | 📋 To Do | 4 | 21 |
 | Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
@@ -1207,8 +1227,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Landing page + Add anime + List anime + Registration page) | 65 |
-| 📋 To Do (remaining MVP) | 88 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Landing page + Add anime + List anime + Get anime detail + Registration page + Login page) | 70 |
+| 📋 To Do (remaining MVP) | 83 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1224,10 +1244,10 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 **Sprint 2 — Auth frontend + Watch Spaces frontend**
 - ~~Story 7.1 — Landing Page (2 pts) — ✅ Done~~
 - ~~Story 7.2 — Registration Page (3 pts) — ✅ Done~~
-- Story 7.3 — Login Page (2 pts)
+- ~~Story 7.3 — Login Page (2 pts) — ✅ Done~~
 - Story 7.4 — Auth Route Guards (2 pts)
 - Story 8.1 — Watch Space Selector Page (3 pts)
-- Total: 12 pts (7 pts remaining)
+- Total: 12 pts (5 pts remaining)
 
 **Sprint 3 — Watch Spaces frontend (management) + AniList backend**
 - Story 8.2 — Watch Space Settings Panel (3 pts)
@@ -1239,9 +1259,9 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 **Sprint 4 — Anime Tracking backend (core)**
 - ~~Story 4.1 — Add Anime to a Watch Space (5 pts) — ✅ Done~~
 - ~~Story 4.2 — List Anime in a Watch Space (3 pts) — ✅ Done~~
-- Story 4.3 — Get Anime Detail (3 pts)
+- ~~Story 4.3 — Get Anime Detail (3 pts) — ✅ Done~~
 - Story 4.4 — Update Shared Anime Status (3 pts)
-- Total: 14 pts (6 pts remaining)
+- Total: 14 pts (3 pts remaining)
 
 **Sprint 5 — Anime Tracking backend (progress, ratings, sessions)**
 - Story 4.5 — Update Individual Participant Progress (3 pts)
