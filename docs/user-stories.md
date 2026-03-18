@@ -501,7 +501,7 @@ As an authenticated user, I want to fetch full details for a specific AniList an
 
 **Goal:** Members of a watch space can add anime, track shared status and progress, record individual ratings, and log watch sessions.
 **Module:** AnimeTracking
-**Backend status:** In Progress (4 Done, 3 To Do)
+**Backend status:** In Progress (5 Done, 2 To Do)
 
 ---
 
@@ -612,9 +612,12 @@ As a watch space member, I want to update the shared status of an anime (e.g. mo
 
 ---
 
+<details>
+<summary>Story 4.5 — Update Individual Participant Progress and Status (Backend)</summary>
+
 ### Story 4.5 — Update Individual Participant Progress and Status (Backend)
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Creates or updates the calling user's ParticipantEntry for the anime. Domain rules: episodes cannot exceed known count; status is an enum. Upsert semantics for the entry.
 
@@ -631,6 +634,8 @@ As a watch space member, I want to update my own progress and individual status 
 
 **Module:** AnimeTracking
 **Endpoints:** `PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-progress`
+
+</details>
 
 ---
 
@@ -981,13 +986,16 @@ As a developer, I want route guards that prevent unauthenticated users from acce
 ## Epic 8 — Watch Spaces Frontend
 
 **Goal:** Users can create, view, and manage watch spaces through the Angular UI, including the full invitation flow.
-**Frontend status:** To Do
+**Frontend status:** In Progress (1 Done, 2 To Do)
 
 ---
 
+<details>
+<summary>Story 8.1 — Watch Space Selector Page</summary>
+
 ### Story 8.1 — Watch Space Selector Page
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** List view with API call, create dialog, and navigation to a specific space. A few UI states (empty, loading, populated).
 
@@ -1001,6 +1009,10 @@ As an authenticated user, I want to see all my watch spaces listed on a selector
 - Form submits to `POST /watchspaces`; on success, the new space appears in the list immediately
 - Loading and empty states are handled gracefully
 - Creating a space with a blank name shows a validation error before submitting
+
+**Known gap:** Member count is not yet displayed on cards (model and template need `memberCount` field).
+
+</details>
 
 ---
 
@@ -1224,11 +1236,11 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 1 — Authentication and Identity (Backend) | 3 ✅ Done | 3 | 8 |
 | Epic 2 — Watch Spaces Management (Backend) | 12 ✅ Done | 12 | 28 |
 | Epic 3 — AniList Discovery (Backend) | 2 ✅ Done | 2 | 8 |
-| Epic 4 — Anime Tracking (Backend) | 4 ✅ Done, 3 📋 To Do | 7 | 23 |
+| Epic 4 — Anime Tracking (Backend) | 5 ✅ Done, 2 📋 To Do | 7 | 23 |
 | Epic 5 — Analytics and Dashboard (Backend) | 📋 To Do | 5 | 18 |
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
-| Epic 8 — Watch Spaces Frontend | 📋 To Do | 3 | 11 |
+| Epic 8 — Watch Spaces Frontend | 1 ✅ Done, 2 📋 To Do | 3 | 11 |
 | Epic 9 — Anime Tracking Frontend | 📋 To Do | 4 | 21 |
 | Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
 | **Total** | | **47** | **153** |
@@ -1237,8 +1249,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status) | 75 |
-| 📋 To Do (remaining MVP) | 78 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Watch space selector) | 81 |
+| 📋 To Do (remaining MVP) | 72 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1256,8 +1268,8 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - ~~Story 7.2 — Registration Page (3 pts) — ✅ Done~~
 - ~~Story 7.3 — Login Page (2 pts) — ✅ Done~~
 - ~~Story 7.4 — Auth Route Guards (2 pts) — ✅ Done~~
-- Story 8.1 — Watch Space Selector Page (3 pts)
-- Total: 12 pts (3 pts remaining)
+- ~~Story 8.1 — Watch Space Selector Page (3 pts) — ✅ Done~~
+- Total: 12 pts *(Complete)*
 
 **Sprint 3 — Watch Spaces frontend (management) + AniList backend**
 - Story 8.2 — Watch Space Settings Panel (3 pts)
@@ -1274,10 +1286,10 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - Total: 14 pts *(Complete)*
 
 **Sprint 5 — Anime Tracking backend (progress, ratings, sessions)**
-- Story 4.5 — Update Individual Participant Progress (3 pts)
+- ~~Story 4.5 — Update Individual Participant Progress (3 pts) — ✅ Done~~
 - Story 4.6 — Submit or Update a Personal Rating (3 pts)
 - Story 4.7 — Record a Watch Session (3 pts)
-- Total: 9 pts
+- Total: 9 pts (6 pts remaining)
 
 **Sprint 6 — Anime Tracking frontend**
 - Story 9.1 — Anime Search Modal (5 pts)

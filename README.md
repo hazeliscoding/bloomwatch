@@ -23,7 +23,7 @@ A shared anime tracking platform for pairs and small groups. BloomWatch lets fri
 **Testing**
 
 - xUnit, NSubstitute, FluentAssertions (backend)
-- 188 automated tests (113 backend across 7 xUnit projects + 75 frontend via Vitest)
+- 224 automated tests (130 backend across 7 xUnit projects + 94 frontend via Vitest)
 
 ## Project Structure
 
@@ -34,6 +34,7 @@ src/
 ├── BloomWatch.UI/                           # Angular 21 frontend application
 │   └── src/
 │       ├── app/
+│       │   ├── core/auth/guards/             # Auth and guest route guards
 │       │   ├── core/layout/                 # Shell layout (nav bar) and minimal layout (auth pages)
 │       │   ├── features/                    # Feature modules: landing, auth (register, login), dashboard, watch-spaces, settings, showcase
 │       │   └── shared/
@@ -58,7 +59,7 @@ src/
     │   └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
     └── AnimeTracking/
         ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, ParticipantEntry, WatchSession entities
-        ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail use cases; cross-module media cache lookup
+        ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail, update status, update progress use cases
         ├── BloomWatch.Modules.AnimeTracking.Infrastructure/  # EF Core, cross-module adapters
         └── BloomWatch.Modules.AnimeTracking.Contracts/       # (reserved for integration events)
 
@@ -186,9 +187,11 @@ GET /api/anilist/media/{anilistMediaId}                  # Get full media detail
 All AnimeTracking endpoints require a valid JWT and watch space membership.
 
 ```http
-POST /watchspaces/{id}/anime                               # Add an anime by AniList media ID
-GET  /watchspaces/{id}/anime                               # List anime in a watch space (optional ?status= filter)
-GET  /watchspaces/{id}/anime/{watchSpaceAnimeId}            # Get full anime detail with participants and sessions
+POST  /watchspaces/{id}/anime                                          # Add an anime by AniList media ID
+GET   /watchspaces/{id}/anime                                          # List anime in a watch space (optional ?status= filter)
+GET   /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Get full anime detail with participants and sessions
+PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Update shared status, progress, mood/vibe/pitch
+PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-progress  # Update caller's individual progress and status
 ```
 
 A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
@@ -314,7 +317,9 @@ openspec/
 │   ├── theme-switching/
 │   ├── landing-page/
 │   ├── registration-form/
-│   └── login-form/
+│   ├── login-form/
+│   ├── update-participant-progress/
+│   └── watch-space-selector/
 └── changes/
     └── archive/                  # Completed changes
 ```
