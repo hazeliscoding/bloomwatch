@@ -1,0 +1,100 @@
+<main class="watch-space-list">
+  <header class="watch-space-list__header">
+    <h1 class="watch-space-list__title bloom-font-display">Your Watch Spaces</h1>
+    @if (!showCreateForm()) {
+      <bloom-button variant="primary" (clicked)="openCreateForm()">
+        Create Watch Space
+      </bloom-button>
+    }
+  </header>
+
+  <!-- Create Form -->
+  @if (showCreateForm()) {
+    <div class="watch-space-list__create-form">
+      <form (submit)="submitCreate($event)" novalidate>
+        <div class="watch-space-list__create-form-fields">
+          <bloom-input
+            label="Space Name"
+            placeholder="e.g. Friday Night Anime"
+            [required]="true"
+            [error]="nameValidationError()"
+            (valueChange)="onNameChange($event)"
+          />
+        </div>
+
+        @if (createError()) {
+          <div class="watch-space-list__create-error" role="alert">
+            {{ createError() }}
+          </div>
+        }
+
+        <div class="watch-space-list__create-form-actions">
+          <bloom-button
+            type="submit"
+            variant="primary"
+            [disabled]="isCreating()"
+            [loading]="isCreating()"
+          >
+            Create
+          </bloom-button>
+          <bloom-button
+            variant="ghost"
+            [disabled]="isCreating()"
+            (clicked)="cancelCreate()"
+          >
+            Cancel
+          </bloom-button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="watch-space-list__loading" role="status">
+      <p>Loading your watch spaces...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!isLoading() && loadError()) {
+    <div class="watch-space-list__error" role="alert">
+      <p>{{ loadError() }}</p>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && !loadError() && spaces().length === 0) {
+    <div class="watch-space-list__empty">
+      <p class="watch-space-list__empty-text">
+        You don't have any watch spaces yet. Create one to start tracking anime with friends!
+      </p>
+    </div>
+  }
+
+  <!-- Space Cards Grid -->
+  @if (!isLoading() && !loadError() && spaces().length > 0) {
+    <div class="watch-space-list__grid">
+      @for (space of spaces(); track space.watchSpaceId) {
+        <bloom-card
+          [hoverable]="true"
+          [ariaLabel]="'Watch space: ' + space.name"
+          (click)="navigateToSpace(space.watchSpaceId)"
+          (keydown.enter)="navigateToSpace(space.watchSpaceId)"
+          tabindex="0"
+          role="link"
+        >
+          <div bloomCardHeader class="watch-space-list__card-header">
+            <h2 class="watch-space-list__card-name">{{ space.name }}</h2>
+            <bloom-badge [color]="roleBadgeColor(space.role)" size="sm">
+              {{ space.role }}
+            </bloom-badge>
+          </div>
+          <p class="watch-space-list__card-date">
+            Created {{ space.createdAt | date:'mediumDate' }}
+          </p>
+        </bloom-card>
+      }
+    </div>
+  }
+</main>

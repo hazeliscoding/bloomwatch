@@ -1,7 +1,103 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
+import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
+import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
+import { BloomBadgeComponent } from '../../shared/ui/badge/bloom-badge';
+import { BloomInputComponent } from '../../shared/ui/input/bloom-input';
+import { WatchSpaceService } from './watch-space.service';
+import { WatchSpaceSummary } from './watch-space.model';
+import { BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
 
 @Component({
   selector: 'app-watch-space-list',
-  template: '<h1>Watch Spaces</h1><p>Your watch spaces will appear here.</p>',
+  imports: [DatePipe, BloomCardComponent, BloomButtonComponent, BloomBadgeComponent, BloomInputComponent],
+  templateUrl: './watch-space-list.html',
+  styleUrl: './watch-space-list.scss',
 })
-export class WatchSpaceList {}
+export class WatchSpaceList implements OnInit {
+  private readonly watchSpaceService = inject(WatchSpaceService);
+  private readonly router = inject(Router);
+
+  readonly spaces = signal<WatchSpaceSummary[]>([]);
+  readonly isLoading = signal(true);
+  readonly loadError = signal('');
+
+  readonly showCreateForm = signal(false);
+  readonly newSpaceName = signal('');
+  readonly createError = signal('');
+  readonly nameValidationError = signal('');
+  readonly isCreating = signal(false);
+
+  ngOnInit(): void {
+    this.loadSpaces();
+  }
+
+  openCreateForm(): void {
+    this.showCreateForm.set(true);
+    this.createError.set('');
+    this.nameValidationError.set('');
+  }
+
+  cancelCreate(): void {
+    this.showCreateForm.set(false);
+    this.newSpaceName.set('');
+    this.createError.set('');
+    this.nameValidationError.set('');
+  }
+
+  onNameChange(value: string): void {
+    this.newSpaceName.set(value);
+    this.nameValidationError.set('');
+    this.createError.set('');
+  }
+
+  submitCreate(event: Event): void {
+    event.preventDefault();
+
+    const name = this.newSpaceName().trim();
+    if (!name) {
+      this.nameValidationError.set('Name is required');
+      return;
+    }
+
+    this.isCreating.set(true);
+    this.createError.set('');
+
+    this.watchSpaceService.createWatchSpace(name).subscribe({
+      next: (created) => {
+        this.spaces.update((list) => [...list, created]);
+        this.isCreating.set(false);
+        this.cancelCreate();
+      },
+      error: () => {
+        this.isCreating.set(false);
+        this.createError.set('Failed to create watch space. Please try again.');
+      },
+    });
+  }
+
+  navigateToSpace(spaceId: string): void {
+    this.router.navigate(['/watch-spaces', spaceId]);
+  }
+
+  roleBadgeColor(role: string): BloomBadgeColor {
+    return role === 'Owner' ? 'pink' : 'blue';
+  }
+
+  private loadSpaces(): void {
+    this.isLoading.set(true);
+    this.loadError.set('');
+
+    this.watchSpaceService.getMyWatchSpaces().subscribe({
+      next: (spaces) => {
+        this.spaces.set(spaces);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.loadError.set('Could not load your watch spaces. Please try again later.');
+      },
+    });
+  }
+}

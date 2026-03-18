@@ -1,0 +1,169 @@
+@use '../../shared/styles/tokens' as *;
+
+// ============================================================================
+// Watch Space List Page
+// ============================================================================
+
+.watch-space-list {
+  max-width: var(--bloom-container-xl);
+  margin: 0 auto;
+  padding: var(--bloom-space-8);
+}
+
+// --------------------------------------------------------------------------
+// Header
+// --------------------------------------------------------------------------
+
+.watch-space-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bloom-space-4);
+  margin-bottom: var(--bloom-space-8);
+}
+
+.watch-space-list__title {
+  font-family: var(--bloom-font-family-display);
+  font-size: var(--bloom-text-2xl);
+  font-weight: var(--bloom-font-bold);
+  color: var(--bloom-text-primary);
+  margin: 0;
+}
+
+// --------------------------------------------------------------------------
+// Create Form
+// --------------------------------------------------------------------------
+
+.watch-space-list__create-form {
+  background: var(--bloom-surface-raised);
+  border: 1px solid var(--bloom-border-default);
+  border-radius: var(--bloom-radius-xl);
+  padding: var(--bloom-space-6);
+  margin-bottom: var(--bloom-space-8);
+}
+
+.watch-space-list__create-form-fields {
+  margin-bottom: var(--bloom-space-4);
+}
+
+.watch-space-list__create-error {
+  background: var(--bloom-error-bg);
+  border: 1px solid var(--bloom-error-light);
+  border-radius: var(--bloom-radius-md);
+  padding: var(--bloom-space-3) var(--bloom-space-4);
+  margin-bottom: var(--bloom-space-4);
+  color: var(--bloom-error-dark);
+  font-size: var(--bloom-text-sm);
+}
+
+.watch-space-list__create-form-actions {
+  display: flex;
+  gap: var(--bloom-space-3);
+}
+
+// --------------------------------------------------------------------------
+// Loading State
+// --------------------------------------------------------------------------
+
+.watch-space-list__loading {
+  text-align: center;
+  padding: var(--bloom-space-16) var(--bloom-space-4);
+  color: var(--bloom-text-secondary);
+  font-size: var(--bloom-text-md);
+}
+
+// --------------------------------------------------------------------------
+// Error State
+// --------------------------------------------------------------------------
+
+.watch-space-list__error {
+  text-align: center;
+  padding: var(--bloom-space-12) var(--bloom-space-4);
+  color: var(--bloom-error-dark);
+  font-size: var(--bloom-text-md);
+}
+
+// --------------------------------------------------------------------------
+// Empty State
+// --------------------------------------------------------------------------
+
+.watch-space-list__empty {
+  text-align: center;
+  padding: var(--bloom-space-16) var(--bloom-space-4);
+}
+
+.watch-space-list__empty-text {
+  color: var(--bloom-text-secondary);
+  font-size: var(--bloom-text-md);
+  line-height: var(--bloom-leading-relaxed);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+// --------------------------------------------------------------------------
+// Card Grid
+// --------------------------------------------------------------------------
+
+.watch-space-list__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--bloom-space-6);
+}
+
+.watch-space-list__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bloom-space-3);
+}
+
+.watch-space-list__card-name {
+  font-family: var(--bloom-font-family-display);
+  font-size: var(--bloom-text-lg);
+  font-weight: var(--bloom-font-semibold);
+  color: var(--bloom-text-primary);
+  margin: 0;
+  @include truncate;
+}
+
+.watch-space-list__card-date {
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-text-tertiary);
+  margin: 0;
+}
+
+// --------------------------------------------------------------------------
+// Clickable Card
+// --------------------------------------------------------------------------
+
+bloom-card {
+  cursor: pointer;
+
+  &:focus-visible {
+    @include bloom-focus-ring;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Responsive
+// --------------------------------------------------------------------------
+
+@include bp-mobile-only {
+  .watch-space-list {
+    padding: var(--bloom-space-4);
+  }
+
+  .watch-space-list__header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: var(--bloom-space-6);
+  }
+
+  .watch-space-list__title {
+    font-size: var(--bloom-text-xl);
+  }
+
+  .watch-space-list__grid {
+    grid-template-columns: 1fr;
+  }
+}
