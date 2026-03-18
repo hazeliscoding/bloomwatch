@@ -1,8 +1,10 @@
 using BloomWatch.Api.Modules.AniListSync;
+using BloomWatch.Api.Modules.Analytics;
 using BloomWatch.Api.Modules.AnimeTracking;
 using BloomWatch.Api.Modules.Identity;
 using BloomWatch.Api.Modules.WatchSpaces;
 using BloomWatch.Modules.AniListSync.Infrastructure.Extensions;
+using BloomWatch.Modules.Analytics.Infrastructure.Extensions;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.Extensions;
 using BloomWatch.Modules.Identity.Infrastructure.Extensions;
 using BloomWatch.Modules.WatchSpaces.Infrastructure.Extensions;
@@ -16,6 +18,7 @@ builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddWatchSpacesModule(builder.Configuration);
 builder.Services.AddAniListSyncModule(builder.Configuration);
 builder.Services.AddAnimeTrackingModule(builder.Configuration);
+builder.Services.AddAnalyticsModule(builder.Configuration);
 
 builder.Services.AddOpenApi(options =>
 {
@@ -95,6 +98,7 @@ app.MapIdentityEndpoints();
 app.MapWatchSpacesEndpoints();
 app.MapAniListSyncEndpoints();
 app.MapAnimeTrackingEndpoints();
+app.MapAnalyticsEndpoints();
 
 app.Run();
 

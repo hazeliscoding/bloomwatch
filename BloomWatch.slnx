@@ -22,6 +22,12 @@
     <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Domain/BloomWatch.Modules.WatchSpaces.Domain.csproj" />
     <Project Path="src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure/BloomWatch.Modules.WatchSpaces.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Analytics/">
+    <Project Path="src/Modules/Analytics/BloomWatch.Modules.Analytics.Application/BloomWatch.Modules.Analytics.Application.csproj" />
+    <Project Path="src/Modules/Analytics/BloomWatch.Modules.Analytics.Contracts/BloomWatch.Modules.Analytics.Contracts.csproj" />
+    <Project Path="src/Modules/Analytics/BloomWatch.Modules.Analytics.Domain/BloomWatch.Modules.Analytics.Domain.csproj" />
+    <Project Path="src/Modules/Analytics/BloomWatch.Modules.Analytics.Infrastructure/BloomWatch.Modules.Analytics.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/AniListSync/">
     <Project Path="src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Application/BloomWatch.Modules.AniListSync.Application.csproj" />
     <Project Path="src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Contracts/BloomWatch.Modules.AniListSync.Contracts.csproj" />
@@ -36,5 +42,7 @@
     <Project Path="tests/BloomWatch.Modules.Identity.UnitTests/BloomWatch.Modules.Identity.UnitTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.WatchSpaces.IntegrationTests/BloomWatch.Modules.WatchSpaces.IntegrationTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.WatchSpaces.UnitTests/BloomWatch.Modules.WatchSpaces.UnitTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.Analytics.UnitTests/BloomWatch.Modules.Analytics.UnitTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.Analytics.IntegrationTests/BloomWatch.Modules.Analytics.IntegrationTests.csproj" />
   </Folder>
 </Solution>
