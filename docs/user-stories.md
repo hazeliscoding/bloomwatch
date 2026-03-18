@@ -1,6 +1,6 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.2
+**Document version:** 1.3
 **Created:** 2026-03-13
 **Last updated:** 2026-03-17
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
@@ -501,7 +501,7 @@ As an authenticated user, I want to fetch full details for a specific AniList an
 
 **Goal:** Members of a watch space can add anime, track shared status and progress, record individual ratings, and log watch sessions.
 **Module:** AnimeTracking
-**Backend status:** In Progress (1 Done, 6 To Do)
+**Backend status:** In Progress (2 Done, 5 To Do)
 
 ---
 
@@ -535,7 +535,7 @@ As a watch space member, I want to add an anime to my watch space by its AniList
 
 ### Story 4.2 — List Anime in a Watch Space (Backend)
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Read endpoint with membership guard, returns a list of WatchSpaceAnime with their shared status and basic participant summaries. Filtering by status is a useful optional query parameter.
 
@@ -868,7 +868,7 @@ As a user, I want to switch between a light pastel mode and a dark mode, so that
 ## Epic 7 — Auth Frontend
 
 **Goal:** Users can register and log in through the Angular frontend.
-**Frontend status:** 1 Done, 3 To Do
+**Frontend status:** 2 Done, 2 To Do
 
 ---
 
@@ -896,7 +896,7 @@ As a visitor, I want to see a landing page that explains what BloomWatch does, s
 
 ### Story 7.2 — Registration Page
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Form with client-side validation, API call to register endpoint, inline error handling, and redirect on success.
 
@@ -1194,10 +1194,10 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 1 — Authentication and Identity (Backend) | 3 ✅ Done | 3 | 8 |
 | Epic 2 — Watch Spaces Management (Backend) | 12 ✅ Done | 12 | 28 |
 | Epic 3 — AniList Discovery (Backend) | 2 ✅ Done | 2 | 8 |
-| Epic 4 — Anime Tracking (Backend) | 1 ✅ Done, 6 📋 To Do | 7 | 23 |
+| Epic 4 — Anime Tracking (Backend) | 2 ✅ Done, 5 📋 To Do | 7 | 23 |
 | Epic 5 — Analytics and Dashboard (Backend) | 📋 To Do | 5 | 18 |
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
-| Epic 7 — Auth Frontend | 1 ✅ Done, 3 📋 To Do | 4 | 9 |
+| Epic 7 — Auth Frontend | 2 ✅ Done, 2 📋 To Do | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 📋 To Do | 3 | 11 |
 | Epic 9 — Anime Tracking Frontend | 📋 To Do | 4 | 21 |
 | Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
@@ -1207,8 +1207,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Landing page + Add anime) | 59 |
-| 📋 To Do (remaining MVP) | 94 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Landing page + Add anime + List anime + Registration page) | 65 |
+| 📋 To Do (remaining MVP) | 88 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1223,11 +1223,11 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 
 **Sprint 2 — Auth frontend + Watch Spaces frontend**
 - ~~Story 7.1 — Landing Page (2 pts) — ✅ Done~~
-- Story 7.2 — Registration Page (3 pts)
+- ~~Story 7.2 — Registration Page (3 pts) — ✅ Done~~
 - Story 7.3 — Login Page (2 pts)
 - Story 7.4 — Auth Route Guards (2 pts)
 - Story 8.1 — Watch Space Selector Page (3 pts)
-- Total: 12 pts (10 pts remaining)
+- Total: 12 pts (7 pts remaining)
 
 **Sprint 3 — Watch Spaces frontend (management) + AniList backend**
 - Story 8.2 — Watch Space Settings Panel (3 pts)
@@ -1238,10 +1238,10 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 
 **Sprint 4 — Anime Tracking backend (core)**
 - ~~Story 4.1 — Add Anime to a Watch Space (5 pts) — ✅ Done~~
-- Story 4.2 — List Anime in a Watch Space (3 pts)
+- ~~Story 4.2 — List Anime in a Watch Space (3 pts) — ✅ Done~~
 - Story 4.3 — Get Anime Detail (3 pts)
 - Story 4.4 — Update Shared Anime Status (3 pts)
-- Total: 14 pts (9 pts remaining)
+- Total: 14 pts (6 pts remaining)
 
 **Sprint 5 — Anime Tracking backend (progress, ratings, sessions)**
 - Story 4.5 — Update Individual Participant Progress (3 pts)
