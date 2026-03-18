@@ -1,5 +1,6 @@
 using BloomWatch.Modules.AnimeTracking.Domain.Aggregates;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
+using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using FluentAssertions;
 
 namespace BloomWatch.Modules.AnimeTracking.UnitTests.Domain;
@@ -96,6 +97,118 @@ public sealed class WatchSpaceAnimeTests
         anime.EpisodeCountSnapshot.Should().BeNull();
         anime.CoverImageUrlSnapshot.Should().BeNull();
         anime.Mood.Should().BeNull();
+    }
+
+    [Fact]
+    public void UpdateSharedState_PartialUpdate_OnlyChangesProvidedFields()
+    {
+        var anime = CreateDefault();
+
+        anime.UpdateSharedState(
+            sharedStatus: AnimeStatus.Watching,
+            sharedEpisodesWatched: 5,
+            mood: null,
+            vibe: null,
+            pitch: null);
+
+        anime.SharedStatus.Should().Be(AnimeStatus.Watching);
+        anime.SharedEpisodesWatched.Should().Be(5);
+        anime.Mood.Should().BeNull();
+        anime.Vibe.Should().BeNull();
+        anime.Pitch.Should().BeNull();
+    }
+
+    [Fact]
+    public void UpdateSharedState_OnlyMetadata_LeavesStatusAndEpisodesUnchanged()
+    {
+        var anime = CreateDefault();
+
+        anime.UpdateSharedState(
+            sharedStatus: null,
+            sharedEpisodesWatched: null,
+            mood: "hype",
+            vibe: "cozy nights",
+            pitch: "a must-watch");
+
+        anime.SharedStatus.Should().Be(AnimeStatus.Backlog);
+        anime.SharedEpisodesWatched.Should().Be(0);
+        anime.Mood.Should().Be("hype");
+        anime.Vibe.Should().Be("cozy nights");
+        anime.Pitch.Should().Be("a must-watch");
+    }
+
+    [Fact]
+    public void UpdateSharedState_NegativeEpisodeCount_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.UpdateSharedState(
+            sharedStatus: null,
+            sharedEpisodesWatched: -1,
+            mood: null,
+            vibe: null,
+            pitch: null);
+
+        act.Should().Throw<InvalidSharedStateException>()
+            .WithMessage("*non-negative*");
+    }
+
+    [Fact]
+    public void UpdateSharedState_EpisodeCountExceedsSnapshot_Throws()
+    {
+        var anime = CreateDefault(); // episodeCountSnapshot = 28
+
+        var act = () => anime.UpdateSharedState(
+            sharedStatus: null,
+            sharedEpisodesWatched: 29,
+            mood: null,
+            vibe: null,
+            pitch: null);
+
+        act.Should().Throw<InvalidSharedStateException>()
+            .WithMessage("*cannot exceed*");
+    }
+
+    [Fact]
+    public void UpdateSharedState_EpisodeCountWhenSnapshotNull_Accepted()
+    {
+        var anime = WatchSpaceAnime.Create(
+            watchSpaceId: _watchSpaceId,
+            aniListMediaId: 100,
+            preferredTitle: "Ongoing",
+            episodeCountSnapshot: null,
+            coverImageUrlSnapshot: null,
+            format: null,
+            season: null,
+            seasonYear: null,
+            mood: null,
+            vibe: null,
+            pitch: null,
+            addedByUserId: _userId);
+
+        anime.UpdateSharedState(
+            sharedStatus: null,
+            sharedEpisodesWatched: 100,
+            mood: null,
+            vibe: null,
+            pitch: null);
+
+        anime.SharedEpisodesWatched.Should().Be(100);
+    }
+
+    [Fact]
+    public void UpdateSharedState_EpisodeCountAtBoundary_Accepted()
+    {
+        var anime = CreateDefault(); // episodeCountSnapshot = 28
+
+        anime.UpdateSharedState(
+            sharedStatus: null,
+            sharedEpisodesWatched: 28,
+            mood: null,
+            vibe: null,
+            pitch: null);
+
+        anime.SharedEpisodesWatched.Should().Be(28);
     }
 
     private WatchSpaceAnime CreateDefault() => WatchSpaceAnime.Create(

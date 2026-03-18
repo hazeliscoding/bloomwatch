@@ -22,3 +22,10 @@ public sealed class NotAWatchSpaceMemberException()
 /// </summary>
 public sealed class MediaNotFoundException(int aniListMediaId)
     : AnimeTrackingDomainException($"Media with AniList ID {aniListMediaId} was not found in the cache.");
+
+/// <summary>
+/// Thrown when shared state mutation violates domain constraints
+/// (e.g. invalid episode count).
+/// </summary>
+public sealed class InvalidSharedStateException(string message)
+    : AnimeTrackingDomainException(message);

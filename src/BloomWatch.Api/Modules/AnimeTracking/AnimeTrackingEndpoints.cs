@@ -2,6 +2,7 @@ using System.Security.Claims;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,18 @@ public static class AnimeTrackingEndpoints
                 "Returns the full aggregate for a single tracked anime including all participant entries " +
                 "(with ratings) and watch session history. The caller must be a member of the watch space.")
             .Produces<GetWatchSpaceAnimeDetailResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound);
+
+        group.MapPatch("/{watchSpaceAnimeId:guid}", UpdateSharedAnimeStatusAsync)
+            .WithName("UpdateSharedAnimeStatus")
+            .WithSummary("Update the shared status and metadata for an anime in a watch space")
+            .WithDescription(
+                "Partially updates the shared tracking state (status, episodes watched, mood, vibe, pitch) " +
+                "for an anime in the specified watch space. Only provided fields are updated. " +
+                "The caller must be a member of the watch space.")
+            .Produces<GetWatchSpaceAnimeDetailResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound);
 
@@ -127,6 +140,52 @@ public static class AnimeTrackingEndpoints
         catch (NotAWatchSpaceMemberException)
         {
             return Results.Forbid();
+        }
+    }
+
+    private static async Task<IResult> UpdateSharedAnimeStatusAsync(
+        Guid watchSpaceId,
+        Guid watchSpaceAnimeId,
+        [FromBody] UpdateSharedAnimeStatusRequest request,
+        ClaimsPrincipal user,
+        UpdateSharedAnimeStatusCommandHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        AnimeStatus? parsedStatus = null;
+        if (request.SharedStatus is not null)
+        {
+            if (!Enum.TryParse<AnimeStatus>(request.SharedStatus, ignoreCase: true, out var status))
+                return Results.BadRequest(new { error = $"Invalid status value '{request.SharedStatus}'." });
+            parsedStatus = status;
+        }
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new UpdateSharedAnimeStatusCommand(
+                    watchSpaceId,
+                    watchSpaceAnimeId,
+                    userId,
+                    parsedStatus,
+                    request.SharedEpisodesWatched,
+                    request.Mood,
+                    request.Vibe,
+                    request.Pitch),
+                ct);
+
+            return result is null
+                ? Results.NotFound(new { error = "Anime not found in this watch space." })
+                : Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+        catch (AnimeTrackingDomainException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
         }
     }
 

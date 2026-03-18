@@ -1,5 +1,6 @@
 using BloomWatch.Modules.AnimeTracking.Domain.Entities;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
+using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using BloomWatch.Modules.AnimeTracking.Domain.ValueObjects;
 
 namespace BloomWatch.Modules.AnimeTracking.Domain.Aggregates;
@@ -79,5 +80,41 @@ public sealed class WatchSpaceAnime
         anime._participantEntries.Add(new ParticipantEntry(id, addedByUserId, now));
 
         return anime;
+    }
+
+    /// <summary>
+    /// Updates the shared tracking state. Only non-null parameters are applied (partial-patch semantics).
+    /// </summary>
+    public void UpdateSharedState(
+        AnimeStatus? sharedStatus,
+        int? sharedEpisodesWatched,
+        string? mood,
+        string? vibe,
+        string? pitch)
+    {
+        if (sharedEpisodesWatched.HasValue)
+        {
+            if (sharedEpisodesWatched.Value < 0)
+                throw new InvalidSharedStateException("Episodes watched must be non-negative.");
+
+            if (EpisodeCountSnapshot.HasValue && sharedEpisodesWatched.Value > EpisodeCountSnapshot.Value)
+                throw new InvalidSharedStateException(
+                    $"Episodes watched ({sharedEpisodesWatched.Value}) cannot exceed total episode count ({EpisodeCountSnapshot.Value}).");
+        }
+
+        if (sharedStatus.HasValue)
+            SharedStatus = sharedStatus.Value;
+
+        if (sharedEpisodesWatched.HasValue)
+            SharedEpisodesWatched = sharedEpisodesWatched.Value;
+
+        if (mood is not null)
+            Mood = mood;
+
+        if (vibe is not null)
+            Vibe = vibe;
+
+        if (pitch is not null)
+            Pitch = pitch;
     }
 }
