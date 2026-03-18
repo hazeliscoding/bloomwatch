@@ -36,3 +36,10 @@ public sealed class InvalidSharedStateException(string message)
 /// </summary>
 public sealed class InvalidParticipantProgressException(string message)
     : AnimeTrackingDomainException(message);
+
+/// <summary>
+/// Thrown when a participant rating mutation violates domain constraints
+/// (e.g. score out of range or not in 0.5 increments).
+/// </summary>
+public sealed class InvalidRatingException(string message)
+    : AnimeTrackingDomainException(message);

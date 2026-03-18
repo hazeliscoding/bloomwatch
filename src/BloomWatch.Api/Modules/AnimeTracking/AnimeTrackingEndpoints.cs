@@ -3,6 +3,7 @@ using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRating;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
@@ -55,7 +56,18 @@ public static class AnimeTrackingEndpoints
             .WithDescription(
                 "Updates the requesting user's individual status and episodes watched for an anime " +
                 "in the specified watch space. Creates the participant entry if it does not already exist.")
-            .Produces<UpdateParticipantProgressResult>(StatusCodes.Status200OK)
+            .Produces<ParticipantDetailResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound);
+
+        group.MapPatch("/{watchSpaceAnimeId:guid}/participant-rating", UpdateParticipantRatingAsync)
+            .WithName("UpdateParticipantRating")
+            .WithSummary("Submit or update the caller's personal rating for an anime in a watch space")
+            .WithDescription(
+                "Updates the requesting user's rating score and optional notes for an anime " +
+                "in the specified watch space. Creates the participant entry if it does not already exist.")
+            .Produces<ParticipantDetailResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound);
@@ -223,6 +235,42 @@ public static class AnimeTrackingEndpoints
                     userId,
                     parsedStatus,
                     request.EpisodesWatched),
+                ct);
+
+            return result is null
+                ? Results.NotFound(new { error = "Anime not found in this watch space." })
+                : Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+        catch (AnimeTrackingDomainException ex)
+        {
+            return Results.BadRequest(new { error = ex.Message });
+        }
+    }
+
+    private static async Task<IResult> UpdateParticipantRatingAsync(
+        Guid watchSpaceId,
+        Guid watchSpaceAnimeId,
+        [FromBody] UpdateParticipantRatingRequest request,
+        ClaimsPrincipal user,
+        UpdateParticipantRatingCommandHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new UpdateParticipantRatingCommand(
+                    watchSpaceId,
+                    watchSpaceAnimeId,
+                    userId,
+                    request.RatingScore,
+                    request.RatingNotes,
+                    request.RatingNotesProvided),
                 ct);
 
             return result is null

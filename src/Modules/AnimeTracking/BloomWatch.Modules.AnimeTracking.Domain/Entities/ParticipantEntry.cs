@@ -57,4 +57,12 @@ public sealed class ParticipantEntry
         EpisodesWatched = episodesWatched;
         LastUpdatedAtUtc = DateTime.UtcNow;
     }
+
+    internal void UpdateRating(decimal ratingScore, string? ratingNotes, bool updateNotes)
+    {
+        RatingScore = ratingScore;
+        if (updateNotes)
+            RatingNotes = ratingNotes;
+        LastUpdatedAtUtc = DateTime.UtcNow;
+    }
 }

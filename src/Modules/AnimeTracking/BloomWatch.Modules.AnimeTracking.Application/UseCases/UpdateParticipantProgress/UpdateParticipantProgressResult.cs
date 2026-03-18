@@ -1,6 +1,6 @@
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
 
-public sealed record UpdateParticipantProgressResult(
+public sealed record ParticipantDetailResult(
     Guid UserId,
     string IndividualStatus,
     int EpisodesWatched,

@@ -3,6 +3,7 @@ using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRating;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.CrossModule;
@@ -43,6 +44,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<AddAnimeToWatchSpaceCommandHandler>();
         services.AddScoped<UpdateSharedAnimeStatusCommandHandler>();
         services.AddScoped<UpdateParticipantProgressCommandHandler>();
+        services.AddScoped<UpdateParticipantRatingCommandHandler>();
 
         // Query handlers
         services.AddScoped<ListWatchSpaceAnimeQueryHandler>();

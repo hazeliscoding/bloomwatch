@@ -1,16 +1,17 @@
 using BloomWatch.Modules.AnimeTracking.Application.Abstractions;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
 using BloomWatch.Modules.AnimeTracking.Domain.ValueObjects;
 
-namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
+namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRating;
 
-public sealed class UpdateParticipantProgressCommandHandler(
+public sealed class UpdateParticipantRatingCommandHandler(
     IMembershipChecker membershipChecker,
     IAnimeTrackingRepository repository)
 {
     public async Task<ParticipantDetailResult?> HandleAsync(
-        UpdateParticipantProgressCommand command,
+        UpdateParticipantRatingCommand command,
         CancellationToken cancellationToken = default)
     {
         var isMember = await membershipChecker.IsMemberAsync(
@@ -27,10 +28,11 @@ public sealed class UpdateParticipantProgressCommandHandler(
         if (anime is null)
             return null;
 
-        var entry = anime.UpdateParticipantProgress(
+        var entry = anime.UpdateParticipantRating(
             command.RequestingUserId,
-            command.IndividualStatus,
-            command.EpisodesWatched);
+            command.RatingScore,
+            command.RatingNotes,
+            command.UpdateNotes);
 
         await repository.SaveChangesAsync(cancellationToken);
 

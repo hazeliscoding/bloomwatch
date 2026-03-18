@@ -284,6 +284,106 @@ public sealed class WatchSpaceAnimeTests
         entry.EpisodesWatched.Should().Be(100);
     }
 
+    // --- UpdateParticipantRating tests ---
+
+    [Fact]
+    public void UpdateParticipantRating_ExistingEntry_UpdatesRatingAndReturnsIt()
+    {
+        var anime = CreateDefault();
+        var before = DateTime.UtcNow;
+
+        var entry = anime.UpdateParticipantRating(_userId, 8.5m, "Great show", updateNotes: true);
+
+        entry.UserId.Should().Be(_userId);
+        entry.RatingScore.Should().Be(8.5m);
+        entry.RatingNotes.Should().Be("Great show");
+        entry.LastUpdatedAtUtc.Should().BeOnOrAfter(before);
+        anime.ParticipantEntries.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void UpdateParticipantRating_NoExistingEntry_CreatesNewEntryWithDefaults()
+    {
+        var anime = CreateDefault();
+        var otherUserId = Guid.NewGuid();
+
+        var entry = anime.UpdateParticipantRating(otherUserId, 7.0m, null, updateNotes: false);
+
+        entry.UserId.Should().Be(otherUserId);
+        entry.RatingScore.Should().Be(7.0m);
+        entry.IndividualStatus.Should().Be(AnimeStatus.Backlog);
+        entry.EpisodesWatched.Should().Be(0);
+        anime.ParticipantEntries.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public void UpdateParticipantRating_BelowMinimum_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.UpdateParticipantRating(_userId, 0.0m, null, updateNotes: false);
+
+        act.Should().Throw<InvalidRatingException>()
+            .WithMessage("*between 0.5 and 10.0*");
+    }
+
+    [Fact]
+    public void UpdateParticipantRating_AboveMaximum_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.UpdateParticipantRating(_userId, 10.5m, null, updateNotes: false);
+
+        act.Should().Throw<InvalidRatingException>()
+            .WithMessage("*between 0.5 and 10.0*");
+    }
+
+    [Fact]
+    public void UpdateParticipantRating_NotInHalfIncrements_Throws()
+    {
+        var anime = CreateDefault();
+
+        var act = () => anime.UpdateParticipantRating(_userId, 7.3m, null, updateNotes: false);
+
+        act.Should().Throw<InvalidRatingException>()
+            .WithMessage("*0.5 increments*");
+    }
+
+    [Fact]
+    public void UpdateParticipantRating_NotesExceeding1000Characters_Throws()
+    {
+        var anime = CreateDefault();
+        var longNotes = new string('x', 1001);
+
+        var act = () => anime.UpdateParticipantRating(_userId, 8.0m, longNotes, updateNotes: true);
+
+        act.Should().Throw<InvalidRatingException>()
+            .WithMessage("*cannot exceed 1000*");
+    }
+
+    [Fact]
+    public void UpdateParticipantRating_NullRatingNotes_ClearsExistingNotes()
+    {
+        var anime = CreateDefault();
+        anime.UpdateParticipantRating(_userId, 8.0m, "Initial notes", updateNotes: true);
+
+        var entry = anime.UpdateParticipantRating(_userId, 9.0m, null, updateNotes: true);
+
+        entry.RatingNotes.Should().BeNull();
+    }
+
+    [Fact]
+    public void UpdateParticipantRating_OmittedRatingNotes_PreservesExistingNotes()
+    {
+        var anime = CreateDefault();
+        anime.UpdateParticipantRating(_userId, 8.0m, "Keep these notes", updateNotes: true);
+
+        var entry = anime.UpdateParticipantRating(_userId, 9.0m, null, updateNotes: false);
+
+        entry.RatingScore.Should().Be(9.0m);
+        entry.RatingNotes.Should().Be("Keep these notes");
+    }
+
     private WatchSpaceAnime CreateDefault() => WatchSpaceAnime.Create(
         watchSpaceId: _watchSpaceId,
         aniListMediaId: 154587,

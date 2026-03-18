@@ -148,4 +148,39 @@ public sealed class WatchSpaceAnime
 
         return entry;
     }
+
+    /// <summary>
+    /// Updates (or creates) the requesting user's participant rating.
+    /// Returns the updated <see cref="ParticipantEntry"/>.
+    /// </summary>
+    public ParticipantEntry UpdateParticipantRating(
+        Guid userId,
+        decimal ratingScore,
+        string? ratingNotes,
+        bool updateNotes)
+    {
+        if (ratingScore < 0.5m || ratingScore > 10.0m)
+            throw new InvalidRatingException("Rating must be between 0.5 and 10.0.");
+
+        if (ratingScore % 0.5m != 0)
+            throw new InvalidRatingException("Rating must be in 0.5 increments.");
+
+        if (updateNotes && ratingNotes is not null && ratingNotes.Length > 1000)
+            throw new InvalidRatingException("Rating notes cannot exceed 1000 characters.");
+
+        var entry = _participantEntries.FirstOrDefault(e => e.UserId == userId);
+
+        if (entry is not null)
+        {
+            entry.UpdateRating(ratingScore, ratingNotes, updateNotes);
+        }
+        else
+        {
+            entry = ParticipantEntry.Create(Id, userId, AnimeStatus.Backlog, 0);
+            entry.UpdateRating(ratingScore, ratingNotes, updateNotes);
+            _participantEntries.Add(entry);
+        }
+
+        return entry;
+    }
 }
