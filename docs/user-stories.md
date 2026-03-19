@@ -1,8 +1,8 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.3
+**Document version:** 1.4
 **Created:** 2026-03-13
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-19
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
 **Tech stack:** .NET 10 / ASP.NET Core Minimal APIs, PostgreSQL, EF Core, Angular, AniList GraphQL
 
@@ -698,7 +698,7 @@ As a watch space member, I want to log a watch session with the episode range an
 
 **Goal:** The system surfaces compatibility scores, rating gaps, shared statistics, and a random backlog picker so users can understand their shared taste at a glance.
 **Module:** Analytics
-**Backend status:** In Progress (2 Done, 3 To Do)
+**Backend status:** In Progress (3 Done, 2 To Do)
 
 ---
 
@@ -764,9 +764,12 @@ As a watch space member, I want to see our compatibility score, so that I can un
 
 ---
 
+<details>
+<summary>Story 5.3 — Rating Gaps Endpoint (Backend)</summary>
+
 ### Story 5.3 — Rating Gaps Endpoint (Backend)
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Read-model computation over ParticipantEntry data. Identifies anime where members' ratings diverge the most. Moderate data aggregation.
 
@@ -781,6 +784,8 @@ As a watch space member, I want to see which anime we rated most differently, so
 
 **Module:** Analytics
 **Endpoints:** `GET /watchspaces/{id}/analytics/rating-gaps`
+
+</details>
 
 ---
 
@@ -1257,7 +1262,7 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 2 — Watch Spaces Management (Backend) | 12 ✅ Done | 12 | 28 |
 | Epic 3 — AniList Discovery (Backend) | 2 ✅ Done | 2 | 8 |
 | Epic 4 — Anime Tracking (Backend) | 7 ✅ Done | 7 | 23 |
-| Epic 5 — Analytics and Dashboard (Backend) | 2 ✅ Done, 3 📋 To Do | 5 | 18 |
+| Epic 5 — Analytics and Dashboard (Backend) | 3 ✅ Done, 2 📋 To Do | 5 | 18 |
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 1 ✅ Done, 2 📋 To Do | 3 | 11 |
@@ -1269,8 +1274,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Dashboard Summary + Compatibility Score) | 97 |
-| 📋 To Do (remaining MVP) | 56 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Dashboard Summary + Compatibility Score + Rating Gaps) | 100 |
+| 📋 To Do (remaining MVP) | 53 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1325,10 +1330,10 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 
 **Sprint 8 — Analytics backend (full) + Dashboard frontend**
 - ~~Story 5.2 — Compatibility Score Endpoint (5 pts) — ✅ Done~~
-- Story 5.3 — Rating Gaps Endpoint (3 pts)
+- ~~Story 5.3 — Rating Gaps Endpoint (3 pts) — ✅ Done~~
 - Story 5.4 — Shared Watch Stats Endpoint (3 pts)
 - Story 10.1 — Watch Space Dashboard Page (8 pts)
-- Total: 19 pts (14 pts remaining)
+- Total: 19 pts (11 pts remaining)
 
 **Sprint 9 — Analytics and Dashboard frontend (polish)**
 - Story 10.2 — Compatibility Score Display Component (3 pts)
