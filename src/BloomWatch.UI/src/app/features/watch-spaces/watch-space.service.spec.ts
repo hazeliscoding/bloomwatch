@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { WatchSpaceService } from './watch-space.service';
-import { WatchSpaceSummary } from './watch-space.model';
+import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary } from './watch-space.model';
 
 describe('WatchSpaceService', () => {
   let service: WatchSpaceService;
@@ -54,6 +54,103 @@ describe('WatchSpaceService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ name: 'New Space' });
       req.flush(created);
+    });
+  });
+
+  describe('sendInvitation', () => {
+    it('should send POST /watchspaces/{id}/invitations with email', () => {
+      const result: InviteMemberResponse = {
+        invitationId: 'inv-1',
+        invitedEmail: 'friend@example.com',
+        status: 'Pending',
+        expiresAt: '2026-03-26T00:00:00Z',
+        token: 'abc123',
+      };
+
+      service.sendInvitation('space-1', 'friend@example.com').subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/invitations'));
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ email: 'friend@example.com' });
+      req.flush(result);
+    });
+  });
+
+  describe('listInvitations', () => {
+    it('should send GET /watchspaces/{id}/invitations', () => {
+      const invitations: InvitationDetail[] = [
+        {
+          invitationId: 'inv-1',
+          invitedEmail: 'friend@example.com',
+          status: 'Pending',
+          expiresAt: '2026-03-26T00:00:00Z',
+          createdAt: '2026-03-19T00:00:00Z',
+        },
+      ];
+
+      service.listInvitations('space-1').subscribe((res) => {
+        expect(res).toEqual(invitations);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/invitations'));
+      expect(req.request.method).toBe('GET');
+      req.flush(invitations);
+    });
+  });
+
+  describe('revokeInvitation', () => {
+    it('should send DELETE /watchspaces/{id}/invitations/{invitationId}', () => {
+      service.revokeInvitation('space-1', 'inv-1').subscribe();
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/invitations/inv-1'));
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+  });
+
+  describe('getInvitationPreview', () => {
+    it('should send GET /watchspaces/invitations/{token}', () => {
+      const preview: InvitationPreview = {
+        watchSpaceId: 'space-1',
+        watchSpaceName: 'Anime Club',
+        invitedEmail: 'friend@example.com',
+        status: 'Pending',
+        expiresAt: '2026-03-26T00:00:00Z',
+      };
+
+      service.getInvitationPreview('abc123').subscribe((res) => {
+        expect(res).toEqual(preview);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/invitations/abc123'));
+      expect(req.request.method).toBe('GET');
+      req.flush(preview);
+    });
+  });
+
+  describe('acceptInvitation', () => {
+    it('should send POST /watchspaces/invitations/{token}/accept', () => {
+      const result: AcceptInvitationResponse = { watchSpaceId: 'space-1' };
+
+      service.acceptInvitation('abc123').subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/invitations/abc123/accept'));
+      expect(req.request.method).toBe('POST');
+      req.flush(result);
+    });
+  });
+
+  describe('declineInvitation', () => {
+    it('should send POST /watchspaces/invitations/{token}/decline', () => {
+      service.declineInvitation('abc123').subscribe();
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/invitations/abc123/decline'));
+      expect(req.request.method).toBe('POST');
+      req.flush(null);
     });
   });
 });

@@ -22,3 +22,31 @@ export interface WatchSpaceDetail {
   createdAt: string;
   members: MemberDetail[];
 }
+
+export interface InvitationDetail {
+  invitationId: string;
+  invitedEmail: string;
+  status: string;
+  expiresAt: string;
+  createdAt: string;
+}
+
+export interface InviteMemberResponse {
+  invitationId: string;
+  invitedEmail: string;
+  status: string;
+  expiresAt: string;
+  token: string;
+}
+
+export interface InvitationPreview {
+  watchSpaceId: string;
+  watchSpaceName: string;
+  invitedEmail: string;
+  status: string;
+  expiresAt: string;
+}
+
+export interface AcceptInvitationResponse {
+  watchSpaceId: string;
+}

@@ -7,8 +7,9 @@ import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
 import { BloomInputComponent } from '../../shared/ui/input/bloom-input';
 import { WatchSpaceService } from './watch-space.service';
-import { WatchSpaceDetail as WatchSpaceDetailModel } from './watch-space.model';
+import { InvitationDetail, WatchSpaceDetail as WatchSpaceDetailModel } from './watch-space.model';
 import { AuthService } from '../../core/auth/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-watch-space-detail',
@@ -43,6 +44,16 @@ export class WatchSpaceDetail implements OnInit {
 
   // Action feedback
   readonly actionError = signal('');
+
+  // Invite form state
+  readonly inviteEmail = signal('');
+  readonly isInviting = signal(false);
+  readonly inviteError = signal('');
+  readonly inviteSuccess = signal('');
+
+  // Invitations list state
+  readonly invitations = signal<InvitationDetail[]>([]);
+  readonly isLoadingInvitations = signal(false);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -151,6 +162,77 @@ export class WatchSpaceDetail implements OnInit {
     });
   }
 
+  onInviteEmailChange(value: string): void {
+    this.inviteEmail.set(value);
+    this.inviteError.set('');
+    this.inviteSuccess.set('');
+  }
+
+  sendInvite(): void {
+    const d = this.detail();
+    const email = this.inviteEmail().trim();
+    if (!d || !email) return;
+
+    this.isInviting.set(true);
+    this.inviteError.set('');
+    this.inviteSuccess.set('');
+
+    this.watchSpaceService.sendInvitation(d.watchSpaceId, email).subscribe({
+      next: () => {
+        this.inviteSuccess.set(`Invitation sent to ${email}`);
+        this.inviteEmail.set('');
+        this.isInviting.set(false);
+        this.loadInvitations();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.isInviting.set(false);
+        if (err.status === 409) {
+          this.inviteError.set('This user is already a member or has a pending invitation.');
+        } else if (err.status === 422) {
+          this.inviteError.set('This email is not a registered BloomWatch user.');
+        } else {
+          this.inviteError.set('Failed to send invitation. Please try again.');
+        }
+      },
+    });
+  }
+
+  revokeInvitation(invitationId: string, email: string): void {
+    const d = this.detail();
+    if (!d) return;
+    if (!confirm(`Revoke invitation to ${email}?`)) return;
+
+    this.actionError.set('');
+    this.watchSpaceService.revokeInvitation(d.watchSpaceId, invitationId).subscribe({
+      next: () => {
+        this.invitations.update(prev => prev.filter(inv => inv.invitationId !== invitationId));
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 409) {
+          this.actionError.set('This invitation has already been accepted or declined.');
+        } else {
+          this.actionError.set(`Failed to revoke invitation to ${email}. Please try again.`);
+        }
+      },
+    });
+  }
+
+  loadInvitations(): void {
+    const d = this.detail();
+    if (!d || !this.isOwner()) return;
+
+    this.isLoadingInvitations.set(true);
+    this.watchSpaceService.listInvitations(d.watchSpaceId).subscribe({
+      next: (invitations) => {
+        this.invitations.set(invitations);
+        this.isLoadingInvitations.set(false);
+      },
+      error: () => {
+        this.isLoadingInvitations.set(false);
+      },
+    });
+  }
+
   roleBadgeColor(role: string): BloomBadgeColor {
     return role === 'Owner' ? 'pink' : 'blue';
   }
@@ -167,6 +249,7 @@ export class WatchSpaceDetail implements OnInit {
       next: (detail) => {
         this.detail.set(detail);
         this.isLoading.set(false);
+        this.loadInvitations();
       },
       error: () => {
         this.isLoading.set(false);

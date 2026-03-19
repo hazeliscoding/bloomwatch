@@ -1,7 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../core/http/api.service';
-import { CreateWatchSpaceRequest, WatchSpaceDetail, WatchSpaceSummary } from './watch-space.model';
+import {
+  AcceptInvitationResponse,
+  CreateWatchSpaceRequest,
+  InvitationDetail,
+  InvitationPreview,
+  InviteMemberResponse,
+  WatchSpaceDetail,
+  WatchSpaceSummary,
+} from './watch-space.model';
 
 @Injectable({ providedIn: 'root' })
 export class WatchSpaceService {
@@ -34,5 +42,29 @@ export class WatchSpaceService {
 
   leaveWatchSpace(spaceId: string): Observable<void> {
     return this.api.delete<void>(`/watchspaces/${spaceId}/members/me`);
+  }
+
+  sendInvitation(spaceId: string, email: string): Observable<InviteMemberResponse> {
+    return this.api.post<InviteMemberResponse>(`/watchspaces/${spaceId}/invitations`, { email });
+  }
+
+  listInvitations(spaceId: string): Observable<InvitationDetail[]> {
+    return this.api.get<InvitationDetail[]>(`/watchspaces/${spaceId}/invitations`);
+  }
+
+  revokeInvitation(spaceId: string, invitationId: string): Observable<void> {
+    return this.api.delete<void>(`/watchspaces/${spaceId}/invitations/${invitationId}`);
+  }
+
+  getInvitationPreview(token: string): Observable<InvitationPreview> {
+    return this.api.get<InvitationPreview>(`/watchspaces/invitations/${token}`);
+  }
+
+  acceptInvitation(token: string): Observable<AcceptInvitationResponse> {
+    return this.api.post<AcceptInvitationResponse>(`/watchspaces/invitations/${token}/accept`, {});
+  }
+
+  declineInvitation(token: string): Observable<void> {
+    return this.api.post<void>(`/watchspaces/invitations/${token}/decline`, {});
   }
 }

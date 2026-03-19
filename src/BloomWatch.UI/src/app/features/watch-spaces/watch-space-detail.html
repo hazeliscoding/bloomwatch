@@ -112,6 +112,76 @@
       </div>
     </section>
 
+    <!-- Invitations Section (owner only) -->
+    @if (isOwner()) {
+      <section class="watch-space-detail__invitations">
+        <h2 class="watch-space-detail__section-title">Invitations</h2>
+
+        <!-- Invite Form -->
+        <div class="watch-space-detail__invite-form">
+          <div class="watch-space-detail__invite-row">
+            <bloom-input
+              label="Email address"
+              [ngModel]="inviteEmail()"
+              (valueChange)="onInviteEmailChange($event)"
+            />
+            <bloom-button
+              variant="primary"
+              size="sm"
+              [disabled]="isInviting() || !inviteEmail().trim()"
+              [loading]="isInviting()"
+              (clicked)="sendInvite()"
+            >
+              Invite
+            </bloom-button>
+          </div>
+          @if (inviteError()) {
+            <p class="watch-space-detail__invite-error" role="alert">{{ inviteError() }}</p>
+          }
+          @if (inviteSuccess()) {
+            <p class="watch-space-detail__invite-success" role="status">{{ inviteSuccess() }}</p>
+          }
+        </div>
+
+        <!-- Pending Invitations List -->
+        @if (isLoadingInvitations()) {
+          <p class="watch-space-detail__invitations-loading">Loading invitations...</p>
+        } @else if (invitations().length === 0) {
+          <p class="watch-space-detail__invitations-empty">No pending invitations.</p>
+        } @else {
+          <div class="watch-space-detail__invitation-list">
+            @for (inv of invitations(); track inv.invitationId) {
+              <bloom-card class="watch-space-detail__invitation-card">
+                <div class="watch-space-detail__invitation-row">
+                  <div class="watch-space-detail__invitation-info">
+                    <span class="watch-space-detail__invitation-email">{{ inv.invitedEmail }}</span>
+                    <bloom-badge
+                      [color]="inv.status === 'Pending' ? 'yellow' : 'neutral'"
+                      size="sm"
+                    >
+                      {{ inv.status }}
+                    </bloom-badge>
+                  </div>
+                  <span class="watch-space-detail__invitation-dates">
+                    Sent {{ inv.createdAt | date:'mediumDate' }} · Expires {{ inv.expiresAt | date:'mediumDate' }}
+                  </span>
+                  @if (inv.status === 'Pending') {
+                    <bloom-button
+                      variant="danger"
+                      size="sm"
+                      (clicked)="revokeInvitation(inv.invitationId, inv.invitedEmail)"
+                    >
+                      Revoke
+                    </bloom-button>
+                  }
+                </div>
+              </bloom-card>
+            }
+          </div>
+        }
+      </section>
+    }
+
     <!-- Leave Space (non-owner only) -->
     @if (!isOwner()) {
       <section class="watch-space-detail__leave">

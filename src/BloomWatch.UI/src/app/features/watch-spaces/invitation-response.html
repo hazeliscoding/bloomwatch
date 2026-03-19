@@ -1,0 +1,62 @@
+<main class="invitation-response">
+  @if (state() === 'loading') {
+    <div class="invitation-response__loading" role="status">
+      <p>Loading invitation...</p>
+    </div>
+  }
+
+  @if (state() === 'error') {
+    <bloom-card class="invitation-response__card">
+      <div class="invitation-response__content">
+        <h1 class="invitation-response__title bloom-font-display">Invitation Unavailable</h1>
+        <p class="invitation-response__message invitation-response__message--error">{{ errorMessage() }}</p>
+        <bloom-button variant="primary" (clicked)="goToWatchSpaces()">
+          Go to Watch Spaces
+        </bloom-button>
+      </div>
+    </bloom-card>
+  }
+
+  @if (state() === 'ready' || state() === 'accepting' || state() === 'declining') {
+    @if (preview(); as p) {
+      <bloom-card class="invitation-response__card">
+        <div class="invitation-response__content">
+          <h1 class="invitation-response__title bloom-font-display">You're Invited!</h1>
+          <p class="invitation-response__message">
+            You've been invited to join <strong>{{ p.watchSpaceName }}</strong>.
+          </p>
+          <div class="invitation-response__actions">
+            <bloom-button
+              variant="primary"
+              [disabled]="state() === 'accepting' || state() === 'declining'"
+              [loading]="state() === 'accepting'"
+              (clicked)="accept()"
+            >
+              Accept
+            </bloom-button>
+            <bloom-button
+              variant="ghost"
+              [disabled]="state() === 'accepting' || state() === 'declining'"
+              [loading]="state() === 'declining'"
+              (clicked)="decline()"
+            >
+              Decline
+            </bloom-button>
+          </div>
+        </div>
+      </bloom-card>
+    }
+  }
+
+  @if (state() === 'declined') {
+    <bloom-card class="invitation-response__card">
+      <div class="invitation-response__content">
+        <h1 class="invitation-response__title bloom-font-display">Invitation Declined</h1>
+        <p class="invitation-response__message">You've declined this invitation.</p>
+        <bloom-button variant="primary" (clicked)="goToWatchSpaces()">
+          Go to Watch Spaces
+        </bloom-button>
+      </div>
+    </bloom-card>
+  }
+</main>
