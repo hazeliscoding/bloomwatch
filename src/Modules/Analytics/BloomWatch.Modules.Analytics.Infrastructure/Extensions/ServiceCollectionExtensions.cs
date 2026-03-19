@@ -1,6 +1,7 @@
 using BloomWatch.Modules.Analytics.Application.Abstractions;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetCompatibility;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
+using BloomWatch.Modules.Analytics.Application.UseCases.GetRatingGaps;
 using BloomWatch.Modules.Analytics.Infrastructure.CrossModule;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,7 @@ public static class ServiceCollectionExtensions
         // Query handlers
         services.AddScoped<GetDashboardSummaryQueryHandler>();
         services.AddScoped<GetCompatibilityQueryHandler>();
+        services.AddScoped<GetRatingGapsQueryHandler>();
 
         return services;
     }

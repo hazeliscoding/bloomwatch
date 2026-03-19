@@ -2,6 +2,7 @@ using System.Security.Claims;
 using BloomWatch.Modules.Analytics.Application.Exceptions;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetCompatibility;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
+using BloomWatch.Modules.Analytics.Application.UseCases.GetRatingGaps;
 
 namespace BloomWatch.Api.Modules.Analytics;
 
@@ -31,6 +32,16 @@ public static class AnalyticsEndpoints
                 "Returns the compatibility score computed from members' anime ratings. " +
                 "The caller must be a member of the watch space.")
             .Produces<CompatibilityScoreResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden);
+
+        group.MapGet("/analytics/rating-gaps", GetRatingGapsAsync)
+            .WithName("GetRatingGaps")
+            .WithSummary("Get all rating gaps for a watch space")
+            .WithDescription(
+                "Returns all anime where at least 2 members have submitted ratings, " +
+                "sorted by descending gap magnitude with alphabetical title tie-breaking. " +
+                "The caller must be a member of the watch space.")
+            .Produces<RatingGapsResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status403Forbidden);
 
         return app;
@@ -69,6 +80,27 @@ public static class AnalyticsEndpoints
         {
             var result = await handler.HandleAsync(
                 new GetCompatibilityQuery(watchSpaceId, userId), ct);
+
+            return Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+    }
+
+    private static async Task<IResult> GetRatingGapsAsync(
+        Guid watchSpaceId,
+        ClaimsPrincipal user,
+        GetRatingGapsQueryHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new GetRatingGapsQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
         }
