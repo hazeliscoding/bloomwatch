@@ -108,6 +108,17 @@ public sealed class AnalyticsWebAppFactory : WebApplicationFactory<Program>, IAs
             aniListMediaId, title, title, episodes ?? (object)DBNull.Value);
     }
 
+    public void SeedParticipantRating(Guid watchSpaceAnimeId, Guid userId, decimal ratingScore)
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeTrackingDbContext>();
+        var id = Guid.NewGuid();
+        var now = DateTime.UtcNow.ToString("o");
+        db.Database.ExecuteSqlRaw(
+            "INSERT INTO participant_entries (id, watch_space_anime_id, user_id, individual_status, episodes_watched, rating_score, rating_notes, last_updated_at_utc) VALUES ({0}, {1}, {2}, 'Backlog', 0, {3}, NULL, {4})",
+            id, watchSpaceAnimeId, userId, ratingScore, now);
+    }
+
     private static void RemoveDbContext<T>(IServiceCollection services) where T : DbContext
     {
         var toRemove = services

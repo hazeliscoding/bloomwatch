@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using BloomWatch.Modules.Analytics.Application.Exceptions;
+using BloomWatch.Modules.Analytics.Application.UseCases.GetCompatibility;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
 
 namespace BloomWatch.Api.Modules.Analytics;
@@ -23,6 +24,15 @@ public static class AnalyticsEndpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound);
 
+        group.MapGet("/analytics/compatibility", GetCompatibilityAsync)
+            .WithName("GetCompatibility")
+            .WithSummary("Get the compatibility score for a watch space")
+            .WithDescription(
+                "Returns the compatibility score computed from members' anime ratings. " +
+                "The caller must be a member of the watch space.")
+            .Produces<CompatibilityScoreResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden);
+
         return app;
     }
 
@@ -38,6 +48,27 @@ public static class AnalyticsEndpoints
         {
             var result = await handler.HandleAsync(
                 new GetDashboardSummaryQuery(watchSpaceId, userId), ct);
+
+            return Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+    }
+
+    private static async Task<IResult> GetCompatibilityAsync(
+        Guid watchSpaceId,
+        ClaimsPrincipal user,
+        GetCompatibilityQueryHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new GetCompatibilityQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
         }
