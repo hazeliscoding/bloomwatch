@@ -95,9 +95,10 @@ public sealed class WatchSpacesEndpointsTests : IClassFixture<WatchSpacesWebAppF
     // --- Task 7.3: GET /watchspaces/{id} ---
 
     [Fact]
-    public async Task GetWatchSpaceById_AsMember_Returns200()
+    public async Task GetWatchSpaceById_AsMember_Returns200WithDisplayName()
     {
-        var token = await RegisterAndLoginAsync($"getbyid_{Guid.NewGuid()}@example.com");
+        var displayName = "DetailUser";
+        var token = await RegisterAndLoginAsync($"getbyid_{Guid.NewGuid()}@example.com", displayName);
         WithToken(_client, token);
 
         var createResponse = await _client.PostAsJsonAsync("/watchspaces", new { name = "Detail Space" });
@@ -110,6 +111,10 @@ public sealed class WatchSpacesEndpointsTests : IClassFixture<WatchSpacesWebAppF
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         body.GetProperty("watchSpaceId").GetGuid().Should().Be(spaceId);
         body.GetProperty("members").GetArrayLength().Should().Be(1);
+
+        var member = body.GetProperty("members")[0];
+        member.GetProperty("displayName").GetString().Should().Be(displayName);
+        member.GetProperty("role").GetString().Should().Be("Owner");
     }
 
     [Fact]

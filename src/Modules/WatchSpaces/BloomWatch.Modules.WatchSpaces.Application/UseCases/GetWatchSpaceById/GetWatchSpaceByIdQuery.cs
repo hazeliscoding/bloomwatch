@@ -25,6 +25,7 @@ public sealed record WatchSpaceDetail(
 /// A projection of a single member within a watch space.
 /// </summary>
 /// <param name="UserId">The unique identifier of the member.</param>
+/// <param name="DisplayName">The member's display name.</param>
 /// <param name="Role">The member's role in the watch space (e.g., <c>"Owner"</c> or <c>"Member"</c>).</param>
 /// <param name="JoinedAt">The UTC timestamp when the member joined the watch space.</param>
-public sealed record MemberDetail(Guid UserId, string Role, DateTime JoinedAt);
+public sealed record MemberDetail(Guid UserId, string DisplayName, string Role, DateTime JoinedAt);

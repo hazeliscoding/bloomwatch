@@ -70,6 +70,7 @@ public static class ServiceCollectionExtensions
 
         // Abstractions
         services.AddScoped<IUserReadModel, UserReadModel>();
+        services.AddScoped<IUserDisplayNameLookup, UserDisplayNameLookup>();
         services.AddScoped<IInvitationEmailSender, NoOpInvitationEmailSender>();
         services.AddScoped<IIntegrationEventPublisher, InProcessIntegrationEventPublisher>();
 

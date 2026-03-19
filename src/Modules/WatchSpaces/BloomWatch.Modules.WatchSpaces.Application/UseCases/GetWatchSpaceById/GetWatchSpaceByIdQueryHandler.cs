@@ -1,3 +1,4 @@
+using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
@@ -9,18 +10,14 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
 /// Handles <see cref="GetWatchSpaceByIdQuery"/> by loading the watch space with its members
 /// and verifying the requesting user has access.
 /// </summary>
-/// <param name="repository">The watch space repository used for querying.</param>
-public sealed class GetWatchSpaceByIdQueryHandler(IWatchSpaceRepository repository)
+public sealed class GetWatchSpaceByIdQueryHandler(
+    IWatchSpaceRepository repository,
+    IUserDisplayNameLookup displayNameLookup)
 {
     /// <summary>
-    /// Retrieves a watch space by its identifier, including the full member list.
+    /// Retrieves a watch space by its identifier, including the full member list with display names.
     /// Only members of the watch space can access its details.
     /// </summary>
-    /// <param name="query">The query containing the watch space identifier and requesting user.</param>
-    /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>A <see cref="WatchSpaceDetail"/> containing the watch space metadata and member list.</returns>
-    /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
-    /// <exception cref="NotAMemberException">Thrown when the requesting user is not a member of the watch space.</exception>
     public async Task<WatchSpaceDetail> HandleAsync(
         GetWatchSpaceByIdQuery query,
         CancellationToken cancellationToken = default)
@@ -32,8 +29,16 @@ public sealed class GetWatchSpaceByIdQueryHandler(IWatchSpaceRepository reposito
         if (!watchSpace.Members.Any(m => m.UserId == query.RequestingUserId))
             throw new NotAMemberException();
 
+        var memberUserIds = watchSpace.Members.Select(m => m.UserId);
+        var displayNames = await displayNameLookup.GetDisplayNamesAsync(
+            memberUserIds, cancellationToken);
+
         var members = watchSpace.Members
-            .Select(m => new MemberDetail(m.UserId, m.Role.ToString(), m.JoinedAtUtc))
+            .Select(m => new MemberDetail(
+                m.UserId,
+                displayNames.GetValueOrDefault(m.UserId, "Unknown"),
+                m.Role.ToString(),
+                m.JoinedAtUtc))
             .ToList();
 
         return new WatchSpaceDetail(watchSpace.Id.Value, watchSpace.Name, watchSpace.CreatedAtUtc, members);
