@@ -31,7 +31,10 @@ internal sealed class WatchSpaceAnalyticsDataSource(
             a.AddedAtUtc,
             a.Participants.Select(p => new ParticipantData(
                 p.UserId,
-                p.RatingScore)).ToList())).ToList();
+                p.RatingScore)).ToList(),
+            a.Mood,
+            a.Vibe,
+            a.Pitch)).ToList();
     }
 
     public async Task<(int Count, DateTime? MostRecentDate)> GetWatchSessionAggregateAsync(

@@ -13,7 +13,10 @@ public sealed record WatchSpaceAnimeData(
     string SharedStatus,
     int SharedEpisodesWatched,
     DateTime AddedAtUtc,
-    IReadOnlyList<ParticipantData> Participants);
+    IReadOnlyList<ParticipantData> Participants,
+    string? Mood = null,
+    string? Vibe = null,
+    string? Pitch = null);
 
 /// <summary>
 /// Read-only projection of a participant entry with rating information.

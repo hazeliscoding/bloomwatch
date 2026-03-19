@@ -28,6 +28,9 @@ public sealed class AnimeTrackingReadDbContext(
             entity.Property(a => a.SharedStatus).HasColumnName("shared_status");
             entity.Property(a => a.SharedEpisodesWatched).HasColumnName("shared_episodes_watched");
             entity.Property(a => a.AddedAtUtc).HasColumnName("added_at_utc");
+            entity.Property(a => a.Mood).HasColumnName("mood");
+            entity.Property(a => a.Vibe).HasColumnName("vibe");
+            entity.Property(a => a.Pitch).HasColumnName("pitch");
 
             entity.HasMany(a => a.Participants)
                 .WithOne()
@@ -66,6 +69,9 @@ public sealed class AnimeRow
     public string SharedStatus { get; set; } = string.Empty;
     public int SharedEpisodesWatched { get; set; }
     public DateTime AddedAtUtc { get; set; }
+    public string? Mood { get; set; }
+    public string? Vibe { get; set; }
+    public string? Pitch { get; set; }
     public List<ParticipantRow> Participants { get; set; } = [];
 }
 

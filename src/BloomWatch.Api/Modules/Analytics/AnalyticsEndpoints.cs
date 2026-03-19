@@ -3,6 +3,7 @@ using BloomWatch.Modules.Analytics.Application.Exceptions;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetCompatibility;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetRatingGaps;
+using BloomWatch.Modules.Analytics.Application.UseCases.GetRandomPick;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetSharedStats;
 
 namespace BloomWatch.Api.Modules.Analytics;
@@ -53,6 +54,16 @@ public static class AnalyticsEndpoints
                 "including total episodes, finished/dropped counts, and session activity. " +
                 "The caller must be a member of the watch space.")
             .Produces<SharedStatsResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden);
+
+        group.MapGet("/analytics/random-pick", GetRandomPickAsync)
+            .WithName("GetRandomPick")
+            .WithSummary("Pick a random anime from the watch space backlog")
+            .WithDescription(
+                "Selects one anime at random from the backlog. " +
+                "Returns null with a message if the backlog is empty. " +
+                "The caller must be a member of the watch space.")
+            .Produces<RandomPickResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status403Forbidden);
 
         return app;
@@ -133,6 +144,27 @@ public static class AnalyticsEndpoints
         {
             var result = await handler.HandleAsync(
                 new GetSharedStatsQuery(watchSpaceId, userId), ct);
+
+            return Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+    }
+
+    private static async Task<IResult> GetRandomPickAsync(
+        Guid watchSpaceId,
+        ClaimsPrincipal user,
+        GetRandomPickQueryHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new GetRandomPickQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
         }
