@@ -23,7 +23,7 @@ A shared anime tracking platform for pairs and small groups. BloomWatch lets fri
 **Testing**
 
 - xUnit, NSubstitute, FluentAssertions (backend)
-- 224 automated tests (130 backend across 7 xUnit projects + 94 frontend via Vitest)
+- 263 automated tests (169 backend across 10 xUnit projects + 94 frontend via Vitest)
 
 ## Project Structure
 
@@ -57,11 +57,16 @@ src/
     │   ├── BloomWatch.Modules.AniListSync.Application/     # Search + media detail query handlers
     │   ├── BloomWatch.Modules.AniListSync.Infrastructure/  # AniList GraphQL client, EF Core + in-memory caching
     │   └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
-    └── AnimeTracking/
-        ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, ParticipantEntry, WatchSession entities
-        ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail, update status, update progress use cases
-        ├── BloomWatch.Modules.AnimeTracking.Infrastructure/  # EF Core, cross-module adapters
-        └── BloomWatch.Modules.AnimeTracking.Contracts/       # (reserved for integration events)
+    ├── AnimeTracking/
+    │   ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, ParticipantEntry, WatchSession entities
+    │   ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail, update status, update progress use cases
+    │   ├── BloomWatch.Modules.AnimeTracking.Infrastructure/  # EF Core, cross-module adapters
+    │   └── BloomWatch.Modules.AnimeTracking.Contracts/       # (reserved for integration events)
+    └── Analytics/
+        ├── BloomWatch.Modules.Analytics.Domain/              # Compatibility score, rating gap computation
+        ├── BloomWatch.Modules.Analytics.Application/         # Dashboard summary query handler
+        ├── BloomWatch.Modules.Analytics.Infrastructure/      # EF Core, cross-module read-model queries
+        └── BloomWatch.Modules.Analytics.Contracts/           # (reserved for integration events)
 
 tests/
 ├── BloomWatch.Modules.Identity.UnitTests/              # Domain + use case unit tests
@@ -70,7 +75,10 @@ tests/
 ├── BloomWatch.Modules.WatchSpaces.IntegrationTests/    # HTTP endpoint integration tests
 ├── BloomWatch.Modules.AniListSync.UnitTests/           # Handler + caching unit tests
 ├── BloomWatch.Modules.AniListSync.IntegrationTests/    # HTTP endpoint integration tests
-└── BloomWatch.Modules.AnimeTracking.UnitTests/         # Domain + use case unit tests
+├── BloomWatch.Modules.AnimeTracking.UnitTests/         # Domain + use case unit tests
+├── BloomWatch.Modules.AnimeTracking.IntegrationTests/  # HTTP endpoint integration tests
+├── BloomWatch.Modules.Analytics.UnitTests/             # Compatibility score + rating gap unit tests
+└── BloomWatch.Modules.Analytics.IntegrationTests/      # Dashboard endpoint integration tests
 
 docs/
 ├── architecture.md     # Full system design, module breakdown, and planned feature phases
@@ -192,6 +200,16 @@ GET   /watchspaces/{id}/anime                                          # List an
 GET   /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Get full anime detail with participants and sessions
 PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Update shared status, progress, mood/vibe/pitch
 PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-progress  # Update caller's individual progress and status
+PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-rating    # Update caller's personal rating (0.5–10 scale)
+POST  /watchspaces/{id}/anime/{watchSpaceAnimeId}/sessions             # Record a watch session with episode range and date
+```
+
+### Analytics
+
+Requires a valid JWT and watch space membership.
+
+```http
+GET /watchspaces/{id}/dashboard                                        # Dashboard summary (stats, compatibility, highlights)
 ```
 
 A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
@@ -268,6 +286,9 @@ dotnet test tests/BloomWatch.Modules.WatchSpaces.IntegrationTests
 dotnet test tests/BloomWatch.Modules.AniListSync.UnitTests
 dotnet test tests/BloomWatch.Modules.AniListSync.IntegrationTests
 dotnet test tests/BloomWatch.Modules.AnimeTracking.UnitTests
+dotnet test tests/BloomWatch.Modules.AnimeTracking.IntegrationTests
+dotnet test tests/BloomWatch.Modules.Analytics.UnitTests
+dotnet test tests/BloomWatch.Modules.Analytics.IntegrationTests
 
 # Frontend tests
 cd src/BloomWatch.UI && npm test
@@ -319,6 +340,12 @@ openspec/
 │   ├── registration-form/
 │   ├── login-form/
 │   ├── update-participant-progress/
+│   ├── update-shared-anime-status/
+│   ├── watch-space-anime-detail/
+│   ├── auth-route-guards/
+│   ├── submit-participant-rating/
+│   ├── record-watch-session/
+│   ├── dashboard-summary/
 │   └── watch-space-selector/
 └── changes/
     └── archive/                  # Completed changes
@@ -342,6 +369,12 @@ openspec/
 | `registration-page-frontend` | 2026-03-17 | Registration form with validation, auto-login, and error handling |
 | `get-anime-detail-backend` | 2026-03-18 | `GET /watchspaces/{id}/anime/{animeId}` with full aggregate detail |
 | `login-page` | 2026-03-18 | Login form with validation and error handling |
+| `update-shared-anime-status-metadata` | 2026-03-18 | `PATCH /watchspaces/{id}/anime/{animeId}` shared status and metadata updates |
+| `update-participant-progress-status` | 2026-03-18 | `PATCH .../participant-progress` individual progress and status tracking |
+| `story-4-6-submit-update-personal-rating` | 2026-03-18 | `PATCH .../participant-rating` personal rating with 0.5–10 scale |
+| `record-watch-session-backend` | 2026-03-18 | `POST .../sessions` watch session recording with episode ranges |
+| `story-7-4-auth-route-guards` | 2026-03-18 | Angular auth and guest route guards with JWT expiry checks |
+| `story-5-1-watch-space-dashboard-summary` | 2026-03-18 | `GET /watchspaces/{id}/dashboard` analytics dashboard summary endpoint |
 
 ### Working with OpenSpec
 
