@@ -698,7 +698,7 @@ As a watch space member, I want to log a watch session with the episode range an
 
 **Goal:** The system surfaces compatibility scores, rating gaps, shared statistics, and a random backlog picker so users can understand their shared taste at a glance.
 **Module:** Analytics
-**Backend status:** In Progress (4 Done, 1 To Do)
+**Backend status:** Complete
 
 ---
 
@@ -817,9 +817,12 @@ As a watch space member, I want to see aggregate statistics about our watch hist
 
 ---
 
+<details>
+<summary>Story 5.5 — Random Backlog Picker Endpoint (Backend)</summary>
+
 ### Story 5.5 — Random Backlog Picker Endpoint (Backend)
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 2
 **Sizing rationale:** Simple random selection from the backlog filtered set. No complex domain logic — just a filtered query with randomization.
 
@@ -835,6 +838,8 @@ As a watch space member, I want the system to pick a random anime from our backl
 
 **Module:** Analytics
 **Endpoints:** `GET /watchspaces/{id}/analytics/random-pick`
+
+</details>
 
 ---
 
@@ -1267,7 +1272,7 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 2 — Watch Spaces Management (Backend) | 12 ✅ Done | 12 | 28 |
 | Epic 3 — AniList Discovery (Backend) | 2 ✅ Done | 2 | 8 |
 | Epic 4 — Anime Tracking (Backend) | 7 ✅ Done | 7 | 23 |
-| Epic 5 — Analytics and Dashboard (Backend) | 4 ✅ Done, 1 📋 To Do | 5 | 18 |
+| Epic 5 — Analytics and Dashboard (Backend) | 5 ✅ Done | 5 | 18 |
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 1 ✅ Done, 2 📋 To Do | 3 | 11 |
@@ -1279,8 +1284,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats) | 103 |
-| 📋 To Do (remaining MVP) | 50 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker) | 105 |
+| 📋 To Do (remaining MVP) | 48 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1288,9 +1293,9 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 These groupings are not prescriptive. They suggest a natural sequencing to unblock dependent work quickly.
 
 **Sprint 1 — Angular shell** *(Complete)*
-- Story 6.1 — Angular Project Setup (3 pts) — ✅ Done
-- Story 6.2 — HTTP Client and Auth Interceptor (3 pts) — ✅ Done
-- Story 6.3 — Theme System (2 pts) — ✅ Done
+- ~~Story 6.1 — Angular Project Setup (3 pts) — ✅ Done~~
+- ~~Story 6.2 — HTTP Client and Auth Interceptor (3 pts) — ✅ Done~~
+- ~~Story 6.3 — Theme System (2 pts) — ✅ Done~~
 - Total: 8 pts
 
 **Sprint 2 — Auth frontend + Watch Spaces frontend**
@@ -1330,8 +1335,8 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 **Sprint 7 — Anime detail frontend + Analytics backend**
 - Story 9.3 — Anime Detail Page (8 pts)
 - ~~Story 5.1 — Dashboard Summary Endpoint (5 pts) — ✅ Done~~
-- Story 5.5 — Random Backlog Picker Endpoint (2 pts)
-- Total: 15 pts (10 pts remaining)
+- ~~Story 5.5 — Random Backlog Picker Endpoint (2 pts) — ✅ Done~~
+- Total: 15 pts (8 pts remaining)
 
 **Sprint 8 — Analytics backend (full) + Dashboard frontend**
 - ~~Story 5.2 — Compatibility Score Endpoint (5 pts) — ✅ Done~~
