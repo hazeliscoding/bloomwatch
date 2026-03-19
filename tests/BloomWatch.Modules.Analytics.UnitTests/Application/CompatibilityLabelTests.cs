@@ -1,4 +1,4 @@
-using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
+using BloomWatch.Modules.Analytics.Application.Shared;
 using FluentAssertions;
 
 namespace BloomWatch.Modules.Analytics.UnitTests.Application;
@@ -20,7 +20,7 @@ public sealed class CompatibilityLabelTests
     [InlineData(0, "Wildly different tastes")]
     public void GetCompatibilityLabel_ReturnsCorrectLabel(int score, string expectedLabel)
     {
-        var label = GetDashboardSummaryQueryHandler.GetCompatibilityLabel(score);
+        var label = CompatibilityComputer.GetCompatibilityLabel(score);
 
         label.Should().Be(expectedLabel);
     }

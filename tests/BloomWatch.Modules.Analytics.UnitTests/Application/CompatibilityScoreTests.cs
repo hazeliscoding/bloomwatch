@@ -1,5 +1,5 @@
 using BloomWatch.Modules.Analytics.Application.DTOs;
-using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
+using BloomWatch.Modules.Analytics.Application.Shared;
 using FluentAssertions;
 
 namespace BloomWatch.Modules.Analytics.UnitTests.Application;
@@ -12,7 +12,7 @@ public sealed class CompatibilityScoreTests
         // All raters gave the same score on every anime → averageGap = 0
         var animeGaps = MakeGaps((0m, 3));
 
-        var (result, message) = GetDashboardSummaryQueryHandler.ComputeCompatibility(animeGaps);
+        var (result, message) = CompatibilityComputer.ComputeCompatibility(animeGaps);
 
         result.Should().NotBeNull();
         result!.Score.Should().Be(100);
@@ -25,7 +25,7 @@ public sealed class CompatibilityScoreTests
         // averageGap = 6.0 → score = max(0, round(100 - 60)) = 40
         var animeGaps = MakeGaps((6.0m, 2));
 
-        var (result, _) = GetDashboardSummaryQueryHandler.ComputeCompatibility(animeGaps);
+        var (result, _) = CompatibilityComputer.ComputeCompatibility(animeGaps);
 
         result!.Score.Should().Be(40);
     }
@@ -36,7 +36,7 @@ public sealed class CompatibilityScoreTests
         // averageGap = 12.0 → 100 - 120 = -20 → clamped to 0
         var animeGaps = MakeGaps((12.0m, 1));
 
-        var (result, _) = GetDashboardSummaryQueryHandler.ComputeCompatibility(animeGaps);
+        var (result, _) = CompatibilityComputer.ComputeCompatibility(animeGaps);
 
         result!.Score.Should().Be(0);
     }
@@ -47,7 +47,7 @@ public sealed class CompatibilityScoreTests
         // averageGap = 0.5 → 100 - 5 = 95
         var animeGaps = MakeGaps((0.5m, 1));
 
-        var (result, _) = GetDashboardSummaryQueryHandler.ComputeCompatibility(animeGaps);
+        var (result, _) = CompatibilityComputer.ComputeCompatibility(animeGaps);
 
         result!.Score.Should().Be(95);
     }
@@ -57,7 +57,7 @@ public sealed class CompatibilityScoreTests
     {
         var animeGaps = new List<(WatchSpaceAnimeData, decimal, List<ParticipantData>)>();
 
-        var (result, message) = GetDashboardSummaryQueryHandler.ComputeCompatibility(animeGaps);
+        var (result, message) = CompatibilityComputer.ComputeCompatibility(animeGaps);
 
         result.Should().BeNull();
         message.Should().Be("Not enough data");
@@ -68,7 +68,7 @@ public sealed class CompatibilityScoreTests
     {
         var animeGaps = MakeGaps((1.0m, 2), (2.0m, 2), (0.5m, 2), (3.0m, 2));
 
-        var (result, _) = GetDashboardSummaryQueryHandler.ComputeCompatibility(animeGaps);
+        var (result, _) = CompatibilityComputer.ComputeCompatibility(animeGaps);
 
         result!.RatedTogetherCount.Should().Be(4);
     }
@@ -79,7 +79,7 @@ public sealed class CompatibilityScoreTests
         // Create gaps of 1.333... and 2.666... → average = 2.0
         var animeGaps = MakeGaps((1.333m, 1), (2.667m, 1));
 
-        var (result, _) = GetDashboardSummaryQueryHandler.ComputeCompatibility(animeGaps);
+        var (result, _) = CompatibilityComputer.ComputeCompatibility(animeGaps);
 
         result!.AverageGap.Should().Be(2.0m);
     }

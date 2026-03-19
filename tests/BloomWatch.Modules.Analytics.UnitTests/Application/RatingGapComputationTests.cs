@@ -1,5 +1,5 @@
 using BloomWatch.Modules.Analytics.Application.DTOs;
-using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
+using BloomWatch.Modules.Analytics.Application.Shared;
 using FluentAssertions;
 
 namespace BloomWatch.Modules.Analytics.UnitTests.Application;
@@ -15,7 +15,7 @@ public sealed class RatingGapComputationTests
             new(Guid.NewGuid(), 3.0m)
         };
 
-        var gap = GetDashboardSummaryQueryHandler.ComputePairwiseGap(raters);
+        var gap = CompatibilityComputer.ComputePairwiseGap(raters);
 
         gap.Should().Be(5.0m);
     }
@@ -32,7 +32,7 @@ public sealed class RatingGapComputationTests
             new(Guid.NewGuid(), 7.0m)
         };
 
-        var gap = GetDashboardSummaryQueryHandler.ComputePairwiseGap(raters);
+        var gap = CompatibilityComputer.ComputePairwiseGap(raters);
 
         gap.Should().BeApproximately(2.6667m, 0.001m);
     }
@@ -46,7 +46,7 @@ public sealed class RatingGapComputationTests
             new(Guid.NewGuid(), 7.0m)
         };
 
-        var gap = GetDashboardSummaryQueryHandler.ComputePairwiseGap(raters);
+        var gap = CompatibilityComputer.ComputePairwiseGap(raters);
 
         gap.Should().Be(0m);
     }
@@ -61,7 +61,7 @@ public sealed class RatingGapComputationTests
             MakeAnime("Watching", 8.0m, 3.0m)      // 2 raters
         };
 
-        var gaps = GetDashboardSummaryQueryHandler.ComputeAnimeGaps(allAnime);
+        var gaps = CompatibilityComputer.ComputeAnimeGaps(allAnime);
 
         gaps.Should().HaveCount(1);
         gaps[0].Gap.Should().Be(5.0m);
@@ -77,7 +77,7 @@ public sealed class RatingGapComputationTests
             MakeAnime("Watching", 8.0m, 3.0m)   // gap = 5.0
         };
 
-        var gaps = GetDashboardSummaryQueryHandler.ComputeAnimeGaps(allAnime);
+        var gaps = CompatibilityComputer.ComputeAnimeGaps(allAnime);
 
         gaps.Should().HaveCount(3);
         gaps[0].Gap.Should().Be(7.0m);
@@ -94,7 +94,7 @@ public sealed class RatingGapComputationTests
             MakeAnime("Backlog")
         };
 
-        var gaps = GetDashboardSummaryQueryHandler.ComputeAnimeGaps(allAnime);
+        var gaps = CompatibilityComputer.ComputeAnimeGaps(allAnime);
 
         gaps.Should().BeEmpty();
     }
@@ -111,7 +111,7 @@ public sealed class RatingGapComputationTests
                 new(Guid.NewGuid(), 3.0m)
             });
 
-        var gaps = GetDashboardSummaryQueryHandler.ComputeAnimeGaps(new[] { anime });
+        var gaps = CompatibilityComputer.ComputeAnimeGaps(new[] { anime });
 
         gaps.Should().HaveCount(1);
         gaps[0].Gap.Should().Be(5.0m); // Only the two with ratings count
