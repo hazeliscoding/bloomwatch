@@ -698,7 +698,7 @@ As a watch space member, I want to log a watch session with the episode range an
 
 **Goal:** The system surfaces compatibility scores, rating gaps, shared statistics, and a random backlog picker so users can understand their shared taste at a glance.
 **Module:** Analytics
-**Backend status:** In Progress (1 Done, 4 To Do)
+**Backend status:** In Progress (2 Done, 3 To Do)
 
 ---
 
@@ -735,9 +735,12 @@ As a watch space member, I want to load a single dashboard endpoint, so that the
 
 ---
 
+<details>
+<summary>Story 5.2 — Compatibility Score Endpoint (Backend)</summary>
+
 ### Story 5.2 — Compatibility Score Endpoint (Backend)
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 5
 **Sizing rationale:** Requires collecting all anime rated by at least two members, computing per-anime score gaps, averaging them, and applying the formula `max(0, round(100 - averageGap * 10))`. Graceful degradation when data is sparse. The formula is simple but the data aggregation across ParticipantEntry records is moderately involved.
 
@@ -756,6 +759,8 @@ As a watch space member, I want to see our compatibility score, so that I can un
 
 **Module:** Analytics
 **Endpoints:** `GET /watchspaces/{id}/analytics/compatibility`
+
+</details>
 
 ---
 
@@ -1252,7 +1257,7 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 2 — Watch Spaces Management (Backend) | 12 ✅ Done | 12 | 28 |
 | Epic 3 — AniList Discovery (Backend) | 2 ✅ Done | 2 | 8 |
 | Epic 4 — Anime Tracking (Backend) | 7 ✅ Done | 7 | 23 |
-| Epic 5 — Analytics and Dashboard (Backend) | 1 ✅ Done, 4 📋 To Do | 5 | 18 |
+| Epic 5 — Analytics and Dashboard (Backend) | 2 ✅ Done, 3 📋 To Do | 5 | 18 |
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 1 ✅ Done, 2 📋 To Do | 3 | 11 |
@@ -1264,8 +1269,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Dashboard Summary) | 92 |
-| 📋 To Do (remaining MVP) | 61 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Dashboard Summary + Compatibility Score) | 97 |
+| 📋 To Do (remaining MVP) | 56 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1319,11 +1324,11 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - Total: 15 pts (10 pts remaining)
 
 **Sprint 8 — Analytics backend (full) + Dashboard frontend**
-- Story 5.2 — Compatibility Score Endpoint (5 pts)
+- ~~Story 5.2 — Compatibility Score Endpoint (5 pts) — ✅ Done~~
 - Story 5.3 — Rating Gaps Endpoint (3 pts)
 - Story 5.4 — Shared Watch Stats Endpoint (3 pts)
 - Story 10.1 — Watch Space Dashboard Page (8 pts)
-- Total: 19 pts
+- Total: 19 pts (14 pts remaining)
 
 **Sprint 9 — Analytics and Dashboard frontend (polish)**
 - Story 10.2 — Compatibility Score Display Component (3 pts)
