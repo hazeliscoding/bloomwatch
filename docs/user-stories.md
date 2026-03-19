@@ -1,6 +1,6 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.5
+**Document version:** 1.6
 **Created:** 2026-03-13
 **Last updated:** 2026-03-19
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
@@ -1021,7 +1021,7 @@ As a developer, I want route guards that prevent unauthenticated users from acce
 ## Epic 8 — Watch Spaces Frontend
 
 **Goal:** Users can create, view, and manage watch spaces through the Angular UI, including the full invitation flow.
-**Frontend status:** In Progress (2 Done, 1 To Do)
+**Frontend status:** Complete
 
 ---
 
@@ -1075,9 +1075,12 @@ As a watch space owner, I want a settings panel where I can rename the space, se
 
 ---
 
+<details>
+<summary>Story 8.3 — Invitation Flow (Send and Manage)</summary>
+
 ### Story 8.3 — Invitation Flow (Send and Manage)
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 5
 **Sizing rationale:** The invitation flow involves: invite form (email input, API call), pending invitation list, revoke action, and the accept/decline pages for invitees. Multiple screens and states; the most complex part of the WatchSpaces frontend.
 
@@ -1092,6 +1095,8 @@ As a watch space owner, I want to invite someone by email and manage pending inv
 - Accepting calls `POST /watchspaces/invitations/{token}/accept` and redirects to the watch space
 - Declining calls the decline endpoint and shows a "declined" confirmation page
 - Expired or invalid tokens show a user-friendly error page (not a blank 400 error)
+
+</details>
 
 ---
 
@@ -1280,7 +1285,7 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 5 — Analytics and Dashboard (Backend) | 5 ✅ Done | 5 | 18 |
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
-| Epic 8 — Watch Spaces Frontend | 2 ✅ Done, 1 📋 To Do | 3 | 11 |
+| Epic 8 — Watch Spaces Frontend | 3 ✅ Done | 3 | 11 |
 | Epic 9 — Anime Tracking Frontend | 📋 To Do | 4 | 21 |
 | Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
 | **Total** | | **47** | **153** |
@@ -1289,8 +1294,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker) | 108 |
-| 📋 To Do (remaining MVP) | 45 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Invitation flow + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker) | 113 |
+| 📋 To Do (remaining MVP) | 40 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1313,10 +1318,10 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 
 **Sprint 3 — Watch Spaces frontend (management) + AniList backend**
 - ~~Story 8.2 — Watch Space Settings Panel (3 pts) — ✅ Done~~
-- Story 8.3 — Invitation Flow Frontend (5 pts)
+- ~~Story 8.3 — Invitation Flow Frontend (5 pts) — ✅ Done~~
 - ~~Story 3.1 — AniList Search Proxy (5 pts) — ✅ Done~~
 - ~~Story 3.2 — AniList Media Detail (3 pts) — ✅ Done~~
-- Total: 16 pts (5 pts remaining)
+- Total: 16 pts *(Complete)*
 
 **Sprint 4 — Anime Tracking backend (core)**
 - ~~Story 4.1 — Add Anime to a Watch Space (5 pts) — ✅ Done~~
