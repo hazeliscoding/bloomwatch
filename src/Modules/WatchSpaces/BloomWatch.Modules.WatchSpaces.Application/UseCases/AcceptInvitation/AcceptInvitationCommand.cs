@@ -7,3 +7,9 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 /// <param name="AcceptingUserId">The identifier of the user accepting the invitation.</param>
 /// <param name="AcceptingUserEmail">The email address of the accepting user, used to verify it matches the invitation.</param>
 public sealed record AcceptInvitationCommand(string Token, Guid AcceptingUserId, string AcceptingUserEmail);
+
+/// <summary>
+/// The result returned after successfully accepting an invitation.
+/// </summary>
+/// <param name="WatchSpaceId">The identifier of the watch space the user joined.</param>
+public sealed record AcceptInvitationResult(Guid WatchSpaceId);

@@ -20,8 +20,9 @@ public sealed class AcceptInvitationCommandHandler(
     /// </summary>
     /// <param name="command">The command containing the invitation token, accepting user identifier, and email.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>The result containing the watch space identifier.</returns>
     /// <exception cref="InvitationNotFoundException">Thrown when no invitation matches the provided token.</exception>
-    public async Task HandleAsync(
+    public async Task<AcceptInvitationResult> HandleAsync(
         AcceptInvitationCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -43,5 +44,7 @@ public sealed class AcceptInvitationCommandHandler(
             member.UserId,
             member.Role.ToString(),
             member.JoinedAtUtc), cancellationToken);
+
+        return new AcceptInvitationResult(watchSpace.Id.Value);
     }
 }

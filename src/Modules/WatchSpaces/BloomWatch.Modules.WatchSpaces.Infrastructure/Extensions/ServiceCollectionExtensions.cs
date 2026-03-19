@@ -2,6 +2,7 @@ using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.DeclineInvitation;
+using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetInvitationByToken;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.InviteMember;
@@ -89,6 +90,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<GetMyWatchSpacesQueryHandler>();
         services.AddScoped<GetWatchSpaceByIdQueryHandler>();
         services.AddScoped<ListInvitationsQueryHandler>();
+        services.AddScoped<GetInvitationByTokenQueryHandler>();
 
         return services;
     }

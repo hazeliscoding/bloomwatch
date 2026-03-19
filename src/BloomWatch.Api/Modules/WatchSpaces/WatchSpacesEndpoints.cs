@@ -2,6 +2,7 @@ using System.Security.Claims;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.DeclineInvitation;
+using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetInvitationByToken;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.InviteMember;
@@ -129,6 +130,16 @@ public static class WatchSpacesEndpoints
             .Produces(StatusCodes.Status409Conflict);
 
         // Invitations (invitee actions -- no space ID needed, token identifies the invitation)
+        invitationsGroup.MapGet("/{token}", GetInvitationByTokenAsync)
+            .WithName("GetInvitationByToken")
+            .WithSummary("Preview a WatchSpace invitation")
+            .WithDescription(
+                "Returns the invitation details (watch space name, status, expiry) " +
+                "for the given token. Used by the invitee to preview the invitation before acting.")
+            .Produces<InvitationPreviewResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .RequireAuthorization();
+
         invitationsGroup.MapPost("/{token}/accept", AcceptInvitationAsync)
             .WithName("AcceptInvitation")
             .WithSummary("Accept a WatchSpace invitation")
@@ -136,7 +147,7 @@ public static class WatchSpacesEndpoints
                 "The authenticated user accepts the invitation identified by the provided token. " +
                 "The user's email must match the email the invitation was addressed to. " +
                 "Returns 410 Gone if the invitation has expired.")
-            .Produces(StatusCodes.Status200OK)
+            .Produces<AcceptInvitationResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status410Gone)
             .Produces(StatusCodes.Status409Conflict)
@@ -398,6 +409,27 @@ public static class WatchSpacesEndpoints
     // --- Invitations (invitee actions) ---
 
     /// <summary>
+    /// Handles the request to preview a WatchSpace invitation by its token.
+    /// </summary>
+    private static async Task<IResult> GetInvitationByTokenAsync(
+        string token,
+        ClaimsPrincipal user,
+        GetInvitationByTokenQueryHandler handler,
+        CancellationToken ct)
+    {
+        var email = GetEmail(user);
+        try
+        {
+            var result = await handler.HandleAsync(new GetInvitationByTokenQuery(token, email), ct);
+            return Results.Ok(result);
+        }
+        catch (InvitationNotFoundException)
+        {
+            return Results.NotFound();
+        }
+    }
+
+    /// <summary>
     /// Handles the request to accept a WatchSpace invitation using the invitation token.
     /// </summary>
     private static async Task<IResult> AcceptInvitationAsync(
@@ -410,8 +442,8 @@ public static class WatchSpacesEndpoints
         var email = GetEmail(user);
         try
         {
-            await handler.HandleAsync(new AcceptInvitationCommand(token, userId, email), ct);
-            return Results.Ok();
+            var result = await handler.HandleAsync(new AcceptInvitationCommand(token, userId, email), ct);
+            return Results.Ok(result);
         }
         catch (InvitationNotFoundException)
         {
