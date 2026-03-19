@@ -3,6 +3,7 @@ using BloomWatch.Modules.Analytics.Application.Exceptions;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetCompatibility;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetRatingGaps;
+using BloomWatch.Modules.Analytics.Application.UseCases.GetSharedStats;
 
 namespace BloomWatch.Api.Modules.Analytics;
 
@@ -42,6 +43,16 @@ public static class AnalyticsEndpoints
                 "sorted by descending gap magnitude with alphabetical title tie-breaking. " +
                 "The caller must be a member of the watch space.")
             .Produces<RatingGapsResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden);
+
+        group.MapGet("/analytics/shared-stats", GetSharedStatsAsync)
+            .WithName("GetSharedStats")
+            .WithSummary("Get shared watch statistics for a watch space")
+            .WithDescription(
+                "Returns aggregate statistics about the watch space's shared watch history " +
+                "including total episodes, finished/dropped counts, and session activity. " +
+                "The caller must be a member of the watch space.")
+            .Produces<SharedStatsResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status403Forbidden);
 
         return app;
@@ -101,6 +112,27 @@ public static class AnalyticsEndpoints
         {
             var result = await handler.HandleAsync(
                 new GetRatingGapsQuery(watchSpaceId, userId), ct);
+
+            return Results.Ok(result);
+        }
+        catch (NotAWatchSpaceMemberException)
+        {
+            return Results.Forbid();
+        }
+    }
+
+    private static async Task<IResult> GetSharedStatsAsync(
+        Guid watchSpaceId,
+        ClaimsPrincipal user,
+        GetSharedStatsQueryHandler handler,
+        CancellationToken ct)
+    {
+        var userId = GetUserId(user);
+
+        try
+        {
+            var result = await handler.HandleAsync(
+                new GetSharedStatsQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
         }

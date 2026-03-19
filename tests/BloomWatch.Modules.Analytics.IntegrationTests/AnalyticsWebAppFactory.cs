@@ -108,6 +108,17 @@ public sealed class AnalyticsWebAppFactory : WebApplicationFactory<Program>, IAs
             aniListMediaId, title, title, episodes ?? (object)DBNull.Value);
     }
 
+    public void SeedWatchSession(Guid watchSpaceAnimeId, DateTime sessionDateUtc, Guid? createdByUserId = null)
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeTrackingDbContext>();
+        var id = Guid.NewGuid();
+        var userId = createdByUserId ?? Guid.NewGuid();
+        db.Database.ExecuteSqlRaw(
+            "INSERT INTO watch_sessions (id, watch_space_anime_id, session_date_utc, start_episode, end_episode, notes, created_by_user_id) VALUES ({0}, {1}, {2}, 1, 2, NULL, {3})",
+            id, watchSpaceAnimeId, sessionDateUtc.ToString("o"), userId);
+    }
+
     public void SeedParticipantRating(Guid watchSpaceAnimeId, Guid userId, decimal ratingScore)
     {
         using var scope = Services.CreateScope();
