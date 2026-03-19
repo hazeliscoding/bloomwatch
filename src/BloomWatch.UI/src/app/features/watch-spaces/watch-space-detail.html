@@ -1,0 +1,124 @@
+<main class="watch-space-detail">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="watch-space-detail__loading" role="status">
+      <p>Loading watch space...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!isLoading() && loadError()) {
+    <div class="watch-space-detail__error" role="alert">
+      <p>{{ loadError() }}</p>
+    </div>
+  }
+
+  <!-- Detail View -->
+  @if (!isLoading() && !loadError() && detail(); as d) {
+    <header class="watch-space-detail__header">
+      @if (isEditing()) {
+        <div class="watch-space-detail__rename-form">
+          <bloom-input
+            label="Space Name"
+            [ngModel]="editName()"
+            (valueChange)="onEditNameChange($event)"
+          />
+          @if (saveError()) {
+            <p class="watch-space-detail__save-error" role="alert">{{ saveError() }}</p>
+          }
+          <div class="watch-space-detail__rename-actions">
+            <bloom-button
+              variant="primary"
+              size="sm"
+              [disabled]="isSaving()"
+              [loading]="isSaving()"
+              (clicked)="saveRename()"
+            >
+              Save
+            </bloom-button>
+            <bloom-button
+              variant="ghost"
+              size="sm"
+              [disabled]="isSaving()"
+              (clicked)="cancelEditing()"
+            >
+              Cancel
+            </bloom-button>
+          </div>
+        </div>
+      } @else {
+        <div class="watch-space-detail__title-row">
+          <h1 class="watch-space-detail__title bloom-font-display">{{ d.name }}</h1>
+          @if (isOwner()) {
+            <bloom-button variant="ghost" size="sm" (clicked)="startEditing()">
+              Rename
+            </bloom-button>
+          }
+        </div>
+      }
+      <p class="watch-space-detail__meta">Created {{ d.createdAt | date:'mediumDate' }}</p>
+    </header>
+
+    <!-- Action Error -->
+    @if (actionError()) {
+      <div class="watch-space-detail__action-error" role="alert">
+        <p>{{ actionError() }}</p>
+      </div>
+    }
+
+    <!-- Members Section -->
+    <section class="watch-space-detail__members">
+      <h2 class="watch-space-detail__section-title">Members</h2>
+      <div class="watch-space-detail__member-list">
+        @for (member of d.members; track member.userId) {
+          <bloom-card class="watch-space-detail__member-card">
+            <div class="watch-space-detail__member-row">
+              <div class="watch-space-detail__member-info">
+                <span class="watch-space-detail__member-name">
+                  {{ member.displayName }}
+                  @if (isSelf(member.userId)) {
+                    <span class="watch-space-detail__self-tag">(you)</span>
+                  }
+                </span>
+                <bloom-badge [color]="roleBadgeColor(member.role)" size="sm">
+                  {{ member.role }}
+                </bloom-badge>
+              </div>
+              <span class="watch-space-detail__member-joined">
+                Joined {{ member.joinedAt | date:'mediumDate' }}
+              </span>
+              <!-- Owner actions on non-owner, non-self members -->
+              @if (isOwner() && member.role !== 'Owner' && !isSelf(member.userId)) {
+                <div class="watch-space-detail__member-actions">
+                  <bloom-button
+                    variant="ghost"
+                    size="sm"
+                    (clicked)="transferOwnership(member.userId, member.displayName)"
+                  >
+                    Transfer Ownership
+                  </bloom-button>
+                  <bloom-button
+                    variant="danger"
+                    size="sm"
+                    (clicked)="removeMember(member.userId, member.displayName)"
+                  >
+                    Remove
+                  </bloom-button>
+                </div>
+              }
+            </div>
+          </bloom-card>
+        }
+      </div>
+    </section>
+
+    <!-- Leave Space (non-owner only) -->
+    @if (!isOwner()) {
+      <section class="watch-space-detail__leave">
+        <bloom-button variant="danger" (clicked)="leaveSpace()">
+          Leave Watch Space
+        </bloom-button>
+      </section>
+    }
+  }
+</main>

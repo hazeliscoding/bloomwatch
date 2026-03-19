@@ -19,6 +19,17 @@ export class AuthService {
     return new Date(expiresAt).getTime() > Date.now();
   });
 
+  readonly userId = computed(() => {
+    const tok = this.tokenSignal();
+    if (!tok) return null;
+    try {
+      const payload = JSON.parse(atob(tok.split('.')[1]));
+      return (payload.sub ?? payload.nameid ?? null) as string | null;
+    } catch {
+      return null;
+    }
+  });
+
   constructor() {
     const stored = localStorage.getItem(TOKEN_KEY);
     if (stored) {
