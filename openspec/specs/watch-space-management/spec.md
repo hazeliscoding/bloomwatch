@@ -52,7 +52,7 @@ The system SHALL allow an authenticated user to list all watch spaces they are a
 ---
 
 ### Requirement: Member can retrieve a single watch space by ID
-The system SHALL allow a member of a watch space to retrieve its details, including the member list.
+The system SHALL allow a member of a watch space to retrieve its details, including the member list with display names.
 
 #### Scenario: Successful retrieval
 - **WHEN** an authenticated member sends `GET /watchspaces/{id}`
