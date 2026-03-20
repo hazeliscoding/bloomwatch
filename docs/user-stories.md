@@ -1,6 +1,6 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.7
+**Document version:** 1.8
 **Created:** 2026-03-13
 **Last updated:** 2026-03-20
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
@@ -1103,13 +1103,16 @@ As a watch space owner, I want to invite someone by email and manage pending inv
 ## Epic 9 — Anime Tracking Frontend
 
 **Goal:** Members can search for anime, add them to their watch space, view the shared list, update progress and status, rate anime, and log watch sessions.
-**Frontend status:** To Do
+**Frontend status:** In Progress (2/4 done)
 
 ---
 
+<details>
+<summary>Story 9.1 — Anime Search Modal</summary>
+
 ### Story 9.1 — Anime Search Modal
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 5
 **Sizing rationale:** Debounced search input calling the AniList search proxy, result list with cover images and key metadata, and an "Add to Watch Space" action. Combines network state management, debouncing, and result rendering.
 
@@ -1125,11 +1128,16 @@ As a watch space member, I want to search for anime by name and add a result to 
 - Loading, empty, and error states are handled gracefully
 - The modal can be dismissed without adding anything
 
+</details>
+
 ---
+
+<details>
+<summary>Story 9.2 — Shared Anime List Page</summary>
 
 ### Story 9.2 — Shared Anime List Page
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 5
 **Sizing rationale:** Tabbed or filtered list view grouped by status (backlog, watching, finished, paused, dropped), with cover images and participant progress indicators. Multiple UI states and filtering.
 
@@ -1143,6 +1151,8 @@ As a watch space member, I want to browse our anime list filtered by status, so 
 - An "Add Anime" button opens the search modal (Story 9.1)
 - Empty state for each status tab is handled with a friendly message
 - Page fetches from `GET /watchspaces/{id}/anime` with the appropriate `?status=` filter
+
+</details>
 
 ---
 
@@ -1286,7 +1296,7 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 3 ✅ Done | 3 | 11 |
-| Epic 9 — Anime Tracking Frontend | 📋 To Do | 4 | 21 |
+| Epic 9 — Anime Tracking Frontend | 2 ✅ Done / 2 📋 To Do | 4 | 21 |
 | Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
 | **Total** | | **47** | **153** |
 
@@ -1294,8 +1304,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Invitation flow + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker) | 113 |
-| 📋 To Do (remaining MVP) | 40 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Invitation flow + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker + Anime Search Modal + Shared Anime List Page) | 123 |
+| 📋 To Do (remaining MVP) | 30 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1336,11 +1346,11 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - ~~Story 4.7 — Record a Watch Session (3 pts) — ✅ Done~~
 - Total: 9 pts *(Complete)*
 
-**Sprint 6 — Anime Tracking frontend**
-- Story 9.1 — Anime Search Modal (5 pts)
-- Story 9.2 — Shared Anime List Page (5 pts)
+**Sprint 6 — Anime Tracking frontend** *(In Progress)*
+- ~~Story 9.1 — Anime Search Modal (5 pts) — ✅ Done~~
+- ~~Story 9.2 — Shared Anime List Page (5 pts) — ✅ Done~~
 - Story 9.4 — Inline Progress and Status Update Controls (3 pts)
-- Total: 13 pts
+- Total: 13 pts (3 pts remaining)
 
 **Sprint 7 — Anime detail frontend + Analytics backend**
 - Story 9.3 — Anime Detail Page (8 pts)
