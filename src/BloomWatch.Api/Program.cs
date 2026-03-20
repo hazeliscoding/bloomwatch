@@ -28,7 +28,13 @@ builder.Services.AddOpenApi(options =>
         {
             Title = "BloomWatch API",
             Version = "v1",
-            Description = "BloomWatch modular monolith API — Identity, WatchSpaces, and AniListSync modules."
+            Description =
+                "BloomWatch is a collaborative anime-tracking platform. " +
+                "Create shared WatchSpaces, invite friends, track anime together, " +
+                "log watch sessions, rate shows, and discover insights like compatibility scores and rating gaps.\n\n" +
+                "**Modules:** Identity, WatchSpaces, AniListSync, AnimeTracking, Analytics.\n\n" +
+                "**Authentication:** All endpoints (except registration and login) require a Bearer JWT token " +
+                "obtained from `POST /auth/login`."
         };
 
         document.Components ??= new OpenApiComponents();
