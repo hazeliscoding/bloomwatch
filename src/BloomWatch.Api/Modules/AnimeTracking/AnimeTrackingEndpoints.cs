@@ -12,8 +12,29 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BloomWatch.Api.Modules.AnimeTracking;
 
+/// <summary>
+/// Defines the minimal API endpoints for the AnimeTracking module, covering anime list management,
+/// shared status updates, individual participant progress and ratings, and watch session recording.
+/// </summary>
 public static class AnimeTrackingEndpoints
 {
+    /// <summary>
+    /// Maps the AnimeTracking HTTP endpoints onto the application's routing pipeline.
+    /// </summary>
+    /// <remarks>
+    /// <para>All endpoints are nested under <c>/watchspaces/{watchSpaceId}/anime</c> and require authorization.
+    /// The caller must be a member of the specified watch space. Registers the following operations:</para>
+    /// <list type="bullet">
+    ///   <item><description>List and detail: browse tracked anime and view full details with participants and sessions.</description></item>
+    ///   <item><description>Add anime: import an anime from the AniList cache into the watch space.</description></item>
+    ///   <item><description>Shared status: update the group's collective tracking state (status, episodes, mood/vibe/pitch).</description></item>
+    ///   <item><description>Individual progress: each member tracks their own status and episode count independently.</description></item>
+    ///   <item><description>Ratings: each member submits a personal score and optional notes.</description></item>
+    ///   <item><description>Watch sessions: log when and which episodes the group watched together.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <param name="app">The endpoint route builder to add the AnimeTracking routes to.</param>
+    /// <returns>The same <see cref="IEndpointRouteBuilder"/> instance for chaining.</returns>
     public static IEndpointRouteBuilder MapAnimeTrackingEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/watchspaces/{watchSpaceId:guid}/anime")
@@ -99,6 +120,14 @@ public static class AnimeTrackingEndpoints
         return app;
     }
 
+    /// <summary>
+    /// Handles adding an anime to a watch space by its AniList media ID.
+    /// </summary>
+    /// <returns>
+    /// A 201 Created result with the new tracked anime entry, a 403 Forbidden if the caller
+    /// is not a member, a 409 Conflict if the anime is already tracked, or a 404 Not Found
+    /// if the AniList media ID is not in the local cache.
+    /// </returns>
     private static async Task<IResult> AddAnimeAsync(
         Guid watchSpaceId,
         [FromBody] AddAnimeRequest request,
@@ -135,6 +164,12 @@ public static class AnimeTrackingEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles listing all anime tracked in a watch space, with optional status filtering.
+    /// </summary>
+    /// <returns>
+    /// A 200 OK result with the anime list, or a 403 Forbidden if the caller is not a member.
+    /// </returns>
     private static async Task<IResult> ListAnimeAsync(
         Guid watchSpaceId,
         [FromQuery] AnimeStatus? status,
@@ -156,6 +191,13 @@ public static class AnimeTrackingEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles retrieving full detail for a single tracked anime including participants and watch sessions.
+    /// </summary>
+    /// <returns>
+    /// A 200 OK result with the anime detail, a 404 Not Found if the anime is not tracked
+    /// in this watch space, or a 403 Forbidden if the caller is not a member.
+    /// </returns>
     private static async Task<IResult> GetAnimeDetailAsync(
         Guid watchSpaceId,
         Guid watchSpaceAnimeId,
@@ -179,6 +221,14 @@ public static class AnimeTrackingEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles partial updates to the shared tracking state (status, episodes, mood/vibe/pitch) for an anime.
+    /// </summary>
+    /// <returns>
+    /// A 200 OK result with the updated anime detail, a 400 Bad Request if the status value
+    /// is invalid, a 404 Not Found if the anime is not tracked, or a 403 Forbidden if the caller
+    /// is not a member.
+    /// </returns>
     private static async Task<IResult> UpdateSharedAnimeStatusAsync(
         Guid watchSpaceId,
         Guid watchSpaceAnimeId,
@@ -225,6 +275,15 @@ public static class AnimeTrackingEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles updating the calling user's individual progress (status and episode count) for an anime.
+    /// Creates the participant entry automatically if it does not already exist.
+    /// </summary>
+    /// <returns>
+    /// A 200 OK result with the updated participant detail, a 400 Bad Request if the status value
+    /// is invalid, a 404 Not Found if the anime is not tracked, or a 403 Forbidden if the caller
+    /// is not a member.
+    /// </returns>
     private static async Task<IResult> UpdateParticipantProgressAsync(
         Guid watchSpaceId,
         Guid watchSpaceAnimeId,
@@ -263,6 +322,15 @@ public static class AnimeTrackingEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles submitting or updating the calling user's personal rating and optional notes for an anime.
+    /// Creates the participant entry automatically if it does not already exist.
+    /// </summary>
+    /// <returns>
+    /// A 200 OK result with the updated participant detail, a 400 Bad Request if the rating
+    /// is invalid, a 404 Not Found if the anime is not tracked, or a 403 Forbidden if the caller
+    /// is not a member.
+    /// </returns>
     private static async Task<IResult> UpdateParticipantRatingAsync(
         Guid watchSpaceId,
         Guid watchSpaceAnimeId,
@@ -299,6 +367,13 @@ public static class AnimeTrackingEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles recording a new watch session (date, episode range, optional notes) for an anime.
+    /// </summary>
+    /// <returns>
+    /// A 201 Created result with the new session record, a 400 Bad Request if validation fails,
+    /// a 404 Not Found if the anime is not tracked, or a 403 Forbidden if the caller is not a member.
+    /// </returns>
     private static async Task<IResult> RecordWatchSessionAsync(
         Guid watchSpaceId,
         Guid watchSpaceAnimeId,
@@ -338,6 +413,9 @@ public static class AnimeTrackingEndpoints
         }
     }
 
+    /// <summary>
+    /// Extracts the user's unique identifier from the JWT claims principal.
+    /// </summary>
     private static Guid GetUserId(ClaimsPrincipal user)
     {
         var sub = user.FindFirstValue(ClaimTypes.NameIdentifier)
@@ -350,6 +428,10 @@ public static class AnimeTrackingEndpoints
 /// <summary>
 /// Request body for adding an anime to a watch space.
 /// </summary>
+/// <param name="AniListMediaId">The AniList media ID of the anime to add. Must exist in the local AniList cache (use <c>GET /api/anilist/search</c> first).</param>
+/// <param name="Mood">An optional free-text mood tag describing the group's feeling about this pick (e.g., "cozy", "intense").</param>
+/// <param name="Vibe">An optional free-text vibe tag for this anime (e.g., "late-night binge", "weekend chill").</param>
+/// <param name="Pitch">An optional short pitch or reason why the group should watch this anime.</param>
 public sealed record AddAnimeRequest(
     int AniListMediaId,
     string? Mood = null,

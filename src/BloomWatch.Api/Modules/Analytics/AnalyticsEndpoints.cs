@@ -8,8 +8,28 @@ using BloomWatch.Modules.Analytics.Application.UseCases.GetSharedStats;
 
 namespace BloomWatch.Api.Modules.Analytics;
 
+/// <summary>
+/// Defines the minimal API endpoints for the Analytics module, providing aggregated insights
+/// about a watch space's activity, compatibility, rating differences, and random picks.
+/// </summary>
 public static class AnalyticsEndpoints
 {
+    /// <summary>
+    /// Maps the Analytics HTTP endpoints onto the application's routing pipeline.
+    /// </summary>
+    /// <remarks>
+    /// <para>All endpoints are nested under <c>/watchspaces/{watchSpaceId}</c> and require authorization.
+    /// The caller must be a member of the specified watch space. Registers the following analytics queries:</para>
+    /// <list type="bullet">
+    ///   <item><description>Dashboard: a single-call composite view combining stats, currently watching, backlog highlights, rating gaps, and compatibility.</description></item>
+    ///   <item><description>Compatibility: a score derived from shared anime ratings indicating how closely members' tastes align.</description></item>
+    ///   <item><description>Rating gaps: anime where members have the largest divergence in personal ratings.</description></item>
+    ///   <item><description>Shared stats: aggregate counters for episodes watched together, finished/dropped shows, and session counts.</description></item>
+    ///   <item><description>Random pick: selects a random anime from the backlog to help the group decide what to watch next.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <param name="app">The endpoint route builder to add the Analytics routes to.</param>
+    /// <returns>The same <see cref="IEndpointRouteBuilder"/> instance for chaining.</returns>
     public static IEndpointRouteBuilder MapAnalyticsEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/watchspaces/{watchSpaceId:guid}")
@@ -69,6 +89,10 @@ public static class AnalyticsEndpoints
         return app;
     }
 
+    /// <summary>
+    /// Handles retrieving the composite dashboard summary for a watch space, combining stats,
+    /// currently-watching list, backlog highlights, rating gaps, and compatibility in a single call.
+    /// </summary>
     private static async Task<IResult> GetDashboardSummaryAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
@@ -90,6 +114,10 @@ public static class AnalyticsEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles computing and returning the taste-compatibility score for a watch space.
+    /// Requires at least two members with shared rated anime to produce a score.
+    /// </summary>
     private static async Task<IResult> GetCompatibilityAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
@@ -111,6 +139,10 @@ public static class AnalyticsEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles listing all anime with rating divergence between members, sorted by descending gap
+    /// magnitude with alphabetical title tie-breaking.
+    /// </summary>
     private static async Task<IResult> GetRatingGapsAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
@@ -132,6 +164,10 @@ public static class AnalyticsEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles returning aggregate statistics about the watch space's shared activity,
+    /// including total episodes watched together, finished/dropped counts, and session totals.
+    /// </summary>
     private static async Task<IResult> GetSharedStatsAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
@@ -153,6 +189,10 @@ public static class AnalyticsEndpoints
         }
     }
 
+    /// <summary>
+    /// Handles selecting a random anime from the watch space's backlog.
+    /// Returns a null pick with a descriptive message if the backlog is empty.
+    /// </summary>
     private static async Task<IResult> GetRandomPickAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
@@ -174,6 +214,9 @@ public static class AnalyticsEndpoints
         }
     }
 
+    /// <summary>
+    /// Extracts the user's unique identifier from the JWT claims principal.
+    /// </summary>
     private static Guid GetUserId(ClaimsPrincipal user)
     {
         var sub = user.FindFirstValue(ClaimTypes.NameIdentifier)
