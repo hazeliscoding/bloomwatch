@@ -10,6 +10,11 @@ import {
   InvitationDetail,
   InvitationPreview,
   InviteMemberResponse,
+  ParticipantDetail,
+  RecordWatchSessionRequest,
+  UpdateParticipantProgressRequest,
+  UpdateParticipantRatingRequest,
+  WatchSpaceAnimeDetail,
   WatchSpaceAnimeListItem,
   WatchSpaceDetail,
   WatchSpaceSummary,
@@ -90,5 +95,21 @@ export class WatchSpaceService {
 
   addAnimeToWatchSpace(spaceId: string, body: AddAnimeToWatchSpaceRequest): Observable<AddAnimeToWatchSpaceResult> {
     return this.api.post<AddAnimeToWatchSpaceResult>(`/watchspaces/${spaceId}/anime`, body);
+  }
+
+  getAnimeDetail(spaceId: string, animeId: string): Observable<WatchSpaceAnimeDetail> {
+    return this.api.get<WatchSpaceAnimeDetail>(`/watchspaces/${spaceId}/anime/${animeId}`);
+  }
+
+  updateParticipantProgress(spaceId: string, animeId: string, body: UpdateParticipantProgressRequest): Observable<ParticipantDetail> {
+    return this.api.patch<ParticipantDetail>(`/watchspaces/${spaceId}/anime/${animeId}/participant-progress`, body);
+  }
+
+  updateParticipantRating(spaceId: string, animeId: string, body: UpdateParticipantRatingRequest): Observable<ParticipantDetail> {
+    return this.api.patch<ParticipantDetail>(`/watchspaces/${spaceId}/anime/${animeId}/participant-rating`, body);
+  }
+
+  recordWatchSession(spaceId: string, animeId: string, body: RecordWatchSessionRequest): Observable<{ watchSessionId: string }> {
+    return this.api.post<{ watchSessionId: string }>(`/watchspaces/${spaceId}/anime/${animeId}/sessions`, body);
   }
 }

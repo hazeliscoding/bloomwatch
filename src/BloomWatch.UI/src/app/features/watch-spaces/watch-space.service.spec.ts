@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { WatchSpaceService } from './watch-space.service';
-import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary } from './watch-space.model';
+import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail } from './watch-space.model';
 
 describe('WatchSpaceService', () => {
   let service: WatchSpaceService;
@@ -161,6 +161,65 @@ describe('WatchSpaceService', () => {
       const req = httpTesting.expectOne((r) => r.url.endsWith('/api/anilist/media/12345'));
       expect(req.request.method).toBe('GET');
       req.flush({});
+    });
+  });
+
+  describe('getAnimeDetail', () => {
+    it('should send GET /watchspaces/{id}/anime/{animeId}', () => {
+      const detail = { watchSpaceAnimeId: 'a1', preferredTitle: 'Cowboy Bebop', participants: [], watchSessions: [] };
+
+      service.getAnimeDetail('space-1', 'a1').subscribe((res) => {
+        expect(res.watchSpaceAnimeId).toBe('a1');
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1'));
+      expect(req.request.method).toBe('GET');
+      req.flush(detail);
+    });
+  });
+
+  describe('updateParticipantProgress', () => {
+    it('should send PATCH /watchspaces/{id}/anime/{animeId}/participant-progress', () => {
+      const result: ParticipantDetail = { userId: 'u1', individualStatus: 'Finished', episodesWatched: 26, ratingScore: null, ratingNotes: null, lastUpdatedAtUtc: '2026-03-20T00:00:00Z' };
+
+      service.updateParticipantProgress('space-1', 'a1', { individualStatus: 'Finished', episodesWatched: 26 }).subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1/participant-progress'));
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ individualStatus: 'Finished', episodesWatched: 26 });
+      req.flush(result);
+    });
+  });
+
+  describe('updateParticipantRating', () => {
+    it('should send PATCH /watchspaces/{id}/anime/{animeId}/participant-rating', () => {
+      const result: ParticipantDetail = { userId: 'u1', individualStatus: 'Watching', episodesWatched: 12, ratingScore: 8.5, ratingNotes: 'Great', lastUpdatedAtUtc: '2026-03-20T00:00:00Z' };
+
+      service.updateParticipantRating('space-1', 'a1', { ratingScore: 8.5, ratingNotes: 'Great' }).subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1/participant-rating'));
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ ratingScore: 8.5, ratingNotes: 'Great' });
+      req.flush(result);
+    });
+  });
+
+  describe('recordWatchSession', () => {
+    it('should send POST /watchspaces/{id}/anime/{animeId}/sessions', () => {
+      const body = { sessionDateUtc: '2026-03-20T00:00:00Z', startEpisode: 1, endEpisode: 3, notes: 'Fun!' };
+
+      service.recordWatchSession('space-1', 'a1', body).subscribe((res) => {
+        expect(res.watchSessionId).toBe('sess-new');
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1/sessions'));
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(body);
+      req.flush({ watchSessionId: 'sess-new' });
     });
   });
 

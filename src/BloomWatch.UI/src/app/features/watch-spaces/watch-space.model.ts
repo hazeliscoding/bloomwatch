@@ -99,3 +99,58 @@ export interface AddAnimeToWatchSpaceResult {
   season: string | null;
   seasonYear: number | null;
 }
+
+export interface ParticipantDetail {
+  userId: string;
+  individualStatus: string;
+  episodesWatched: number;
+  ratingScore: number | null;
+  ratingNotes: string | null;
+  lastUpdatedAtUtc: string;
+}
+
+export interface WatchSessionDetail {
+  watchSessionId: string;
+  sessionDateUtc: string;
+  startEpisode: number;
+  endEpisode: number;
+  notes: string | null;
+  createdByUserId: string;
+}
+
+export interface WatchSpaceAnimeDetail {
+  watchSpaceAnimeId: string;
+  anilistMediaId: number;
+  preferredTitle: string;
+  coverImageUrlSnapshot: string | null;
+  episodeCountSnapshot: number | null;
+  format: string | null;
+  season: string | null;
+  seasonYear: number | null;
+  sharedStatus: string;
+  sharedEpisodesWatched: number;
+  mood: string | null;
+  vibe: string | null;
+  pitch: string | null;
+  addedByUserId: string;
+  addedAtUtc: string;
+  participants: ParticipantDetail[];
+  watchSessions: WatchSessionDetail[];
+}
+
+export interface UpdateParticipantProgressRequest {
+  individualStatus: string;
+  episodesWatched: number;
+}
+
+export interface UpdateParticipantRatingRequest {
+  ratingScore: number;
+  ratingNotes?: string | null;
+}
+
+export interface RecordWatchSessionRequest {
+  sessionDateUtc: string;
+  startEpisode: number;
+  endEpisode: number;
+  notes?: string | null;
+}
