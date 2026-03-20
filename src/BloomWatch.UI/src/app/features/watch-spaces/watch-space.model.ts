@@ -64,6 +64,13 @@ export interface AnimeSearchResult {
   genres: string[];
 }
 
+export interface AnimeParticipantSummary {
+  userId: string;
+  displayName: string;
+  individualStatus: string;
+  episodesWatched: number;
+}
+
 export interface WatchSpaceAnimeListItem {
   watchSpaceAnimeId: string;
   anilistMediaId: number;
@@ -73,6 +80,7 @@ export interface WatchSpaceAnimeListItem {
   sharedStatus: string;
   sharedEpisodesWatched: number;
   addedAtUtc: string;
+  participants: AnimeParticipantSummary[];
 }
 
 export interface AddAnimeToWatchSpaceRequest {

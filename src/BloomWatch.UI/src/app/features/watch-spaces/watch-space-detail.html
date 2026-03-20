@@ -76,8 +76,14 @@
     <app-anime-search-modal
       [open]="isSearchModalOpen()"
       [watchSpaceId]="d.watchSpaceId"
-      (closed)="onSearchModalClosed()"
+      (closed)="onSearchModalClosedWithRefresh()"
       (animeAdded)="onAnimeAdded()"
+    />
+
+    <!-- Anime List -->
+    <app-anime-list
+      #animeList
+      [watchSpaceId]="d.watchSpaceId"
     />
 
     <!-- Members Section -->

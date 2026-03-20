@@ -167,7 +167,7 @@ describe('WatchSpaceService', () => {
   describe('listWatchSpaceAnime', () => {
     it('should send GET /watchspaces/{id}/anime and unwrap items', () => {
       const items = [
-        { watchSpaceAnimeId: 'a1', anilistMediaId: 1, preferredTitle: 'Cowboy Bebop', coverImageUrlSnapshot: null, episodeCountSnapshot: 26, sharedStatus: 'Backlog', sharedEpisodesWatched: 0, addedAtUtc: '2026-01-01T00:00:00Z' },
+        { watchSpaceAnimeId: 'a1', anilistMediaId: 1, preferredTitle: 'Cowboy Bebop', coverImageUrlSnapshot: null, episodeCountSnapshot: 26, sharedStatus: 'Backlog', sharedEpisodesWatched: 0, addedAtUtc: '2026-01-01T00:00:00Z', participants: [] },
       ];
 
       service.listWatchSpaceAnime('space-1').subscribe((res) => {
@@ -177,6 +177,30 @@ describe('WatchSpaceService', () => {
       const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime'));
       expect(req.request.method).toBe('GET');
       req.flush({ items });
+    });
+
+    it('should append status query param when provided', () => {
+      const items = [
+        { watchSpaceAnimeId: 'a2', anilistMediaId: 2, preferredTitle: 'Steins;Gate', coverImageUrlSnapshot: null, episodeCountSnapshot: 24, sharedStatus: 'Watching', sharedEpisodesWatched: 5, addedAtUtc: '2026-02-01T00:00:00Z', participants: [] },
+      ];
+
+      service.listWatchSpaceAnime('space-1', 'watching').subscribe((res) => {
+        expect(res).toEqual(items);
+      });
+
+      const req = httpTesting.expectOne((r) =>
+        r.url.includes('/watchspaces/space-1/anime') && r.url.includes('status=watching')
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush({ items });
+    });
+
+    it('should not append status query param when not provided', () => {
+      service.listWatchSpaceAnime('space-1').subscribe();
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime'));
+      expect(req.request.url).not.toContain('status=');
+      req.flush({ items: [] });
     });
   });
 });

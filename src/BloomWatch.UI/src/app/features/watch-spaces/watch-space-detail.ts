@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,10 +11,11 @@ import { InvitationDetail, WatchSpaceDetail as WatchSpaceDetailModel } from './w
 import { AuthService } from '../../core/auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AnimeSearchModalComponent } from './anime-search-modal';
+import { AnimeListComponent } from './anime-list';
 
 @Component({
   selector: 'app-watch-space-detail',
-  imports: [DatePipe, FormsModule, BloomCardComponent, BloomButtonComponent, BloomBadgeComponent, BloomInputComponent, AnimeSearchModalComponent],
+  imports: [DatePipe, FormsModule, BloomCardComponent, BloomButtonComponent, BloomBadgeComponent, BloomInputComponent, AnimeSearchModalComponent, AnimeListComponent],
   templateUrl: './watch-space-detail.html',
   styleUrl: './watch-space-detail.scss',
 })
@@ -56,6 +57,9 @@ export class WatchSpaceDetail implements OnInit {
   readonly invitations = signal<InvitationDetail[]>([]);
   readonly isLoadingInvitations = signal(false);
 
+  // Anime list ref
+  private readonly animeList = viewChild<AnimeListComponent>('animeList');
+
   // Anime search modal state
   readonly isSearchModalOpen = signal(false);
 
@@ -63,17 +67,18 @@ export class WatchSpaceDetail implements OnInit {
     this.isSearchModalOpen.set(true);
   }
 
-  onSearchModalClosed(): void {
-    this.isSearchModalOpen.set(false);
-  }
+  private animeAddedDuringSearch = false;
 
   onAnimeAdded(): void {
-    // Will refresh when modal closes — no-op here for per-add events
+    this.animeAddedDuringSearch = true;
   }
 
   onSearchModalClosedWithRefresh(): void {
     this.isSearchModalOpen.set(false);
-    // Refresh anime list if needed — future task when anime list is rendered
+    if (this.animeAddedDuringSearch) {
+      this.animeList()?.refresh();
+      this.animeAddedDuringSearch = false;
+    }
   }
 
   ngOnInit(): void {

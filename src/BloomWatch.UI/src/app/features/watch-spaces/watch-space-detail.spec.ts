@@ -67,15 +67,26 @@ describe('WatchSpaceDetail — Invitations', () => {
     localStorage.clear();
   });
 
+  function flushAnimeList(): void {
+    const animeReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime') && r.method === 'GET'
+    );
+    animeReq.flush({ items: [] });
+    fixture.detectChanges();
+  }
+
   function initAsOwner(): void {
     // Set auth token so userId() returns ownerUserId
     authService.setToken(fakeJwt(ownerUserId), '2099-01-01T00:00:00Z');
     fixture.detectChanges();
 
     // Flush detail request
-    const detailReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1'));
+    const detailReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1') && !r.url.includes('/anime') && !r.url.includes('/invitations'));
     detailReq.flush(mockDetail);
     fixture.detectChanges();
+
+    // Flush anime list request (from child component)
+    flushAnimeList();
 
     // Flush invitations request (auto-loaded for owner)
     const invReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1/invitations'));
@@ -87,9 +98,12 @@ describe('WatchSpaceDetail — Invitations', () => {
     authService.setToken(fakeJwt('user-2'), '2099-01-01T00:00:00Z');
     fixture.detectChanges();
 
-    const detailReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1'));
+    const detailReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1') && !r.url.includes('/anime') && !r.url.includes('/invitations'));
     detailReq.flush(mockDetail);
     fixture.detectChanges();
+
+    // Flush anime list request (from child component)
+    flushAnimeList();
     // No invitations request expected for non-owner
   }
 
@@ -195,9 +209,11 @@ describe('WatchSpaceDetail — Invitations', () => {
     authService.setToken(fakeJwt(ownerUserId), '2099-01-01T00:00:00Z');
     fixture.detectChanges();
 
-    const detailReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1'));
+    const detailReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1') && !r.url.includes('/anime') && !r.url.includes('/invitations'));
     detailReq.flush(mockDetail);
     fixture.detectChanges();
+
+    flushAnimeList();
 
     const invReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1/invitations'));
     invReq.flush([]);

@@ -56,8 +56,17 @@ describe('Anime Search Integration', () => {
     fixture.detectChanges();
 
     // Respond to initial detail load
-    const detailReq = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/ws-1'));
+    const detailReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1') && !r.url.includes('/anime') && !r.url.includes('/invitations')
+    );
     detailReq.flush(mockDetail);
+    fixture.detectChanges();
+
+    // Respond to anime list load (from child AnimeListComponent)
+    const animeListReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime') && r.method === 'GET'
+    );
+    animeListReq.flush({ items: [] });
     fixture.detectChanges();
 
     // Respond to invitations load
@@ -87,6 +96,13 @@ describe('Anime Search Integration', () => {
 
     // 3. Type search query
     vi.advanceTimersByTime(100); // let modal open effects settle
+    fixture.detectChanges();
+
+    // Flush modal's loadExistingAnime request
+    const modalAnimeReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime') && r.method === 'GET'
+    );
+    modalAnimeReq.flush({ items: [] });
     fixture.detectChanges();
 
     const searchInput = fixture.nativeElement.querySelector(
@@ -124,7 +140,15 @@ describe('Anime Search Integration', () => {
     resultAddBtn.click();
     fixture.detectChanges();
 
-    const addReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1/anime'));
+    // Flush ensureMediaCached GET
+    const cacheReq = httpTesting.expectOne((r) => r.url.includes('/api/anilist/media/20'));
+    expect(cacheReq.request.method).toBe('GET');
+    cacheReq.flush({});
+    fixture.detectChanges();
+
+    const addReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime') && r.method === 'POST'
+    );
     expect(addReq.request.method).toBe('POST');
     addReq.flush({
       watchSpaceAnimeId: 'anime-20',
@@ -144,6 +168,13 @@ describe('Anime Search Integration', () => {
     // 7. Close modal
     const closeBtn = fixture.nativeElement.querySelector('.bloom-modal__close');
     closeBtn.click();
+    fixture.detectChanges();
+
+    // Flush anime list refresh (triggered because anime was added)
+    const refreshReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime') && r.method === 'GET'
+    );
+    refreshReq.flush({ items: [] });
     fixture.detectChanges();
 
     // Modal should be gone

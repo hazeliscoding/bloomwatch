@@ -72,8 +72,11 @@ export class WatchSpaceService {
     return this.api.post<void>(`/watchspaces/invitations/${token}/decline`, {});
   }
 
-  listWatchSpaceAnime(spaceId: string): Observable<WatchSpaceAnimeListItem[]> {
-    return this.api.get<{ items: WatchSpaceAnimeListItem[] }>(`/watchspaces/${spaceId}/anime`)
+  listWatchSpaceAnime(spaceId: string, status?: string): Observable<WatchSpaceAnimeListItem[]> {
+    const url = status
+      ? `/watchspaces/${spaceId}/anime?status=${encodeURIComponent(status)}`
+      : `/watchspaces/${spaceId}/anime`;
+    return this.api.get<{ items: WatchSpaceAnimeListItem[] }>(url)
       .pipe(map((res) => res.items));
   }
 
