@@ -3,6 +3,9 @@ import { Observable } from 'rxjs';
 import { ApiService } from '../../core/http/api.service';
 import {
   AcceptInvitationResponse,
+  AddAnimeToWatchSpaceRequest,
+  AddAnimeToWatchSpaceResult,
+  AnimeSearchResult,
   CreateWatchSpaceRequest,
   InvitationDetail,
   InvitationPreview,
@@ -66,5 +69,13 @@ export class WatchSpaceService {
 
   declineInvitation(token: string): Observable<void> {
     return this.api.post<void>(`/watchspaces/invitations/${token}/decline`, {});
+  }
+
+  searchAnime(query: string): Observable<AnimeSearchResult[]> {
+    return this.api.get<AnimeSearchResult[]>(`/api/anilist/search?query=${encodeURIComponent(query)}`);
+  }
+
+  addAnimeToWatchSpace(spaceId: string, body: AddAnimeToWatchSpaceRequest): Observable<AddAnimeToWatchSpaceResult> {
+    return this.api.post<AddAnimeToWatchSpaceResult>(`/watchspaces/${spaceId}/anime`, body);
   }
 }

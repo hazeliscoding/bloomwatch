@@ -50,3 +50,33 @@ export interface InvitationPreview {
 export interface AcceptInvitationResponse {
   watchSpaceId: string;
 }
+
+export interface AnimeSearchResult {
+  anilistMediaId: number;
+  titleRomaji: string | null;
+  titleEnglish: string | null;
+  coverImageUrl: string | null;
+  episodes: number | null;
+  status: string | null;
+  format: string | null;
+  season: string | null;
+  seasonYear: number | null;
+  genres: string[];
+}
+
+export interface AddAnimeToWatchSpaceRequest {
+  aniListMediaId: number;
+  mood?: string | null;
+  vibe?: string | null;
+  pitch?: string | null;
+}
+
+export interface AddAnimeToWatchSpaceResult {
+  watchSpaceAnimeId: string;
+  preferredTitle: string;
+  episodeCountSnapshot: number | null;
+  coverImageUrlSnapshot: string | null;
+  format: string | null;
+  season: string | null;
+  seasonYear: number | null;
+}

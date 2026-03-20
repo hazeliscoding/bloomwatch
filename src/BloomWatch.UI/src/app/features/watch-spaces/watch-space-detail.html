@@ -66,6 +66,20 @@
       </div>
     }
 
+    <!-- Add Anime -->
+    <section class="watch-space-detail__add-anime">
+      <bloom-button variant="accent" (clicked)="openSearchModal()">
+        Add Anime
+      </bloom-button>
+    </section>
+
+    <app-anime-search-modal
+      [open]="isSearchModalOpen()"
+      [watchSpaceId]="d.watchSpaceId"
+      (closed)="onSearchModalClosed()"
+      (animeAdded)="onAnimeAdded()"
+    />
+
     <!-- Members Section -->
     <section class="watch-space-detail__members">
       <h2 class="watch-space-detail__section-title">Members</h2>

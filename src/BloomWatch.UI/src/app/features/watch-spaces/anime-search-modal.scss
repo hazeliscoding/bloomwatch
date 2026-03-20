@@ -1,0 +1,220 @@
+// ============================================================================
+// Anime Search Modal
+// Kawaii / Y2K Search & Add Interface
+// ============================================================================
+
+.anime-search__title {
+  font-size: var(--bloom-text-lg);
+  font-weight: var(--bloom-font-bold);
+  color: var(--bloom-text-primary);
+  margin: 0;
+}
+
+.anime-search__input-wrapper {
+  margin-bottom: var(--bloom-space-4);
+}
+
+// --------------------------------------------------------------------------
+// Loading State
+// --------------------------------------------------------------------------
+
+.anime-search__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bloom-space-3);
+  padding: var(--bloom-space-8) 0;
+  color: var(--bloom-text-secondary);
+  font-size: var(--bloom-text-sm);
+}
+
+.anime-search__spinner {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-1);
+}
+
+.anime-search__spinner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--bloom-radius-circle);
+  background-color: var(--bloom-pink-400);
+  animation: bloom-loading-dot 1.4s ease-in-out infinite both;
+
+  &:nth-child(1) { animation-delay: -0.32s; }
+  &:nth-child(2) { animation-delay: -0.16s; }
+  &:nth-child(3) { animation-delay: 0s; }
+}
+
+@keyframes bloom-loading-dot {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Error State
+// --------------------------------------------------------------------------
+
+.anime-search__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bloom-space-2);
+  padding: var(--bloom-space-6) 0;
+  color: var(--bloom-error-dark);
+  font-size: var(--bloom-text-sm);
+  text-align: center;
+}
+
+// --------------------------------------------------------------------------
+// Empty State
+// --------------------------------------------------------------------------
+
+.anime-search__empty {
+  padding: var(--bloom-space-8) 0;
+  text-align: center;
+  color: var(--bloom-text-tertiary);
+  font-size: var(--bloom-text-sm);
+}
+
+// --------------------------------------------------------------------------
+// Results List
+// --------------------------------------------------------------------------
+
+.anime-search__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bloom-space-3);
+}
+
+.anime-search__result {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bloom-space-3);
+  padding: var(--bloom-space-3);
+  background: var(--bloom-surface-raised);
+  border: 1px solid var(--bloom-border-default);
+  border-radius: var(--bloom-radius-lg);
+  transition:
+    border-color var(--bloom-transition-fast),
+    box-shadow var(--bloom-transition-fast);
+
+  &:hover {
+    border-color: var(--bloom-border-strong);
+    box-shadow: var(--bloom-shadow-sm);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Cover Image
+// --------------------------------------------------------------------------
+
+.anime-search__result-cover {
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 5rem;
+  border-radius: var(--bloom-radius-md);
+  overflow: hidden;
+  background: var(--bloom-surface-sunken);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.anime-search__result-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--bloom-gradient-kawaii);
+  opacity: 0.3;
+}
+
+// --------------------------------------------------------------------------
+// Info
+// --------------------------------------------------------------------------
+
+.anime-search__result-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bloom-space-1);
+}
+
+.anime-search__result-title {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-semibold);
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.anime-search__result-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-2);
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-text-secondary);
+}
+
+.anime-search__result-episodes,
+.anime-search__result-season {
+  white-space: nowrap;
+}
+
+.anime-search__result-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bloom-space-1);
+}
+
+// --------------------------------------------------------------------------
+// Action
+// --------------------------------------------------------------------------
+
+.anime-search__result-action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-top: var(--bloom-space-1);
+}
+
+.anime-search__result-added {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bloom-space-1);
+  padding: var(--bloom-space-1) var(--bloom-space-2);
+  font-size: var(--bloom-text-xs);
+  font-weight: var(--bloom-font-semibold);
+  color: var(--bloom-success-dark);
+  background: var(--bloom-success-bg);
+  border-radius: var(--bloom-radius-md);
+
+  &::before {
+    content: '\2713';
+  }
+}
+
+// --------------------------------------------------------------------------
+// Reduced Motion
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .anime-search__spinner-dot {
+    animation: none;
+    opacity: 0.6;
+  }
+}

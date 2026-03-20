@@ -10,10 +10,11 @@ import { WatchSpaceService } from './watch-space.service';
 import { InvitationDetail, WatchSpaceDetail as WatchSpaceDetailModel } from './watch-space.model';
 import { AuthService } from '../../core/auth/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AnimeSearchModalComponent } from './anime-search-modal';
 
 @Component({
   selector: 'app-watch-space-detail',
-  imports: [DatePipe, FormsModule, BloomCardComponent, BloomButtonComponent, BloomBadgeComponent, BloomInputComponent],
+  imports: [DatePipe, FormsModule, BloomCardComponent, BloomButtonComponent, BloomBadgeComponent, BloomInputComponent, AnimeSearchModalComponent],
   templateUrl: './watch-space-detail.html',
   styleUrl: './watch-space-detail.scss',
 })
@@ -54,6 +55,26 @@ export class WatchSpaceDetail implements OnInit {
   // Invitations list state
   readonly invitations = signal<InvitationDetail[]>([]);
   readonly isLoadingInvitations = signal(false);
+
+  // Anime search modal state
+  readonly isSearchModalOpen = signal(false);
+
+  openSearchModal(): void {
+    this.isSearchModalOpen.set(true);
+  }
+
+  onSearchModalClosed(): void {
+    this.isSearchModalOpen.set(false);
+  }
+
+  onAnimeAdded(): void {
+    // Will refresh when modal closes — no-op here for per-add events
+  }
+
+  onSearchModalClosedWithRefresh(): void {
+    this.isSearchModalOpen.set(false);
+    // Refresh anime list if needed — future task when anime list is rendered
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
