@@ -23,7 +23,7 @@ A shared anime tracking platform for pairs and small groups. BloomWatch lets fri
 **Testing**
 
 - xUnit, NSubstitute, FluentAssertions (backend)
-- 263 automated tests (169 backend across 10 xUnit projects + 94 frontend via Vitest)
+- 351 automated tests (214 backend across 10 xUnit projects + 137 frontend via Vitest)
 
 ## Project Structure
 
@@ -39,7 +39,7 @@ src/
 │       │   ├── features/                    # Feature modules: landing, auth (register, login), dashboard, watch-spaces, settings, showcase
 │       │   └── shared/
 │       │       ├── styles/                  # Design tokens, base styles, animations, utilities
-│       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar)
+│       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar, modal)
 │       └── styles.scss                      # Global stylesheet
 └── Modules/
     ├── Identity/
@@ -174,6 +174,7 @@ POST   /watchspaces/{id}/invitations                     # Invite a user by emai
 GET    /watchspaces/{id}/invitations                     # List pending invitations (owner only)
 DELETE /watchspaces/{id}/invitations/{invitationId}      # Revoke an invitation (owner only)
 
+GET    /watchspaces/invitations/{token}                   # Preview an invitation (invitee only)
 POST   /watchspaces/invitations/{token}/accept           # Accept an invitation by token
 POST   /watchspaces/invitations/{token}/decline          # Decline an invitation by token
 
@@ -210,6 +211,10 @@ Requires a valid JWT and watch space membership.
 
 ```http
 GET /watchspaces/{id}/dashboard                                        # Dashboard summary (stats, compatibility, highlights)
+GET /watchspaces/{id}/analytics/compatibility                          # Compatibility score between members
+GET /watchspaces/{id}/analytics/rating-gaps                            # Anime with largest rating divergences
+GET /watchspaces/{id}/analytics/shared-stats                           # Aggregate watch statistics
+GET /watchspaces/{id}/analytics/random-pick                            # Random backlog anime suggestion
 ```
 
 A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
@@ -227,6 +232,7 @@ The Angular frontend lives in `src/BloomWatch.UI/` and provides the user-facing 
 | `/register` | Minimal | Registration page (no nav bar) |
 | `/dashboard` | Shell | Dashboard |
 | `/watch-spaces` | Shell | Watch space list and detail views |
+| `/watch-spaces/invitations/:token` | Shell | Invitation accept/decline response page |
 | `/settings` | Shell | User settings |
 | `/showcase` | Shell | Component library showcase |
 
@@ -243,6 +249,7 @@ The frontend includes a custom component library under `src/app/shared/ui/`, bui
 | Avatar | `bloom-avatar` | User avatar with status indicators |
 | Avatar Stack | `bloom-avatar-stack` | Overlapping avatar group display |
 | Theme Toggle | `bloom-theme-toggle` | Light/dark theme switcher |
+| Modal | `bloom-modal` | Dialog overlay with backdrop, focus trapping, and keyboard dismissal |
 
 ### Design system
 
@@ -341,12 +348,21 @@ openspec/
 │   ├── login-form/
 │   ├── update-participant-progress/
 │   ├── update-shared-anime-status/
-│   ├── watch-space-anime-detail/
 │   ├── auth-route-guards/
 │   ├── submit-participant-rating/
 │   ├── record-watch-session/
 │   ├── dashboard-summary/
-│   └── watch-space-selector/
+│   ├── watch-space-selector/
+│   ├── compatibility-score/
+│   ├── rating-gaps/
+│   ├── shared-watch-stats/
+│   ├── random-backlog-pick/
+│   ├── watch-space-settings-panel/
+│   ├── invitation-send-form/
+│   ├── invitation-list-manage/
+│   ├── invitation-accept-decline/
+│   ├── bloom-modal/
+│   └── anime-search-modal/
 └── changes/
     └── archive/                  # Completed changes
 ```
@@ -375,6 +391,13 @@ openspec/
 | `record-watch-session-backend` | 2026-03-18 | `POST .../sessions` watch session recording with episode ranges |
 | `story-7-4-auth-route-guards` | 2026-03-18 | Angular auth and guest route guards with JWT expiry checks |
 | `story-5-1-watch-space-dashboard-summary` | 2026-03-18 | `GET /watchspaces/{id}/dashboard` analytics dashboard summary endpoint |
+| `story-5-2-compatibility-score-endpoint` | 2026-03-18 | `GET /watchspaces/{id}/analytics/compatibility` dedicated compatibility score endpoint |
+| `story-5-3-rating-gaps-endpoint` | 2026-03-19 | `GET /watchspaces/{id}/analytics/rating-gaps` full rating gaps list endpoint |
+| `shared-watch-stats-endpoint` | 2026-03-19 | `GET /watchspaces/{id}/analytics/shared-stats` aggregate watch statistics endpoint |
+| `random-backlog-picker-endpoint` | 2026-03-19 | `GET /watchspaces/{id}/analytics/random-pick` random backlog anime suggestion |
+| `watch-space-settings-panel` | 2026-03-19 | Watch space settings panel: rename, member list, remove members, transfer ownership |
+| `invitation-flow-send-and-manage` | 2026-03-19 | Invitation send/manage UI and accept/decline pages for invitees |
+| `anime-search-modal` | 2026-03-20 | Anime search modal with debounced AniList search and add-to-space flow |
 
 ### Working with OpenSpec
 
