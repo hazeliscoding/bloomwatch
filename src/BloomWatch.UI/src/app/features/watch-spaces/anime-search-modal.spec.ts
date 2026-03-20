@@ -85,11 +85,20 @@ describe('AnimeSearchModalComponent', () => {
     document.body.style.overflow = '';
   });
 
-  function typeAndSearch(query: string): void {
+  function openModal(): void {
     host.isOpen.set(true);
     fixture.detectChanges();
-    vi.advanceTimersByTime(100); // let modal open effects settle
+    vi.advanceTimersByTime(100);
     fixture.detectChanges();
+
+    // Modal fetches existing anime on open
+    const listReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1/anime') && r.method === 'GET');
+    listReq.flush({ items: [] });
+    fixture.detectChanges();
+  }
+
+  function typeAndSearch(query: string): void {
+    openModal();
 
     const input = fixture.nativeElement.querySelector('bloom-input input') as HTMLInputElement;
     input.value = query;
@@ -106,8 +115,7 @@ describe('AnimeSearchModalComponent', () => {
   });
 
   it('should render modal when open', () => {
-    host.isOpen.set(true);
-    fixture.detectChanges();
+    openModal();
 
     const title = fixture.nativeElement.querySelector('.anime-search__title');
     expect(title?.textContent).toContain('Search Anime');
@@ -170,6 +178,13 @@ describe('AnimeSearchModalComponent', () => {
     addBtn.click();
     fixture.detectChanges();
 
+    // First: ensure media is cached via detail endpoint
+    const cacheReq = httpTesting.expectOne((r) => r.url.includes('/api/anilist/media/1'));
+    expect(cacheReq.request.method).toBe('GET');
+    cacheReq.flush({});
+    fixture.detectChanges();
+
+    // Then: add anime to watchspace
     const addReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1/anime'));
     expect(addReq.request.method).toBe('POST');
     expect(addReq.request.body).toEqual({ aniListMediaId: 1 });
@@ -199,5 +214,42 @@ describe('AnimeSearchModalComponent', () => {
     const firstResult = fixture.nativeElement.querySelectorAll('.anime-search__result')[0];
     const genreBadges = firstResult.querySelectorAll('.anime-search__result-genres bloom-badge');
     expect(genreBadges.length).toBe(3);
+  });
+
+  it('should mark already-added anime in search results', () => {
+    host.isOpen.set(true);
+    fixture.detectChanges();
+    vi.advanceTimersByTime(100);
+    fixture.detectChanges();
+
+    // Return existing anime that includes anilistMediaId 1
+    const listReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1/anime') && r.method === 'GET');
+    listReq.flush({
+      items: [
+        { watchSpaceAnimeId: 'a1', anilistMediaId: 1, preferredTitle: 'Cowboy Bebop', coverImageUrlSnapshot: null, episodeCountSnapshot: 26, sharedStatus: 'Backlog', sharedEpisodesWatched: 0, addedAtUtc: '2026-01-01T00:00:00Z' },
+      ],
+    });
+    fixture.detectChanges();
+
+    // Now search
+    const input = fixture.nativeElement.querySelector('bloom-input input') as HTMLInputElement;
+    input.value = 'Cowboy';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    vi.advanceTimersByTime(350);
+    fixture.detectChanges();
+
+    const searchReq = httpTesting.expectOne((r) => r.url.includes('/api/anilist/search'));
+    searchReq.flush(mockResults);
+    fixture.detectChanges();
+
+    // First result (anilistMediaId=1) should show as added
+    const addedLabel = fixture.nativeElement.querySelector('.anime-search__result-added');
+    expect(addedLabel).toBeTruthy();
+
+    // Second result (anilistMediaId=2) should still have Add button
+    const results = fixture.nativeElement.querySelectorAll('.anime-search__result');
+    const secondAction = results[1].querySelector('.anime-search__result-action bloom-button');
+    expect(secondAction).toBeTruthy();
   });
 });

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ApiService } from '../../core/http/api.service';
 import {
   AcceptInvitationResponse,
@@ -10,6 +10,7 @@ import {
   InvitationDetail,
   InvitationPreview,
   InviteMemberResponse,
+  WatchSpaceAnimeListItem,
   WatchSpaceDetail,
   WatchSpaceSummary,
 } from './watch-space.model';
@@ -71,8 +72,17 @@ export class WatchSpaceService {
     return this.api.post<void>(`/watchspaces/invitations/${token}/decline`, {});
   }
 
+  listWatchSpaceAnime(spaceId: string): Observable<WatchSpaceAnimeListItem[]> {
+    return this.api.get<{ items: WatchSpaceAnimeListItem[] }>(`/watchspaces/${spaceId}/anime`)
+      .pipe(map((res) => res.items));
+  }
+
   searchAnime(query: string): Observable<AnimeSearchResult[]> {
     return this.api.get<AnimeSearchResult[]>(`/api/anilist/search?query=${encodeURIComponent(query)}`);
+  }
+
+  ensureMediaCached(anilistMediaId: number): Observable<unknown> {
+    return this.api.get<unknown>(`/api/anilist/media/${anilistMediaId}`);
   }
 
   addAnimeToWatchSpace(spaceId: string, body: AddAnimeToWatchSpaceRequest): Observable<AddAnimeToWatchSpaceResult> {

@@ -199,6 +199,10 @@
   border-top: 1px solid var(--bloom-border-default);
 }
 
+.watch-space-detail__add-anime {
+  margin-bottom: var(--bloom-space-8);
+}
+
 @include bp-mobile-only {
   .watch-space-detail { padding: var(--bloom-space-4); }
   .watch-space-detail__title { font-size: var(--bloom-text-xl); }

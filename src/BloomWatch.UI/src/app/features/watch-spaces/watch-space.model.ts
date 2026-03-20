@@ -64,6 +64,17 @@ export interface AnimeSearchResult {
   genres: string[];
 }
 
+export interface WatchSpaceAnimeListItem {
+  watchSpaceAnimeId: string;
+  anilistMediaId: number;
+  preferredTitle: string;
+  coverImageUrlSnapshot: string | null;
+  episodeCountSnapshot: number | null;
+  sharedStatus: string;
+  sharedEpisodesWatched: number;
+  addedAtUtc: string;
+}
+
 export interface AddAnimeToWatchSpaceRequest {
   aniListMediaId: number;
   mood?: string | null;

@@ -14,7 +14,7 @@ import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomBadgeComponent } from '../../shared/ui/badge/bloom-badge';
 import { WatchSpaceService } from './watch-space.service';
 import { AnimeSearchResult } from './watch-space.model';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 
 type AddState = 'idle' | 'adding' | 'added' | 'error';
 
@@ -150,6 +150,7 @@ export class AnimeSearchModalComponent implements OnDestroy {
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
   private searchSub: Subscription | null = null;
   private addedCount = 0;
+  private readonly existingAniListIds = new Set<number>();
 
   constructor() {
     effect(() => {
@@ -160,6 +161,7 @@ export class AnimeSearchModalComponent implements OnDestroy {
     // Auto-focus search input when modal opens
     effect(() => {
       if (this.open()) {
+        this.loadExistingAnime();
         setTimeout(() => {
           const inputEl = document.querySelector<HTMLInputElement>(
             'app-anime-search-modal bloom-input input'
@@ -173,6 +175,7 @@ export class AnimeSearchModalComponent implements OnDestroy {
         this.isLoading.set(false);
         this.searchError.set('');
         this.hasSearched.set(false);
+        this.existingAniListIds.clear();
       }
     });
   }
@@ -203,10 +206,18 @@ export class AnimeSearchModalComponent implements OnDestroy {
     this.updateItemState(item.anilistMediaId, 'adding');
 
     this.watchSpaceService
-      .addAnimeToWatchSpace(this.watchSpaceId(), { aniListMediaId: item.anilistMediaId })
+      .ensureMediaCached(item.anilistMediaId)
+      .pipe(
+        switchMap(() =>
+          this.watchSpaceService.addAnimeToWatchSpace(this.watchSpaceId(), {
+            aniListMediaId: item.anilistMediaId,
+          }),
+        ),
+      )
       .subscribe({
         next: () => {
           this.updateItemState(item.anilistMediaId, 'added');
+          this.existingAniListIds.add(item.anilistMediaId);
           this.addedCount++;
           this.animeAdded.emit();
         },
@@ -246,7 +257,10 @@ export class AnimeSearchModalComponent implements OnDestroy {
 
     this.searchSub = this.watchSpaceService.searchAnime(query).subscribe({
       next: (results) => {
-        this.results.set(results.map((r) => ({ ...r, addState: 'idle' as AddState })));
+        this.results.set(results.map((r) => ({
+          ...r,
+          addState: this.existingAniListIds.has(r.anilistMediaId) ? 'added' as AddState : 'idle' as AddState,
+        })));
         this.isLoading.set(false);
         this.hasSearched.set(true);
       },
@@ -254,6 +268,16 @@ export class AnimeSearchModalComponent implements OnDestroy {
         this.isLoading.set(false);
         this.searchError.set('Search failed. Please try again.');
         this.hasSearched.set(true);
+      },
+    });
+  }
+
+  private loadExistingAnime(): void {
+    this.watchSpaceService.listWatchSpaceAnime(this.watchSpaceId()).subscribe({
+      next: (items) => {
+        for (const item of items) {
+          this.existingAniListIds.add(item.anilistMediaId);
+        }
       },
     });
   }
