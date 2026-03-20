@@ -64,7 +64,8 @@
       "Bash(for dir:*)",
       "Bash(do echo:*)",
       "Read(//home/hazeliscoding/projects/bloomwatch/openspec/changes/archive/$dir/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); proj=list\\(d.get\\(''''projects'''',{}\\).keys\\(\\)\\)[0]; test=d[''''projects''''][proj].get\\(''''architect'''',{}\\).get\\(''''test'''',{}\\); print\\(json.dumps\\(test, indent=2\\)\\)\")"
     ]
   }
 }
