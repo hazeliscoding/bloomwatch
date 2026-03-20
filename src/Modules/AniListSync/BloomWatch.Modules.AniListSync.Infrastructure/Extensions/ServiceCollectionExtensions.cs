@@ -28,8 +28,13 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Persistence
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(connectionString);
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
+
         services.AddDbContext<AniListSyncDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(dataSource));
 
         services.AddScoped<IMediaCacheRepository, EfMediaCacheRepository>();
 
