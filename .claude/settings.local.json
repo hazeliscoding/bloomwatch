@@ -60,7 +60,11 @@
       "Bash(chmod:*)",
       "Bash(npx vitest:*)",
       "Bash(npm test:*)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(for dir:*)",
+      "Bash(do echo:*)",
+      "Read(//home/hazeliscoding/projects/bloomwatch/openspec/changes/archive/$dir/**)",
+      "Bash(done)"
     ]
   }
 }
