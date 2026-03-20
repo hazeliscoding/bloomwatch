@@ -1,8 +1,8 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.6
+**Document version:** 1.7
 **Created:** 2026-03-13
-**Last updated:** 2026-03-19
+**Last updated:** 2026-03-20
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
 **Tech stack:** .NET 10 / ASP.NET Core Minimal APIs, PostgreSQL, EF Core, Angular, AniList GraphQL
 
@@ -1308,7 +1308,7 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - ~~Story 6.3 — Theme System (2 pts) — ✅ Done~~
 - Total: 8 pts
 
-**Sprint 2 — Auth frontend + Watch Spaces frontend**
+**Sprint 2 — Auth frontend + Watch Spaces frontend** *(Complete)*
 - ~~Story 7.1 — Landing Page (2 pts) — ✅ Done~~
 - ~~Story 7.2 — Registration Page (3 pts) — ✅ Done~~
 - ~~Story 7.3 — Login Page (2 pts) — ✅ Done~~
@@ -1316,21 +1316,21 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - ~~Story 8.1 — Watch Space Selector Page (3 pts) — ✅ Done~~
 - Total: 12 pts *(Complete)*
 
-**Sprint 3 — Watch Spaces frontend (management) + AniList backend**
+**Sprint 3 — Watch Spaces frontend (management) + AniList backend** *(Complete)*
 - ~~Story 8.2 — Watch Space Settings Panel (3 pts) — ✅ Done~~
 - ~~Story 8.3 — Invitation Flow Frontend (5 pts) — ✅ Done~~
 - ~~Story 3.1 — AniList Search Proxy (5 pts) — ✅ Done~~
 - ~~Story 3.2 — AniList Media Detail (3 pts) — ✅ Done~~
 - Total: 16 pts *(Complete)*
 
-**Sprint 4 — Anime Tracking backend (core)**
+**Sprint 4 — Anime Tracking backend (core)** *(Complete)*
 - ~~Story 4.1 — Add Anime to a Watch Space (5 pts) — ✅ Done~~
 - ~~Story 4.2 — List Anime in a Watch Space (3 pts) — ✅ Done~~
 - ~~Story 4.3 — Get Anime Detail (3 pts) — ✅ Done~~
 - ~~Story 4.4 — Update Shared Anime Status (3 pts) — ✅ Done~~
 - Total: 14 pts *(Complete)*
 
-**Sprint 5 — Anime Tracking backend (progress, ratings, sessions)**
+**Sprint 5 — Anime Tracking backend (progress, ratings, sessions)** *(Complete)*
 - ~~Story 4.5 — Update Individual Participant Progress (3 pts) — ✅ Done~~
 - ~~Story 4.6 — Submit or Update a Personal Rating (3 pts) — ✅ Done~~
 - ~~Story 4.7 — Record a Watch Session (3 pts) — ✅ Done~~
