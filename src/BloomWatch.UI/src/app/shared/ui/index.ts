@@ -25,3 +25,6 @@ export type { BloomAvatarSize, BloomAvatarStatus } from './avatar/bloom-avatar';
 
 // Theme Toggle
 export { BloomThemeToggleComponent } from './theme-toggle/bloom-theme-toggle';
+
+// Modal
+export { BloomModalComponent } from './modal/bloom-modal';

@@ -1,0 +1,121 @@
+// ============================================================================
+// BloomWatch Modal Component
+// Kawaii / Y2K Overlay Dialog
+// ============================================================================
+
+.bloom-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--bloom-z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--bloom-space-4);
+  background: rgb(18 14 30 / 0.6);
+  backdrop-filter: blur(4px);
+  animation: bloom-fade-in var(--bloom-duration-fast) var(--bloom-ease-out);
+}
+
+.bloom-modal__dialog {
+  position: relative;
+  width: 100%;
+  max-height: calc(100vh - var(--bloom-space-8));
+  display: flex;
+  flex-direction: column;
+  background: var(--bloom-surface-base);
+  border: 2px solid var(--bloom-border-default);
+  border-radius: var(--bloom-radius-2xl);
+  box-shadow: var(--bloom-shadow-xl);
+  animation: bloom-fade-in-scale var(--bloom-duration-normal) var(--bloom-ease-spring);
+  overflow: hidden;
+}
+
+.bloom-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bloom-space-3);
+  padding: var(--bloom-space-4) var(--bloom-space-5);
+  border-bottom: 1px solid var(--bloom-border-default);
+  min-height: 3.5rem;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.bloom-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin-left: auto;
+  font-size: var(--bloom-text-xl);
+  line-height: 1;
+  color: var(--bloom-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--bloom-radius-md);
+  cursor: pointer;
+  transition:
+    color var(--bloom-transition-fast),
+    background-color var(--bloom-transition-fast);
+
+  &:hover {
+    color: var(--bloom-text-primary);
+    background-color: var(--bloom-ghost-hover-bg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bloom-pink-400);
+    outline-offset: 2px;
+  }
+}
+
+.bloom-modal__body {
+  flex: 1 1 auto;
+  padding: var(--bloom-space-5);
+  overflow-y: auto;
+
+  // Kawaii scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--bloom-scrollbar-track);
+    border-radius: var(--bloom-radius-pill);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--bloom-scrollbar-thumb);
+    border-radius: var(--bloom-radius-pill);
+
+    &:hover {
+      background: var(--bloom-scrollbar-thumb-hover);
+    }
+  }
+}
+
+.bloom-modal__footer {
+  padding: var(--bloom-space-3) var(--bloom-space-5);
+  border-top: 1px solid var(--bloom-border-default);
+
+  &:empty {
+    display: none;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Reduced Motion
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .bloom-modal__backdrop,
+  .bloom-modal__dialog {
+    animation: none;
+  }
+}
