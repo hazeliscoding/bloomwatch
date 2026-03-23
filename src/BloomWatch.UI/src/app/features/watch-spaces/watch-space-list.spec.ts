@@ -98,28 +98,28 @@ describe('WatchSpaceList', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/watch-spaces', 'ws-1']);
   });
 
-  // ---- Create Form Toggle ----
+  // ---- Create Modal Toggle ----
 
-  it('should toggle create form visibility', () => {
+  it('should toggle create modal visibility', () => {
     fixture.detectChanges();
     flushSpaces();
 
-    expect(component.showCreateForm()).toBe(false);
-    component.openCreateForm();
-    expect(component.showCreateForm()).toBe(true);
-    component.cancelCreate();
-    expect(component.showCreateForm()).toBe(false);
+    expect(component.showCreateModal()).toBe(false);
+    component.openCreateModal();
+    expect(component.showCreateModal()).toBe(true);
+    component.closeCreateModal();
+    expect(component.showCreateModal()).toBe(false);
   });
 
   it('should clear input on cancel', () => {
     fixture.detectChanges();
     flushSpaces();
 
-    component.openCreateForm();
+    component.openCreateModal();
     component.onNameChange('Test');
     expect(component.newSpaceName()).toBe('Test');
 
-    component.cancelCreate();
+    component.closeCreateModal();
     expect(component.newSpaceName()).toBe('');
   });
 
@@ -129,7 +129,7 @@ describe('WatchSpaceList', () => {
     fixture.detectChanges();
     flushSpaces();
 
-    component.openCreateForm();
+    component.openCreateModal();
     component.onNameChange('   ');
     component.submitCreate(new Event('submit'));
 
@@ -143,7 +143,7 @@ describe('WatchSpaceList', () => {
     fixture.detectChanges();
     flushSpaces();
 
-    component.openCreateForm();
+    component.openCreateModal();
     component.onNameChange('New Space');
     component.submitCreate(new Event('submit'));
 
@@ -164,7 +164,7 @@ describe('WatchSpaceList', () => {
 
     expect(component.spaces().length).toBe(3);
     expect(component.spaces()[2].name).toBe('New Space');
-    expect(component.showCreateForm()).toBe(false);
+    expect(component.showCreateModal()).toBe(false);
     expect(component.isCreating()).toBe(false);
   });
 
@@ -174,7 +174,7 @@ describe('WatchSpaceList', () => {
     fixture.detectChanges();
     flushSpaces();
 
-    component.openCreateForm();
+    component.openCreateModal();
     component.onNameChange('Fail Space');
     component.submitCreate(new Event('submit'));
 
@@ -183,7 +183,7 @@ describe('WatchSpaceList', () => {
     fixture.detectChanges();
 
     expect(component.createError()).toBeTruthy();
-    expect(component.showCreateForm()).toBe(true);
+    expect(component.showCreateModal()).toBe(true);
     expect(component.newSpaceName()).toBe('Fail Space');
     expect(component.isCreating()).toBe(false);
   });

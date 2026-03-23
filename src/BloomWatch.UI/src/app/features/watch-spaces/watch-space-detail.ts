@@ -1,10 +1,7 @@
 import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
-import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
 import { BloomInputComponent } from '../../shared/ui/input/bloom-input';
 import { WatchSpaceService } from './watch-space.service';
 import { InvitationDetail, WatchSpaceDetail as WatchSpaceDetailModel } from './watch-space.model';
@@ -15,7 +12,7 @@ import { AnimeListComponent } from './anime-list';
 
 @Component({
   selector: 'app-watch-space-detail',
-  imports: [DatePipe, FormsModule, BloomCardComponent, BloomButtonComponent, BloomBadgeComponent, BloomInputComponent, AnimeSearchModalComponent, AnimeListComponent],
+  imports: [FormsModule, RouterLink, BloomButtonComponent, BloomInputComponent, AnimeSearchModalComponent, AnimeListComponent],
   templateUrl: './watch-space-detail.html',
   styleUrl: './watch-space-detail.scss',
 })
@@ -259,7 +256,7 @@ export class WatchSpaceDetail implements OnInit {
     });
   }
 
-  roleBadgeColor(role: string): BloomBadgeColor {
+  roleBadgeColor(role: string): string {
     return role === 'Owner' ? 'pink' : 'blue';
   }
 

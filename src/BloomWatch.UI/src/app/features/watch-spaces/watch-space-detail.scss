@@ -18,14 +18,27 @@
   color: var(--bloom-error-dark);
 }
 
+.watch-space-detail__back-link {
+  display: inline-block;
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-primary);
+  text-decoration: none;
+  margin-bottom: var(--bloom-space-4);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .watch-space-detail__header {
-  margin-bottom: var(--bloom-space-8);
+  margin-bottom: var(--bloom-space-6);
 }
 
 .watch-space-detail__title-row {
   display: flex;
   align-items: center;
-  gap: var(--bloom-space-3);
+  justify-content: space-between;
+  gap: var(--bloom-space-4);
 }
 
 .watch-space-detail__title {
@@ -34,12 +47,6 @@
   font-weight: var(--bloom-font-bold);
   color: var(--bloom-text-primary);
   margin: 0;
-}
-
-.watch-space-detail__meta {
-  font-size: var(--bloom-text-sm);
-  color: var(--bloom-text-tertiary);
-  margin: var(--bloom-space-1) 0 0;
 }
 
 .watch-space-detail__rename-form {

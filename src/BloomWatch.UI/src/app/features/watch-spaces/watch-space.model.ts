@@ -1,8 +1,14 @@
+export interface MemberPreview {
+  displayName: string;
+}
+
 export interface WatchSpaceSummary {
   watchSpaceId: string;
   name: string;
   createdAt: string;
   role: string;
+  memberCount?: number;
+  memberPreviews?: MemberPreview[];
 }
 
 export interface CreateWatchSpaceRequest {
@@ -81,6 +87,11 @@ export interface WatchSpaceAnimeListItem {
   sharedEpisodesWatched: number;
   addedAtUtc: string;
   participants: AnimeParticipantSummary[];
+  formatSnapshot?: string | null;
+  seasonSnapshot?: string | null;
+  seasonYearSnapshot?: number | null;
+  mood?: string | null;
+  vibe?: string | null;
 }
 
 export interface AddAnimeToWatchSpaceRequest {
@@ -136,6 +147,10 @@ export interface WatchSpaceAnimeDetail {
   addedAtUtc: string;
   participants: ParticipantDetail[];
   watchSessions: WatchSessionDetail[];
+  genres?: string[];
+  anilistScore?: number | null;
+  anilistPopularity?: number | null;
+  description?: string | null;
 }
 
 export interface UpdateParticipantProgressRequest {

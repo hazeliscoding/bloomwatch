@@ -15,6 +15,10 @@
 
   <!-- Detail View -->
   @if (!isLoading() && !loadError() && detail(); as d) {
+    <a class="watch-space-detail__back-link" routerLink="/watch-spaces">
+      ← Back to Watch Spaces
+    </a>
+
     <header class="watch-space-detail__header">
       @if (isEditing()) {
         <div class="watch-space-detail__rename-form">
@@ -48,15 +52,12 @@
         </div>
       } @else {
         <div class="watch-space-detail__title-row">
-          <h1 class="watch-space-detail__title bloom-font-display">{{ d.name }}</h1>
-          @if (isOwner()) {
-            <bloom-button variant="ghost" size="sm" (clicked)="startEditing()">
-              Rename
-            </bloom-button>
-          }
+          <h1 class="watch-space-detail__title bloom-font-display">Anime List &mdash; {{ d.name }}</h1>
+          <bloom-button variant="primary" size="sm" (clicked)="openSearchModal()">
+            🔍 Add Anime
+          </bloom-button>
         </div>
       }
-      <p class="watch-space-detail__meta">Created {{ d.createdAt | date:'mediumDate' }}</p>
     </header>
 
     <!-- Action Error -->
@@ -65,13 +66,6 @@
         <p>{{ actionError() }}</p>
       </div>
     }
-
-    <!-- Add Anime -->
-    <section class="watch-space-detail__add-anime">
-      <bloom-button variant="accent" (clicked)="openSearchModal()">
-        Add Anime
-      </bloom-button>
-    </section>
 
     <app-anime-search-modal
       [open]="isSearchModalOpen()"
@@ -85,130 +79,5 @@
       #animeList
       [watchSpaceId]="d.watchSpaceId"
     />
-
-    <!-- Members Section -->
-    <section class="watch-space-detail__members">
-      <h2 class="watch-space-detail__section-title">Members</h2>
-      <div class="watch-space-detail__member-list">
-        @for (member of d.members; track member.userId) {
-          <bloom-card class="watch-space-detail__member-card">
-            <div class="watch-space-detail__member-row">
-              <div class="watch-space-detail__member-info">
-                <span class="watch-space-detail__member-name">
-                  {{ member.displayName }}
-                  @if (isSelf(member.userId)) {
-                    <span class="watch-space-detail__self-tag">(you)</span>
-                  }
-                </span>
-                <bloom-badge [color]="roleBadgeColor(member.role)" size="sm">
-                  {{ member.role }}
-                </bloom-badge>
-              </div>
-              <span class="watch-space-detail__member-joined">
-                Joined {{ member.joinedAt | date:'mediumDate' }}
-              </span>
-              <!-- Owner actions on non-owner, non-self members -->
-              @if (isOwner() && member.role !== 'Owner' && !isSelf(member.userId)) {
-                <div class="watch-space-detail__member-actions">
-                  <bloom-button
-                    variant="ghost"
-                    size="sm"
-                    (clicked)="transferOwnership(member.userId, member.displayName)"
-                  >
-                    Transfer Ownership
-                  </bloom-button>
-                  <bloom-button
-                    variant="danger"
-                    size="sm"
-                    (clicked)="removeMember(member.userId, member.displayName)"
-                  >
-                    Remove
-                  </bloom-button>
-                </div>
-              }
-            </div>
-          </bloom-card>
-        }
-      </div>
-    </section>
-
-    <!-- Invitations Section (owner only) -->
-    @if (isOwner()) {
-      <section class="watch-space-detail__invitations">
-        <h2 class="watch-space-detail__section-title">Invitations</h2>
-
-        <!-- Invite Form -->
-        <div class="watch-space-detail__invite-form">
-          <div class="watch-space-detail__invite-row">
-            <bloom-input
-              label="Email address"
-              [ngModel]="inviteEmail()"
-              (valueChange)="onInviteEmailChange($event)"
-            />
-            <bloom-button
-              variant="primary"
-              size="sm"
-              [disabled]="isInviting() || !inviteEmail().trim()"
-              [loading]="isInviting()"
-              (clicked)="sendInvite()"
-            >
-              Invite
-            </bloom-button>
-          </div>
-          @if (inviteError()) {
-            <p class="watch-space-detail__invite-error" role="alert">{{ inviteError() }}</p>
-          }
-          @if (inviteSuccess()) {
-            <p class="watch-space-detail__invite-success" role="status">{{ inviteSuccess() }}</p>
-          }
-        </div>
-
-        <!-- Pending Invitations List -->
-        @if (isLoadingInvitations()) {
-          <p class="watch-space-detail__invitations-loading">Loading invitations...</p>
-        } @else if (invitations().length === 0) {
-          <p class="watch-space-detail__invitations-empty">No pending invitations.</p>
-        } @else {
-          <div class="watch-space-detail__invitation-list">
-            @for (inv of invitations(); track inv.invitationId) {
-              <bloom-card class="watch-space-detail__invitation-card">
-                <div class="watch-space-detail__invitation-row">
-                  <div class="watch-space-detail__invitation-info">
-                    <span class="watch-space-detail__invitation-email">{{ inv.invitedEmail }}</span>
-                    <bloom-badge
-                      [color]="inv.status === 'Pending' ? 'yellow' : 'neutral'"
-                      size="sm"
-                    >
-                      {{ inv.status }}
-                    </bloom-badge>
-                  </div>
-                  <span class="watch-space-detail__invitation-dates">
-                    Sent {{ inv.createdAt | date:'mediumDate' }} · Expires {{ inv.expiresAt | date:'mediumDate' }}
-                  </span>
-                  @if (inv.status === 'Pending') {
-                    <bloom-button
-                      variant="danger"
-                      size="sm"
-                      (clicked)="revokeInvitation(inv.invitationId, inv.invitedEmail)"
-                    >
-                      Revoke
-                    </bloom-button>
-                  }
-                </div>
-              </bloom-card>
-            }
-          </div>
-        }
-      </section>
-    }
-
-    <!-- Leave Space (non-owner only) -->
-    @if (!isOwner()) {
-      <section class="watch-space-detail__leave">
-        <bloom-button variant="danger" (clicked)="leaveSpace()">
-          Leave Watch Space
-        </bloom-button>
-      </section>
-    }
   }
 </main>

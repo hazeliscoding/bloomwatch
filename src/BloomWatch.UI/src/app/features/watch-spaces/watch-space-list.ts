@@ -1,17 +1,26 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomBadgeComponent } from '../../shared/ui/badge/bloom-badge';
 import { BloomInputComponent } from '../../shared/ui/input/bloom-input';
+import { BloomModalComponent } from '../../shared/ui/modal/bloom-modal';
+import { BloomAvatarComponent, BloomAvatarStackComponent } from '../../shared/ui/avatar/bloom-avatar';
 import { WatchSpaceService } from './watch-space.service';
 import { WatchSpaceSummary } from './watch-space.model';
 import { BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
 
 @Component({
   selector: 'app-watch-space-list',
-  imports: [DatePipe, BloomCardComponent, BloomButtonComponent, BloomBadgeComponent, BloomInputComponent],
+  imports: [
+    BloomCardComponent,
+    BloomButtonComponent,
+    BloomBadgeComponent,
+    BloomInputComponent,
+    BloomModalComponent,
+    BloomAvatarComponent,
+    BloomAvatarStackComponent,
+  ],
   templateUrl: './watch-space-list.html',
   styleUrl: './watch-space-list.scss',
 })
@@ -23,7 +32,7 @@ export class WatchSpaceList implements OnInit {
   readonly isLoading = signal(true);
   readonly loadError = signal('');
 
-  readonly showCreateForm = signal(false);
+  readonly showCreateModal = signal(false);
   readonly newSpaceName = signal('');
   readonly createError = signal('');
   readonly nameValidationError = signal('');
@@ -33,14 +42,14 @@ export class WatchSpaceList implements OnInit {
     this.loadSpaces();
   }
 
-  openCreateForm(): void {
-    this.showCreateForm.set(true);
+  openCreateModal(): void {
+    this.showCreateModal.set(true);
     this.createError.set('');
     this.nameValidationError.set('');
   }
 
-  cancelCreate(): void {
-    this.showCreateForm.set(false);
+  closeCreateModal(): void {
+    this.showCreateModal.set(false);
     this.newSpaceName.set('');
     this.createError.set('');
     this.nameValidationError.set('');
@@ -68,7 +77,7 @@ export class WatchSpaceList implements OnInit {
       next: (created) => {
         this.spaces.update((list) => [...list, created]);
         this.isCreating.set(false);
-        this.cancelCreate();
+        this.closeCreateModal();
       },
       error: () => {
         this.isCreating.set(false);

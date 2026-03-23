@@ -1,53 +1,10 @@
 <main class="watch-space-list">
   <header class="watch-space-list__header">
-    <h1 class="watch-space-list__title bloom-font-display">Your Watch Spaces</h1>
-    @if (!showCreateForm()) {
-      <bloom-button variant="primary" (clicked)="openCreateForm()">
-        Create Watch Space
-      </bloom-button>
-    }
+    <h1 class="watch-space-list__title bloom-font-display">My Watch Spaces</h1>
+    <bloom-button variant="primary" size="sm" (clicked)="openCreateModal()">
+      + Create New
+    </bloom-button>
   </header>
-
-  <!-- Create Form -->
-  @if (showCreateForm()) {
-    <div class="watch-space-list__create-form">
-      <form (submit)="submitCreate($event)" novalidate>
-        <div class="watch-space-list__create-form-fields">
-          <bloom-input
-            label="Space Name"
-            placeholder="e.g. Friday Night Anime"
-            [required]="true"
-            [error]="nameValidationError()"
-            (valueChange)="onNameChange($event)"
-          />
-        </div>
-
-        @if (createError()) {
-          <div class="watch-space-list__create-error" role="alert">
-            {{ createError() }}
-          </div>
-        }
-
-        <div class="watch-space-list__create-form-actions">
-          <bloom-button
-            type="submit"
-            variant="primary"
-            [disabled]="isCreating()"
-            [loading]="isCreating()"
-          >
-            Create
-          </bloom-button>
-          <bloom-button
-            variant="ghost"
-            [disabled]="isCreating()"
-            (clicked)="cancelCreate()"
-          >
-            Cancel
-          </bloom-button>
-        </div>
-      </form>
-    </div>
-  }
 
   <!-- Loading State -->
   @if (isLoading()) {
@@ -66,9 +23,14 @@
   <!-- Empty State -->
   @if (!isLoading() && !loadError() && spaces().length === 0) {
     <div class="watch-space-list__empty">
+      <span class="watch-space-list__empty-icon" aria-hidden="true">✿</span>
+      <h3 class="watch-space-list__empty-heading bloom-font-display">No Watch Spaces Yet</h3>
       <p class="watch-space-list__empty-text">
-        You don't have any watch spaces yet. Create one to start tracking anime with friends!
+        Create your first Watch Space to start tracking anime with friends.
       </p>
+      <bloom-button variant="primary" (clicked)="openCreateModal()">
+        + Create Watch Space
+      </bloom-button>
     </div>
   }
 
@@ -79,22 +41,88 @@
         <bloom-card
           [hoverable]="true"
           [ariaLabel]="'Watch space: ' + space.name"
-          (click)="navigateToSpace(space.watchSpaceId)"
-          (keydown.enter)="navigateToSpace(space.watchSpaceId)"
           tabindex="0"
           role="link"
+          (keydown.enter)="navigateToSpace(space.watchSpaceId)"
         >
           <div bloomCardHeader class="watch-space-list__card-header">
             <h2 class="watch-space-list__card-name">{{ space.name }}</h2>
+          </div>
+
+          <div class="watch-space-list__card-body">
+            @if (space.memberPreviews && space.memberPreviews.length > 0) {
+              <div class="watch-space-list__card-members">
+                <bloom-avatar-stack [ariaLabel]="(space.memberCount || space.memberPreviews.length) + ' members'">
+                  @for (member of space.memberPreviews; track $index) {
+                    <bloom-avatar size="sm" [name]="member.displayName" />
+                  }
+                </bloom-avatar-stack>
+                <span class="watch-space-list__card-member-count">
+                  {{ space.memberCount || space.memberPreviews.length }} members
+                </span>
+              </div>
+            }
             <bloom-badge [color]="roleBadgeColor(space.role)" size="sm">
               {{ space.role }}
             </bloom-badge>
           </div>
-          <p class="watch-space-list__card-date">
-            Created {{ space.createdAt | date:'mediumDate' }}
-          </p>
+
+          <div bloomCardFooter class="watch-space-list__card-footer">
+            <bloom-button
+              variant="ghost"
+              size="sm"
+              (clicked)="navigateToSpace(space.watchSpaceId)"
+            >
+              Enter →
+            </bloom-button>
+          </div>
         </bloom-card>
       }
     </div>
   }
+
+  <!-- Create Modal -->
+  <bloom-modal
+    [open]="showCreateModal()"
+    width="28rem"
+    (closed)="closeCreateModal()"
+  >
+    <h3 bloomModalHeader class="watch-space-list__modal-title bloom-font-display">
+      Create a Watch Space
+    </h3>
+
+    <form (submit)="submitCreate($event)" novalidate>
+      <bloom-input
+        label="Space Name"
+        placeholder='e.g. "Anime Night"'
+        [required]="true"
+        [error]="nameValidationError()"
+        (valueChange)="onNameChange($event)"
+      />
+
+      @if (createError()) {
+        <div class="watch-space-list__create-error" role="alert">
+          {{ createError() }}
+        </div>
+      }
+    </form>
+
+    <div bloomModalFooter class="watch-space-list__modal-footer">
+      <bloom-button
+        variant="ghost"
+        [disabled]="isCreating()"
+        (clicked)="closeCreateModal()"
+      >
+        Cancel
+      </bloom-button>
+      <bloom-button
+        variant="primary"
+        [disabled]="isCreating()"
+        [loading]="isCreating()"
+        (clicked)="submitCreate($event)"
+      >
+        Create
+      </bloom-button>
+    </div>
+  </bloom-modal>
 </main>
