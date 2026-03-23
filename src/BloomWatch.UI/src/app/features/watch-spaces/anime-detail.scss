@@ -667,6 +667,21 @@
   margin: 0;
 }
 
+.anime-detail__inline-error {
+  margin: var(--bloom-space-2) 0 0;
+  padding: var(--bloom-space-1) var(--bloom-space-2);
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-error-dark);
+  background: var(--bloom-error-light, rgba(239, 68, 68, 0.08));
+  border-radius: var(--bloom-radius-sm);
+  animation: anime-detail-error-fade 3s ease-out forwards;
+}
+
+@keyframes anime-detail-error-fade {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 // --------------------------------------------------------------------------
 // Responsive
 // --------------------------------------------------------------------------
@@ -716,5 +731,9 @@
 
   .anime-detail__progress-fill {
     transition: none;
+  }
+
+  .anime-detail__inline-error {
+    animation: none;
   }
 }

@@ -1,7 +1,9 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
@@ -155,6 +157,9 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
               [style.width.%]="progressPercent()"
             ></div>
           </div>
+          @if (sharedError()) {
+            <p class="anime-detail__inline-error" role="alert">{{ sharedError() }}</p>
+          }
           @if (anime()!.mood || anime()!.vibe || anime()!.pitch) {
             <div class="anime-detail__mood-tags">
               @if (anime()!.mood) {
@@ -406,7 +411,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
     }
   `,
 })
-export class AnimeDetail implements OnInit {
+export class AnimeDetail implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly watchSpaceService = inject(WatchSpaceService);
@@ -414,6 +419,12 @@ export class AnimeDetail implements OnInit {
 
   readonly statusOptions = STATUS_OPTIONS;
   private readonly GENRE_BADGE_COLORS: BloomBadgeColor[] = ['lilac', 'blue', 'pink', 'green', 'yellow', 'neutral'];
+
+  // Shared status/episode error + switchMap subject
+  readonly sharedError = signal('');
+  private sharedErrorTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly sharedEpisode$ = new Subject<number>();
+  private readonly destroy$ = new Subject<void>();
 
   // Data signals
   readonly anime = signal<WatchSpaceAnimeDetail | null>(null);
@@ -497,6 +508,32 @@ export class AnimeDetail implements OnInit {
     this.watchSpaceId = this.route.snapshot.paramMap.get('id') ?? '';
     this.animeId = this.route.snapshot.paramMap.get('animeId') ?? '';
     this.loadDetail();
+
+    // switchMap: only the latest shared episode value is persisted
+    this.sharedEpisode$
+      .pipe(
+        switchMap((episodes) =>
+          this.watchSpaceService.updateSharedAnime(this.watchSpaceId, this.animeId, {
+            sharedEpisodesWatched: episodes,
+          }),
+        ),
+        takeUntil(this.destroy$),
+      )
+      .subscribe({
+        next: (updated) => {
+          this.anime.set({ ...this.anime()!, sharedEpisodesWatched: updated.sharedEpisodesWatched });
+        },
+        error: () => {
+          this.refreshDetail();
+          this.showSharedError('Failed to update episodes. Reverted.');
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.sharedErrorTimer) clearTimeout(this.sharedErrorTimer);
   }
 
   loadDetail(): void {
@@ -560,25 +597,42 @@ export class AnimeDetail implements OnInit {
   // --- Shared status/episode steppers ---
 
   onSharedStatusChange(status: string): void {
-    // Optimistically update UI; real API would go here
     const a = this.anime();
-    if (a) {
-      this.anime.set({ ...a, sharedStatus: status });
-    }
+    if (!a) return;
+    const prev = a.sharedStatus;
+    this.anime.set({ ...a, sharedStatus: status });
+    this.watchSpaceService
+      .updateSharedAnime(this.watchSpaceId, this.animeId, { sharedStatus: status })
+      .subscribe({
+        error: () => {
+          this.anime.set({ ...this.anime()!, sharedStatus: prev });
+          this.showSharedError('Failed to update status. Reverted.');
+        },
+      });
   }
 
   decrementSharedEpisode(): void {
     const a = this.anime();
     if (a && a.sharedEpisodesWatched > 0) {
-      this.anime.set({ ...a, sharedEpisodesWatched: a.sharedEpisodesWatched - 1 });
+      const newVal = a.sharedEpisodesWatched - 1;
+      this.anime.set({ ...a, sharedEpisodesWatched: newVal });
+      this.sharedEpisode$.next(newVal);
     }
   }
 
   incrementSharedEpisode(): void {
     const a = this.anime();
     if (a && (a.episodeCountSnapshot == null || a.sharedEpisodesWatched < a.episodeCountSnapshot)) {
-      this.anime.set({ ...a, sharedEpisodesWatched: a.sharedEpisodesWatched + 1 });
+      const newVal = a.sharedEpisodesWatched + 1;
+      this.anime.set({ ...a, sharedEpisodesWatched: newVal });
+      this.sharedEpisode$.next(newVal);
     }
+  }
+
+  private showSharedError(msg: string): void {
+    this.sharedError.set(msg);
+    if (this.sharedErrorTimer) clearTimeout(this.sharedErrorTimer);
+    this.sharedErrorTimer = setTimeout(() => this.sharedError.set(''), 3000);
   }
 
   // --- My episode steppers ---

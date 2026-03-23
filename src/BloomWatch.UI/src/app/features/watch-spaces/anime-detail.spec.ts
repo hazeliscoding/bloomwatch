@@ -410,4 +410,82 @@ describe('AnimeDetail', () => {
     expect(component.ratingScore).toBe(9.0);
     expect(component.ratingNotes).toBe('Masterpiece');
   });
+
+  // ---- Shared Status Wiring ----
+
+  it('should call updateSharedAnime when shared status changes', () => {
+    flushDetailAndMembers();
+    component.onSharedStatusChange('Finished');
+
+    expect(component.anime()!.sharedStatus).toBe('Finished');
+
+    const req = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'PATCH'
+    );
+    expect(req.request.body).toEqual({ sharedStatus: 'Finished' });
+    req.flush({ ...mockDetail, sharedStatus: 'Finished' });
+  });
+
+  it('should rollback shared status on API failure', () => {
+    flushDetailAndMembers();
+    component.onSharedStatusChange('Dropped');
+
+    expect(component.anime()!.sharedStatus).toBe('Dropped');
+
+    const req = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'PATCH'
+    );
+    req.flush('Error', { status: 500, statusText: 'Server Error' });
+    fixture.detectChanges();
+
+    expect(component.anime()!.sharedStatus).toBe('Watching');
+    expect(component.sharedError()).toContain('Failed to update status');
+  });
+
+  // ---- Shared Episode Stepper Wiring ----
+
+  it('should call updateSharedAnime when shared episode incremented', () => {
+    flushDetailAndMembers();
+    component.incrementSharedEpisode();
+
+    expect(component.anime()!.sharedEpisodesWatched).toBe(13);
+
+    const req = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'PATCH'
+    );
+    expect(req.request.body).toEqual({ sharedEpisodesWatched: 13 });
+    req.flush({ ...mockDetail, sharedEpisodesWatched: 13 });
+  });
+
+  it('should call updateSharedAnime when shared episode decremented', () => {
+    flushDetailAndMembers();
+    component.decrementSharedEpisode();
+
+    expect(component.anime()!.sharedEpisodesWatched).toBe(11);
+
+    const req = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'PATCH'
+    );
+    expect(req.request.body).toEqual({ sharedEpisodesWatched: 11 });
+    req.flush({ ...mockDetail, sharedEpisodesWatched: 11 });
+  });
+
+  it('should show inline error when shared episode update fails', () => {
+    flushDetailAndMembers();
+    component.incrementSharedEpisode();
+
+    const req = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'PATCH'
+    );
+    req.flush('Error', { status: 500, statusText: 'Server Error' });
+
+    // switchMap error triggers refreshDetail
+    const refetchReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'GET'
+    );
+    refetchReq.flush(mockDetail);
+    fixture.detectChanges();
+
+    expect(component.sharedError()).toContain('Failed to update episodes');
+  });
 });
