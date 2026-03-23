@@ -76,9 +76,8 @@ describe('InvitationResponse', () => {
 
   // ---- Accept Flow ----
 
-  it('should accept invitation and navigate to watch space', () => {
+  it('should accept invitation and show accepted state', () => {
     setup();
-    vi.spyOn(router, 'navigate');
     fixture.detectChanges();
     flushPreview();
 
@@ -90,6 +89,22 @@ describe('InvitationResponse', () => {
     req.flush({ watchSpaceId: 'ws-1' });
     fixture.detectChanges();
 
+    expect(component.state()).toBe('accepted');
+    expect(component.acceptedWatchSpaceId()).toBe('ws-1');
+  });
+
+  it('should navigate to watch space from accepted state', () => {
+    setup();
+    vi.spyOn(router, 'navigate');
+    fixture.detectChanges();
+    flushPreview();
+
+    component.accept();
+    const req = httpTesting.expectOne((r) => r.url.includes('/accept'));
+    req.flush({ watchSpaceId: 'ws-1' });
+    fixture.detectChanges();
+
+    component.goToWatchSpace();
     expect(router.navigate).toHaveBeenCalledWith(['/watch-spaces', 'ws-1']);
   });
 
@@ -113,12 +128,11 @@ describe('InvitationResponse', () => {
 
   // ---- Error States ----
 
-  it('should show error for expired invitation (410)', () => {
+  it('should show expired state for expired invitation (410)', () => {
     setup();
     fixture.detectChanges();
     flushPreviewError(410);
-    expect(component.state()).toBe('error');
-    expect(component.errorMessage()).toContain('expired');
+    expect(component.state()).toBe('expired');
   });
 
   it('should show error for wrong account (403)', () => {
@@ -137,17 +151,16 @@ describe('InvitationResponse', () => {
     expect(component.errorMessage()).toContain('not found');
   });
 
-  it('should show error for already-used invitation', () => {
+  it('should show already-used state for used invitation', () => {
     setup();
     fixture.detectChanges();
     flushPreview({ ...mockPreview, status: 'Accepted' });
-    expect(component.state()).toBe('error');
-    expect(component.errorMessage()).toContain('already been used');
+    expect(component.state()).toBe('already-used');
   });
 
   // ---- Accept Error ----
 
-  it('should show error when accept fails with 410', () => {
+  it('should show expired state when accept fails with 410', () => {
     setup();
     fixture.detectChanges();
     flushPreview();
@@ -157,7 +170,6 @@ describe('InvitationResponse', () => {
     req.flush('Error', { status: 410, statusText: 'Gone' });
     fixture.detectChanges();
 
-    expect(component.state()).toBe('error');
-    expect(component.errorMessage()).toContain('expired');
+    expect(component.state()).toBe('expired');
   });
 });

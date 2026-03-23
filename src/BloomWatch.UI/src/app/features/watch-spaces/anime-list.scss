@@ -4,14 +4,6 @@
   margin-bottom: var(--bloom-space-8);
 }
 
-.anime-list__title {
-  font-family: var(--bloom-font-family-display);
-  font-size: var(--bloom-text-lg);
-  font-weight: var(--bloom-font-semibold);
-  color: var(--bloom-text-primary);
-  margin: 0 0 var(--bloom-space-4);
-}
-
 // --------------------------------------------------------------------------
 // Status Tabs
 // --------------------------------------------------------------------------
@@ -62,15 +54,9 @@
 .anime-list__tab-count {
   font-size: var(--bloom-text-xs);
   color: var(--bloom-text-tertiary);
-  background: var(--bloom-surface-sunken);
-  border-radius: var(--bloom-radius-pill);
-  padding: 0 var(--bloom-space-1-5);
-  min-width: 1.25rem;
-  text-align: center;
 
   .anime-list__tab--active & {
     color: var(--bloom-primary);
-    background: var(--bloom-pink-100);
   }
 }
 
@@ -176,12 +162,11 @@
 
 .anime-list__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--bloom-space-4);
 }
 
 .anime-list__card {
-  cursor: pointer;
   transition:
     border-color var(--bloom-transition-fast),
     box-shadow var(--bloom-transition-fast);
@@ -189,15 +174,11 @@
   &:hover {
     box-shadow: var(--bloom-shadow-md);
   }
-
-  &:focus-visible {
-    @include bloom-focus-ring;
-  }
 }
 
 .anime-list__card-inner {
   display: flex;
-  gap: var(--bloom-space-3);
+  gap: var(--bloom-space-4);
 }
 
 // --------------------------------------------------------------------------
@@ -206,8 +187,8 @@
 
 .anime-list__card-cover {
   flex-shrink: 0;
-  width: 4rem;
-  height: 5.5rem;
+  width: 5.625rem;
+  height: 8.125rem;
   border-radius: var(--bloom-radius-md);
   overflow: hidden;
   background: var(--bloom-surface-sunken);
@@ -223,7 +204,11 @@
   width: 100%;
   height: 100%;
   background: var(--bloom-gradient-kawaii);
-  opacity: 0.3;
+  opacity: 0.4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
 }
 
 // --------------------------------------------------------------------------
@@ -240,51 +225,124 @@
 
 .anime-list__card-title {
   font-family: var(--bloom-font-family-display);
-  font-weight: var(--bloom-font-semibold);
-  font-size: var(--bloom-text-sm);
+  font-weight: var(--bloom-font-bold);
+  font-size: var(--bloom-text-md);
   color: var(--bloom-text-primary);
-  @include truncate;
+  margin-bottom: 0.125rem;
 }
 
-.anime-list__card-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--bloom-space-2);
-}
-
-.anime-list__card-progress {
+.anime-list__card-meta-line {
   font-size: var(--bloom-text-xs);
+  color: var(--bloom-text-tertiary);
+  margin-bottom: var(--bloom-space-1);
+}
+
+.anime-list__card-shared-progress {
+  font-size: var(--bloom-text-sm);
   color: var(--bloom-text-secondary);
-  white-space: nowrap;
+  margin-top: var(--bloom-space-1);
 }
 
 // --------------------------------------------------------------------------
-// Participant Progress
+// Progress Bar
+// --------------------------------------------------------------------------
+
+.anime-list__progress-bar {
+  height: 6px;
+  max-width: 180px;
+  border-radius: var(--bloom-radius-pill);
+  background: var(--bloom-surface-sunken);
+  overflow: hidden;
+  margin-top: var(--bloom-space-1);
+}
+
+.anime-list__progress-fill {
+  height: 100%;
+  border-radius: var(--bloom-radius-pill);
+  background: linear-gradient(90deg, #4ade80, #a3e635);
+  transition: width 0.3s ease;
+}
+
+// --------------------------------------------------------------------------
+// Participant Rows
 // --------------------------------------------------------------------------
 
 .anime-list__card-participants {
-  list-style: none;
-  margin: var(--bloom-space-1) 0 0;
-  padding: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--bloom-space-1) var(--bloom-space-3);
+  flex-direction: column;
+  gap: var(--bloom-space-1);
+  margin-top: var(--bloom-space-3);
 }
 
-.anime-list__card-participant {
+.anime-list__participant-row {
   display: flex;
   align-items: center;
-  gap: var(--bloom-space-1);
-  font-size: var(--bloom-text-xs);
+  gap: var(--bloom-space-2);
+  font-size: var(--bloom-text-sm);
 }
 
-.anime-list__card-participant-name {
+.anime-list__participant-name {
   color: var(--bloom-text-secondary);
-  font-weight: var(--bloom-font-medium);
 }
 
-.anime-list__card-participant-ep {
-  color: var(--bloom-text-tertiary);
+.anime-list__participant-ep {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-semibold);
+  color: var(--bloom-text-primary);
+}
+
+.anime-list__plus-btn {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--bloom-border-default);
+  background: var(--bloom-surface-base);
+  font-size: 0.875rem;
+  color: var(--bloom-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition:
+    background var(--bloom-transition-fast),
+    border-color var(--bloom-transition-fast),
+    color var(--bloom-transition-fast);
+
+  &:hover {
+    background: var(--bloom-pink-50);
+    border-color: var(--bloom-pink-200);
+    color: var(--bloom-pink-500);
+  }
+
+  &:focus-visible {
+    @include bloom-focus-ring;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Tags
+// --------------------------------------------------------------------------
+
+.anime-list__card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bloom-space-2);
+  margin-top: var(--bloom-space-2);
+
+  bloom-badge {
+    font-size: 0.6875rem;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Card Footer
+// --------------------------------------------------------------------------
+
+.anime-list__card-footer {
+  display: flex;
+  align-items: center;
 }
 
 // --------------------------------------------------------------------------

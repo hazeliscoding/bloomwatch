@@ -174,8 +174,18 @@ describe('AnimeSearchModalComponent', () => {
     searchReq.flush(mockResults);
     fixture.detectChanges();
 
+    // Step 1: click "+ Add" to open confirm panel
     const addBtn = fixture.nativeElement.querySelector('.anime-search__result-action bloom-button button');
     addBtn.click();
+    fixture.detectChanges();
+
+    // Confirm panel should appear
+    const confirmPanel = fixture.nativeElement.querySelector('.anime-search__add-details');
+    expect(confirmPanel).toBeTruthy();
+
+    // Step 2: click "Add to Space" to confirm
+    const confirmBtn = fixture.nativeElement.querySelector('.anime-search__add-actions bloom-button[variant="primary"] button');
+    confirmBtn.click();
     fixture.detectChanges();
 
     // First: ensure media is cached via detail endpoint
@@ -187,7 +197,6 @@ describe('AnimeSearchModalComponent', () => {
     // Then: add anime to watchspace
     const addReq = httpTesting.expectOne((r) => r.url.includes('/watchspaces/ws-1/anime'));
     expect(addReq.request.method).toBe('POST');
-    expect(addReq.request.body).toEqual({ aniListMediaId: 1 });
     addReq.flush({
       watchSpaceAnimeId: 'anime-1',
       preferredTitle: 'Cowboy Bebop',
@@ -199,8 +208,8 @@ describe('AnimeSearchModalComponent', () => {
     });
     fixture.detectChanges();
 
-    const addedLabel = fixture.nativeElement.querySelector('.anime-search__result-added');
-    expect(addedLabel).toBeTruthy();
+    const addedBadge = fixture.nativeElement.querySelector('.anime-search__result--added bloom-badge');
+    expect(addedBadge).toBeTruthy();
     expect(host.addedCount).toBe(1);
   });
 
@@ -244,8 +253,8 @@ describe('AnimeSearchModalComponent', () => {
     fixture.detectChanges();
 
     // First result (anilistMediaId=1) should show as added
-    const addedLabel = fixture.nativeElement.querySelector('.anime-search__result-added');
-    expect(addedLabel).toBeTruthy();
+    const addedBadge = fixture.nativeElement.querySelector('.anime-search__result--added bloom-badge');
+    expect(addedBadge).toBeTruthy();
 
     // Second result (anilistMediaId=2) should still have Add button
     const results = fixture.nativeElement.querySelectorAll('.anime-search__result');

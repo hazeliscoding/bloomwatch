@@ -11,16 +11,18 @@ import { FormsModule } from '@angular/forms';
 import { BloomModalComponent } from '../../shared/ui/modal/bloom-modal';
 import { BloomInputComponent } from '../../shared/ui/input/bloom-input';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
-import { BloomBadgeComponent } from '../../shared/ui/badge/bloom-badge';
+import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
 import { WatchSpaceService } from './watch-space.service';
 import { AnimeSearchResult } from './watch-space.model';
 import { Subscription, switchMap } from 'rxjs';
 
-type AddState = 'idle' | 'adding' | 'added' | 'error';
+type AddState = 'idle' | 'confirm' | 'adding' | 'added' | 'error';
 
 interface SearchResultItem extends AnimeSearchResult {
   addState: AddState;
 }
+
+const GENRE_BADGE_COLORS: BloomBadgeColor[] = ['lilac', 'blue', 'pink', 'green', 'yellow', 'neutral'];
 
 @Component({
   selector: 'app-anime-search-modal',
@@ -28,27 +30,33 @@ interface SearchResultItem extends AnimeSearchResult {
   imports: [FormsModule, BloomModalComponent, BloomInputComponent, BloomButtonComponent, BloomBadgeComponent],
   styleUrl: './anime-search-modal.scss',
   template: `
-    <bloom-modal [open]="open()" width="40rem" (closed)="onModalClosed()">
+    <bloom-modal [open]="open()" width="36rem" (closed)="onModalClosed()">
       <h2 bloomModalHeader class="anime-search__title bloom-font-display">Search Anime</h2>
 
+      <!-- Search Input -->
       <div class="anime-search__input-wrapper">
         <bloom-input
           placeholder="Search by title..."
           [ngModel]="query()"
           (valueChange)="onQueryChange($event)"
+          hint="Results update as you type (400ms debounce)"
           #searchInput
         />
       </div>
 
-      <!-- Loading -->
+      <!-- Loading Skeleton -->
       @if (isLoading()) {
-        <div class="anime-search__loading" role="status">
-          <div class="anime-search__spinner">
-            <span class="anime-search__spinner-dot"></span>
-            <span class="anime-search__spinner-dot"></span>
-            <span class="anime-search__spinner-dot"></span>
-          </div>
-          <p>Searching...</p>
+        <div class="anime-search__skeletons" role="status" aria-label="Loading results">
+          @for (i of [1, 2, 3]; track i) {
+            <div class="anime-search__skeleton-row">
+              <div class="anime-search__shimmer anime-search__shimmer--cover"></div>
+              <div class="anime-search__skeleton-info">
+                <div class="anime-search__shimmer" style="width: 70%"></div>
+                <div class="anime-search__shimmer anime-search__shimmer--sm" style="width: 50%"></div>
+                <div class="anime-search__shimmer anime-search__shimmer--sm" style="width: 40%"></div>
+              </div>
+            </div>
+          }
         </div>
       }
 
@@ -65,7 +73,8 @@ interface SearchResultItem extends AnimeSearchResult {
       <!-- Empty state -->
       @if (!isLoading() && !searchError() && hasSearched() && results().length === 0) {
         <div class="anime-search__empty">
-          <p>No anime found for "{{ query() }}"</p>
+          <span class="anime-search__empty-icon" aria-hidden="true">&#128270;</span>
+          <p>No results for &ldquo;{{ query() }}&rdquo;. Try a different search term.</p>
         </div>
       }
 
@@ -73,7 +82,10 @@ interface SearchResultItem extends AnimeSearchResult {
       @if (!isLoading() && !searchError() && results().length > 0) {
         <ul class="anime-search__results">
           @for (item of results(); track item.anilistMediaId) {
-            <li class="anime-search__result">
+            <li
+              class="anime-search__result"
+              [class.anime-search__result--added]="item.addState === 'added'"
+            >
               <div class="anime-search__result-cover">
                 @if (item.coverImageUrl) {
                   <img
@@ -87,47 +99,91 @@ interface SearchResultItem extends AnimeSearchResult {
               </div>
               <div class="anime-search__result-info">
                 <span class="anime-search__result-title">{{ preferredTitle(item) }}</span>
-                <div class="anime-search__result-meta">
-                  @if (item.format) {
-                    <bloom-badge color="blue" size="sm">{{ item.format }}</bloom-badge>
-                  }
-                  @if (item.episodes) {
-                    <span class="anime-search__result-episodes">{{ item.episodes }} ep</span>
-                  }
-                  @if (item.season && item.seasonYear) {
-                    <span class="anime-search__result-season">{{ item.season }} {{ item.seasonYear }}</span>
-                  } @else if (item.seasonYear) {
-                    <span class="anime-search__result-season">{{ item.seasonYear }}</span>
-                  }
-                </div>
-                <div class="anime-search__result-genres">
-                  @for (genre of item.genres.slice(0, 3); track genre) {
-                    <bloom-badge color="lilac" size="sm">{{ genre }}</bloom-badge>
-                  }
-                </div>
+                @if (romajiSubtitle(item)) {
+                  <span class="anime-search__result-subtitle">{{ romajiSubtitle(item) }}</span>
+                }
+                <span class="anime-search__result-meta">{{ metaLine(item) }}</span>
+                @if (item.genres.length > 0) {
+                  <div class="anime-search__result-genres">
+                    @for (genre of item.genres.slice(0, 3); track genre) {
+                      <bloom-badge [color]="genreBadgeColor($index)" size="sm">{{ genre }}</bloom-badge>
+                    }
+                  </div>
+                }
               </div>
               <div class="anime-search__result-action">
                 @if (item.addState === 'added') {
-                  <span class="anime-search__result-added">Added</span>
+                  <bloom-badge color="green" size="sm">&#10003; Added</bloom-badge>
                 } @else if (item.addState === 'error') {
-                  <bloom-button variant="danger" size="sm" (clicked)="addAnime(item)">
+                  <bloom-button variant="danger" size="sm" (clicked)="startAdd(item)">
                     Retry
                   </bloom-button>
-                } @else {
+                } @else if (item.addState !== 'confirm' && item.addState !== 'adding') {
                   <bloom-button
-                    variant="accent"
+                    variant="primary"
                     size="sm"
-                    [loading]="item.addState === 'adding'"
-                    [disabled]="item.addState === 'adding'"
-                    (clicked)="addAnime(item)"
+                    (clicked)="startAdd(item)"
                   >
-                    Add
+                    + Add
                   </bloom-button>
                 }
               </div>
             </li>
           }
         </ul>
+
+        <!-- Add Details Panel -->
+        @if (confirmingItem()) {
+          <div class="anime-search__add-details">
+            <div class="anime-search__add-details-title">Adding: {{ preferredTitle(confirmingItem()!) }}</div>
+            <div class="anime-search__add-details-fields">
+              <div class="anime-search__add-field">
+                <label class="anime-search__add-label">Mood <span class="anime-search__add-optional">(optional)</span></label>
+                <input
+                  type="text"
+                  class="anime-search__add-input"
+                  [(ngModel)]="addMood"
+                  name="addMood"
+                  placeholder='e.g. "Cozy", "Hype", "Emotional"'
+                />
+              </div>
+              <div class="anime-search__add-field">
+                <label class="anime-search__add-label">Vibe <span class="anime-search__add-optional">(optional)</span></label>
+                <input
+                  type="text"
+                  class="anime-search__add-input"
+                  [(ngModel)]="addVibe"
+                  name="addVibe"
+                  placeholder='e.g. "Sunday evening vibes"'
+                />
+              </div>
+              <div class="anime-search__add-field">
+                <label class="anime-search__add-label">Pitch <span class="anime-search__add-optional">(optional)</span></label>
+                <input
+                  type="text"
+                  class="anime-search__add-input"
+                  [(ngModel)]="addPitch"
+                  name="addPitch"
+                  placeholder='"Why should we watch this?"'
+                />
+              </div>
+              @if (addError()) {
+                <p class="anime-search__add-error" role="alert">{{ addError() }}</p>
+              }
+              <div class="anime-search__add-actions">
+                <bloom-button variant="ghost" size="md" (clicked)="cancelAdd()">Cancel</bloom-button>
+                <bloom-button
+                  variant="primary"
+                  size="md"
+                  [loading]="isAdding()"
+                  (clicked)="confirmAdd()"
+                >
+                  Add to Space
+                </bloom-button>
+              </div>
+            </div>
+          </div>
+        }
       }
     </bloom-modal>
   `,
@@ -147,6 +203,14 @@ export class AnimeSearchModalComponent implements OnDestroy {
   readonly searchError = signal('');
   readonly hasSearched = signal(false);
 
+  // Add details step
+  readonly confirmingItem = signal<SearchResultItem | null>(null);
+  readonly isAdding = signal(false);
+  readonly addError = signal('');
+  addMood = '';
+  addVibe = '';
+  addPitch = '';
+
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
   private searchSub: Subscription | null = null;
   private addedCount = 0;
@@ -158,7 +222,6 @@ export class AnimeSearchModalComponent implements OnDestroy {
       this.scheduleSearch(q);
     });
 
-    // Auto-focus search input when modal opens
     effect(() => {
       if (this.open()) {
         this.loadExistingAnime();
@@ -169,13 +232,14 @@ export class AnimeSearchModalComponent implements OnDestroy {
           inputEl?.focus();
         }, 50);
       } else {
-        // Reset state when modal closes
         this.query.set('');
         this.results.set([]);
         this.isLoading.set(false);
         this.searchError.set('');
         this.hasSearched.set(false);
         this.existingAniListIds.clear();
+        this.confirmingItem.set(null);
+        this.resetAddFields();
       }
     });
   }
@@ -202,7 +266,58 @@ export class AnimeSearchModalComponent implements OnDestroy {
     this.executeSearch(this.query());
   }
 
-  addAnime(item: SearchResultItem): void {
+  preferredTitle(item: AnimeSearchResult): string {
+    return item.titleEnglish || item.titleRomaji || 'Unknown Title';
+  }
+
+  romajiSubtitle(item: AnimeSearchResult): string | null {
+    if (item.titleEnglish && item.titleRomaji && item.titleRomaji !== item.titleEnglish) {
+      return item.titleRomaji;
+    }
+    return null;
+  }
+
+  metaLine(item: AnimeSearchResult): string {
+    const parts: string[] = [];
+    if (item.format) parts.push(item.format);
+    if (item.episodes) parts.push(`${item.episodes} ep`);
+    if (item.season && item.seasonYear) {
+      parts.push(`${item.season} ${item.seasonYear}`);
+    } else if (item.seasonYear) {
+      parts.push(`${item.seasonYear}`);
+    } else if (item.status) {
+      parts.push(item.status);
+    }
+    return parts.join(' \u00B7 ');
+  }
+
+  genreBadgeColor(index: number): BloomBadgeColor {
+    return GENRE_BADGE_COLORS[index % GENRE_BADGE_COLORS.length];
+  }
+
+  // --- Add flow (two-step) ---
+
+  startAdd(item: SearchResultItem): void {
+    this.confirmingItem.set(item);
+    this.updateItemState(item.anilistMediaId, 'confirm');
+    this.resetAddFields();
+  }
+
+  cancelAdd(): void {
+    const item = this.confirmingItem();
+    if (item) {
+      this.updateItemState(item.anilistMediaId, 'idle');
+    }
+    this.confirmingItem.set(null);
+    this.resetAddFields();
+  }
+
+  confirmAdd(): void {
+    const item = this.confirmingItem();
+    if (!item) return;
+
+    this.isAdding.set(true);
+    this.addError.set('');
     this.updateItemState(item.anilistMediaId, 'adding');
 
     this.watchSpaceService
@@ -211,6 +326,9 @@ export class AnimeSearchModalComponent implements OnDestroy {
         switchMap(() =>
           this.watchSpaceService.addAnimeToWatchSpace(this.watchSpaceId(), {
             aniListMediaId: item.anilistMediaId,
+            mood: this.addMood.trim() || null,
+            vibe: this.addVibe.trim() || null,
+            pitch: this.addPitch.trim() || null,
           }),
         ),
       )
@@ -219,16 +337,24 @@ export class AnimeSearchModalComponent implements OnDestroy {
           this.updateItemState(item.anilistMediaId, 'added');
           this.existingAniListIds.add(item.anilistMediaId);
           this.addedCount++;
+          this.isAdding.set(false);
+          this.confirmingItem.set(null);
+          this.resetAddFields();
           this.animeAdded.emit();
         },
         error: () => {
           this.updateItemState(item.anilistMediaId, 'error');
+          this.isAdding.set(false);
+          this.addError.set('Failed to add. Please try again.');
         },
       });
   }
 
-  preferredTitle(item: AnimeSearchResult): string {
-    return item.titleEnglish || item.titleRomaji || 'Unknown Title';
+  private resetAddFields(): void {
+    this.addMood = '';
+    this.addVibe = '';
+    this.addPitch = '';
+    this.addError.set('');
   }
 
   private scheduleSearch(query: string): void {
@@ -254,6 +380,8 @@ export class AnimeSearchModalComponent implements OnDestroy {
     this.searchSub?.unsubscribe();
     this.isLoading.set(true);
     this.searchError.set('');
+    this.confirmingItem.set(null);
+    this.resetAddFields();
 
     this.searchSub = this.watchSpaceService.searchAnime(query).subscribe({
       next: (results) => {

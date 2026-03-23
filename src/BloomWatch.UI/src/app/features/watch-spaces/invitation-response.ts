@@ -1,16 +1,16 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { WatchSpaceService } from './watch-space.service';
 import { InvitationPreview } from './watch-space.model';
 import { HttpErrorResponse } from '@angular/common/http';
 
-type PageState = 'loading' | 'ready' | 'accepting' | 'declining' | 'accepted' | 'declined' | 'error';
+type PageState = 'loading' | 'ready' | 'accepting' | 'declining' | 'accepted' | 'declined' | 'expired' | 'already-used' | 'error';
 
 @Component({
   selector: 'app-invitation-response',
-  imports: [BloomButtonComponent, BloomCardComponent],
+  imports: [BloomButtonComponent, BloomCardComponent, RouterLink],
   templateUrl: './invitation-response.html',
   styleUrl: './invitation-response.scss',
 })
@@ -22,6 +22,7 @@ export class InvitationResponse implements OnInit {
   readonly state = signal<PageState>('loading');
   readonly preview = signal<InvitationPreview | null>(null);
   readonly errorMessage = signal('');
+  readonly acceptedWatchSpaceId = signal('');
 
   private token = '';
 
@@ -39,12 +40,11 @@ export class InvitationResponse implements OnInit {
     this.state.set('accepting');
     this.watchSpaceService.acceptInvitation(this.token).subscribe({
       next: (result) => {
+        this.acceptedWatchSpaceId.set(result.watchSpaceId);
         this.state.set('accepted');
-        this.router.navigate(['/watch-spaces', result.watchSpaceId]);
       },
       error: (err: HttpErrorResponse) => {
-        this.state.set('error');
-        this.errorMessage.set(this.mapError(err.status));
+        this.setErrorState(err.status);
       },
     });
   }
@@ -56,32 +56,51 @@ export class InvitationResponse implements OnInit {
         this.state.set('declined');
       },
       error: (err: HttpErrorResponse) => {
-        this.state.set('error');
-        this.errorMessage.set(this.mapError(err.status));
+        this.setErrorState(err.status);
       },
     });
+  }
+
+  goToWatchSpace(): void {
+    const id = this.acceptedWatchSpaceId();
+    if (id) {
+      this.router.navigate(['/watch-spaces', id]);
+    }
+  }
+
+  goToWatchSpaces(): void {
+    this.router.navigate(['/watch-spaces']);
   }
 
   private loadPreview(): void {
     this.watchSpaceService.getInvitationPreview(this.token).subscribe({
       next: (preview) => {
         if (preview.status !== 'Pending') {
-          this.state.set('error');
-          this.errorMessage.set('This invitation has already been used.');
+          this.state.set('already-used');
           return;
         }
         this.preview.set(preview);
         this.state.set('ready');
       },
       error: (err: HttpErrorResponse) => {
-        this.state.set('error');
-        this.errorMessage.set(this.mapError(err.status));
+        this.setErrorState(err.status);
       },
     });
   }
 
-  goToWatchSpaces(): void {
-    this.router.navigate(['/watch-spaces']);
+  private setErrorState(status: number): void {
+    switch (status) {
+      case 409:
+        this.state.set('already-used');
+        break;
+      case 410:
+        this.state.set('expired');
+        break;
+      default:
+        this.state.set('error');
+        this.errorMessage.set(this.mapError(status));
+        break;
+    }
   }
 
   private mapError(status: number): string {
@@ -90,10 +109,6 @@ export class InvitationResponse implements OnInit {
         return 'This invitation was sent to a different account.';
       case 404:
         return 'This invitation was not found. It may have been revoked.';
-      case 409:
-        return 'This invitation has already been used.';
-      case 410:
-        return 'This invitation has expired.';
       default:
         return 'Something went wrong. Please try again.';
     }

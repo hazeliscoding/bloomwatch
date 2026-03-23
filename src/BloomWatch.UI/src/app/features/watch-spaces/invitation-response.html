@@ -1,41 +1,34 @@
 <main class="invitation-response">
+  <!-- Loading -->
   @if (state() === 'loading') {
     <div class="invitation-response__loading" role="status">
       <p>Loading invitation...</p>
     </div>
   }
 
-  @if (state() === 'error') {
-    <bloom-card class="invitation-response__card">
-      <div class="invitation-response__content">
-        <h1 class="invitation-response__title bloom-font-display">Invitation Unavailable</h1>
-        <p class="invitation-response__message invitation-response__message--error">{{ errorMessage() }}</p>
-        <bloom-button variant="primary" (clicked)="goToWatchSpaces()">
-          Go to Watch Spaces
-        </bloom-button>
-      </div>
-    </bloom-card>
-  }
-
+  <!-- Valid Invitation (Ready / Accepting / Declining) -->
   @if (state() === 'ready' || state() === 'accepting' || state() === 'declining') {
     @if (preview(); as p) {
       <bloom-card class="invitation-response__card">
-        <div class="invitation-response__content">
-          <h1 class="invitation-response__title bloom-font-display">You're Invited!</h1>
-          <p class="invitation-response__message">
-            You've been invited to join <strong>{{ p.watchSpaceName }}</strong>.
-          </p>
+        <div bloomCardHeader class="invitation-response__header">
+          <h1 class="invitation-response__gradient-title bloom-font-display">You're Invited!</h1>
+        </div>
+        <div class="invitation-response__body">
+          <p class="invitation-response__subtitle">You've been invited to join</p>
+          <div class="invitation-response__space-name">{{ p.watchSpaceName }}</div>
           <div class="invitation-response__actions">
             <bloom-button
               variant="primary"
+              size="md"
               [disabled]="state() === 'accepting' || state() === 'declining'"
               [loading]="state() === 'accepting'"
               (clicked)="accept()"
             >
-              Accept
+              Accept &amp; Join
             </bloom-button>
             <bloom-button
               variant="ghost"
+              size="md"
               [disabled]="state() === 'accepting' || state() === 'declining'"
               [loading]="state() === 'declining'"
               (clicked)="decline()"
@@ -44,18 +37,90 @@
             </bloom-button>
           </div>
         </div>
+        <div bloomCardFooter class="invitation-response__footer">
+          <p>Not you? <a routerLink="/login" class="invitation-response__link">Sign in with a different account</a></p>
+        </div>
       </bloom-card>
     }
   }
 
+  <!-- Accepted -->
+  @if (state() === 'accepted') {
+    <bloom-card class="invitation-response__card">
+      <div bloomCardHeader class="invitation-response__header">
+        <h1 class="invitation-response__success-title bloom-font-display">You're In!</h1>
+      </div>
+      <div class="invitation-response__body">
+        <p class="invitation-response__subtitle">Welcome to</p>
+        <div class="invitation-response__space-name">{{ preview()?.watchSpaceName }}</div>
+        <p class="invitation-response__detail">You've been added as a member.</p>
+        <div class="invitation-response__actions">
+          <bloom-button variant="primary" size="md" (clicked)="goToWatchSpace()">
+            Go to Watch Space &rarr;
+          </bloom-button>
+        </div>
+      </div>
+    </bloom-card>
+  }
+
+  <!-- Declined -->
   @if (state() === 'declined') {
     <bloom-card class="invitation-response__card">
-      <div class="invitation-response__content">
-        <h1 class="invitation-response__title bloom-font-display">Invitation Declined</h1>
-        <p class="invitation-response__message">You've declined this invitation.</p>
-        <bloom-button variant="primary" (clicked)="goToWatchSpaces()">
-          Go to Watch Spaces
-        </bloom-button>
+      <div class="invitation-response__body invitation-response__body--padded">
+        <h2 class="invitation-response__title bloom-font-display">Invitation Declined</h2>
+        <p class="invitation-response__detail">You've declined the invitation to join <strong>{{ preview()?.watchSpaceName }}</strong>.</p>
+        <div class="invitation-response__actions">
+          <bloom-button variant="ghost" size="md" (clicked)="goToWatchSpaces()">
+            Go to My Spaces
+          </bloom-button>
+        </div>
+      </div>
+    </bloom-card>
+  }
+
+  <!-- Expired -->
+  @if (state() === 'expired') {
+    <bloom-card class="invitation-response__card">
+      <div class="invitation-response__body invitation-response__body--padded">
+        <span class="invitation-response__icon" aria-hidden="true">&#8987;</span>
+        <h2 class="invitation-response__error-title bloom-font-display">Invitation Expired</h2>
+        <p class="invitation-response__detail">This invitation is no longer valid. Ask the space owner to send a new one.</p>
+        <div class="invitation-response__actions">
+          <bloom-button variant="ghost" size="md" (clicked)="goToWatchSpaces()">
+            Go Home
+          </bloom-button>
+        </div>
+      </div>
+    </bloom-card>
+  }
+
+  <!-- Already Used -->
+  @if (state() === 'already-used') {
+    <bloom-card class="invitation-response__card">
+      <div class="invitation-response__body invitation-response__body--padded">
+        <span class="invitation-response__icon" aria-hidden="true">&#10003;</span>
+        <h2 class="invitation-response__title bloom-font-display">Already Used</h2>
+        <p class="invitation-response__detail">This invitation has already been accepted or declined.</p>
+        <div class="invitation-response__actions">
+          <bloom-button variant="ghost" size="md" (clicked)="goToWatchSpaces()">
+            Go to My Spaces
+          </bloom-button>
+        </div>
+      </div>
+    </bloom-card>
+  }
+
+  <!-- Generic Error -->
+  @if (state() === 'error') {
+    <bloom-card class="invitation-response__card">
+      <div class="invitation-response__body invitation-response__body--padded">
+        <h2 class="invitation-response__error-title bloom-font-display">Invitation Unavailable</h2>
+        <p class="invitation-response__detail invitation-response__detail--error">{{ errorMessage() }}</p>
+        <div class="invitation-response__actions">
+          <bloom-button variant="ghost" size="md" (clicked)="goToWatchSpaces()">
+            Go to Watch Spaces
+          </bloom-button>
+        </div>
       </div>
     </bloom-card>
   }

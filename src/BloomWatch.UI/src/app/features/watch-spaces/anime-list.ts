@@ -1,7 +1,9 @@
-import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
+import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
+import { BloomAvatarComponent } from '../../shared/ui/avatar/bloom-avatar';
 import { WatchSpaceService } from './watch-space.service';
 import { WatchSpaceAnimeListItem } from './watch-space.model';
 
@@ -36,12 +38,10 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
 @Component({
   selector: 'app-anime-list',
   standalone: true,
-  imports: [BloomCardComponent, BloomBadgeComponent],
+  imports: [BloomCardComponent, BloomBadgeComponent, BloomButtonComponent, BloomAvatarComponent],
   styleUrl: './anime-list.scss',
   template: `
     <section class="anime-list">
-      <h2 class="anime-list__title bloom-font-display">Anime</h2>
-
       <!-- Status Tabs -->
       <nav class="anime-list__tabs" role="tablist" aria-label="Filter by status">
         @for (tab of tabs; track tab.value) {
@@ -53,9 +53,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
             (click)="setTab(tab.value)"
           >
             {{ tab.label }}
-            @if (tab.value !== 'all') {
-              <span class="anime-list__tab-count">{{ countForStatus(tab.value) }}</span>
-            }
+            <span class="anime-list__tab-count">({{ countForTab(tab.value) }})</span>
           </button>
         }
       </nav>
@@ -91,13 +89,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
       @if (!isLoading() && !loadError() && filteredList().length > 0) {
         <div class="anime-list__grid">
           @for (anime of filteredList(); track anime.watchSpaceAnimeId) {
-            <bloom-card
-              class="anime-list__card"
-              (click)="navigateToDetail(anime.watchSpaceAnimeId)"
-              (keydown.enter)="navigateToDetail(anime.watchSpaceAnimeId)"
-              tabindex="0"
-              role="link"
-            >
+            <bloom-card class="anime-list__card">
               <div class="anime-list__card-inner">
                 <div class="anime-list__card-cover">
                   @if (anime.coverImageUrlSnapshot) {
@@ -107,30 +99,73 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
                       loading="lazy"
                     />
                   } @else {
-                    <div class="anime-list__card-cover-placeholder"></div>
+                    <div class="anime-list__card-cover-placeholder">&#127912;</div>
                   }
                 </div>
                 <div class="anime-list__card-info">
                   <span class="anime-list__card-title">{{ anime.preferredTitle }}</span>
-                  <div class="anime-list__card-meta">
-                    <bloom-badge [color]="statusBadgeColor(anime.sharedStatus)" size="sm">
-                      {{ anime.sharedStatus }}
-                    </bloom-badge>
-                    <span class="anime-list__card-progress">
-                      {{ formatProgress(anime) }}
-                    </span>
-                  </div>
+
+                  @if (formatMetaLine(anime); as meta) {
+                    <span class="anime-list__card-meta-line">{{ meta }}</span>
+                  }
+
+                  <bloom-badge [color]="statusBadgeColor(anime.sharedStatus)" size="sm">
+                    {{ anime.sharedStatus }}
+                  </bloom-badge>
+
+                  <span class="anime-list__card-shared-progress">
+                    Shared: {{ formatProgress(anime) }}
+                  </span>
+
+                  @if (anime.episodeCountSnapshot) {
+                    <div class="anime-list__progress-bar">
+                      <div
+                        class="anime-list__progress-fill"
+                        [style.width.%]="progressPercent(anime)"
+                      ></div>
+                    </div>
+                  }
+
                   @if (anime.participants.length > 0) {
-                    <ul class="anime-list__card-participants">
+                    <div class="anime-list__card-participants">
                       @for (p of anime.participants; track p.userId) {
-                        <li class="anime-list__card-participant">
-                          <span class="anime-list__card-participant-name">{{ p.displayName }}</span>
-                          <span class="anime-list__card-participant-ep">Ep {{ p.episodesWatched }}</span>
-                        </li>
+                        <div class="anime-list__participant-row">
+                          <bloom-avatar size="xs" [name]="p.displayName" />
+                          <span class="anime-list__participant-name">{{ p.displayName }}:</span>
+                          <span class="anime-list__participant-ep">Ep {{ p.episodesWatched }}</span>
+                          <button
+                            class="anime-list__plus-btn"
+                            type="button"
+                            title="Increment episode"
+                            aria-label="Increment episode for {{ p.displayName }}"
+                            (click)="incrementEpisode.emit({ animeId: anime.watchSpaceAnimeId, userId: p.userId }); $event.stopPropagation()"
+                          >+</button>
+                        </div>
                       }
-                    </ul>
+                    </div>
+                  }
+
+                  @if (anime.mood || anime.vibe) {
+                    <div class="anime-list__card-tags">
+                      @if (anime.mood) {
+                        <bloom-badge color="lilac" size="sm">Mood: {{ anime.mood }}</bloom-badge>
+                      }
+                      @if (anime.vibe) {
+                        <bloom-badge color="blue" size="sm">Vibe: {{ anime.vibe }}</bloom-badge>
+                      }
+                    </div>
                   }
                 </div>
+              </div>
+
+              <div bloomCardFooter class="anime-list__card-footer">
+                <bloom-button
+                  variant="ghost"
+                  size="sm"
+                  (clicked)="navigateToDetail(anime.watchSpaceAnimeId)"
+                >
+                  View Details →
+                </bloom-button>
               </div>
             </bloom-card>
           }
@@ -141,6 +176,8 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
 })
 export class AnimeListComponent implements OnInit {
   readonly watchSpaceId = input.required<string>();
+
+  readonly incrementEpisode = output<{ animeId: string; userId: string }>();
 
   private readonly watchSpaceService = inject(WatchSpaceService);
   private readonly router = inject(Router);
@@ -185,9 +222,10 @@ export class AnimeListComponent implements OnInit {
     this.activeTab.set(tab);
   }
 
-  countForStatus(status: string): number {
+  countForTab(tab: StatusTab): number {
+    if (tab === 'all') return this.animeList().length;
     return this.animeList().filter(
-      (a) => a.sharedStatus.toLowerCase() === status,
+      (a) => a.sharedStatus.toLowerCase() === tab,
     ).length;
   }
 
@@ -199,6 +237,21 @@ export class AnimeListComponent implements OnInit {
     const watched = anime.sharedEpisodesWatched;
     const total = anime.episodeCountSnapshot;
     return total != null ? `Ep ${watched} / ${total}` : `Ep ${watched}`;
+  }
+
+  formatMetaLine(anime: WatchSpaceAnimeListItem): string {
+    const parts: string[] = [];
+    if (anime.formatSnapshot) parts.push(anime.formatSnapshot);
+    if (anime.episodeCountSnapshot != null) parts.push(`${anime.episodeCountSnapshot} eps`);
+    if (anime.seasonSnapshot && anime.seasonYearSnapshot) {
+      parts.push(`${anime.seasonSnapshot} ${anime.seasonYearSnapshot}`);
+    }
+    return parts.join(' · ');
+  }
+
+  progressPercent(anime: WatchSpaceAnimeListItem): number {
+    if (!anime.episodeCountSnapshot || anime.episodeCountSnapshot === 0) return 0;
+    return Math.min(100, (anime.sharedEpisodesWatched / anime.episodeCountSnapshot) * 100);
   }
 
   navigateToDetail(watchSpaceAnimeId: string): void {
