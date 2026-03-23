@@ -1,8 +1,8 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.8
+**Document version:** 1.9
 **Created:** 2026-03-13
-**Last updated:** 2026-03-20
+**Last updated:** 2026-03-23
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
 **Tech stack:** .NET 10 / ASP.NET Core Minimal APIs, PostgreSQL, EF Core, Angular, AniList GraphQL
 
@@ -1045,8 +1045,6 @@ As an authenticated user, I want to see all my watch spaces listed on a selector
 - Loading and empty states are handled gracefully
 - Creating a space with a blank name shows a validation error before submitting
 
-**Known gap:** Member count is not yet displayed on cards (model and template need `memberCount` field).
-
 </details>
 
 ---
@@ -1103,7 +1101,7 @@ As a watch space owner, I want to invite someone by email and manage pending inv
 ## Epic 9 — Anime Tracking Frontend
 
 **Goal:** Members can search for anime, add them to their watch space, view the shared list, update progress and status, rate anime, and log watch sessions.
-**Frontend status:** In Progress (2/4 done)
+**Frontend status:** In Progress (3/4 done)
 
 ---
 
@@ -1156,9 +1154,12 @@ As a watch space member, I want to browse our anime list filtered by status, so 
 
 ---
 
+<details>
+<summary>Story 9.3 — Anime Detail Page</summary>
+
 ### Story 9.3 — Anime Detail Page
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 8
 **Sizing rationale:** The richest screen in the app. Shows full anime metadata, per-participant progress and ratings, shared status controls, rating input, watch session list, and a "Log Session" form. Multiple API calls and a complex UI with multiple interactive sections.
 
@@ -1177,6 +1178,13 @@ As a watch space member, I want to see all details for one anime, so that I can 
 - "Log Watch Session" button opens an inline form or modal: date, start episode, end episode, notes
 - All mutations provide immediate optimistic or reload-based feedback
 - Returns to the anime list if the anime is not found
+
+**Known gaps:**
+- Mood/vibe/pitch edit controls are display-only (pencil icons present but no edit form wired)
+- Shared status and shared episode stepper mutations are UI-only — no PATCH call to the backend is wired yet
+- Error state shows retry button instead of redirecting to anime list when anime is not found
+
+</details>
 
 ---
 
@@ -1296,7 +1304,7 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 3 ✅ Done | 3 | 11 |
-| Epic 9 — Anime Tracking Frontend | 2 ✅ Done / 2 📋 To Do | 4 | 21 |
+| Epic 9 — Anime Tracking Frontend | 3 ✅ Done / 1 📋 To Do | 4 | 21 |
 | Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
 | **Total** | | **47** | **153** |
 
@@ -1304,8 +1312,8 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Invitation flow + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker + Anime Search Modal + Shared Anime List Page) | 123 |
-| 📋 To Do (remaining MVP) | 30 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Invitation flow + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker + Anime Search Modal + Shared Anime List Page + Anime Detail Page) | 131 |
+| 📋 To Do (remaining MVP) | 22 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1352,11 +1360,11 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - Story 9.4 — Inline Progress and Status Update Controls (3 pts)
 - Total: 13 pts (3 pts remaining)
 
-**Sprint 7 — Anime detail frontend + Analytics backend**
-- Story 9.3 — Anime Detail Page (8 pts)
+**Sprint 7 — Anime detail frontend + Analytics backend** *(Complete)*
+- ~~Story 9.3 — Anime Detail Page (8 pts) — ✅ Done~~
 - ~~Story 5.1 — Dashboard Summary Endpoint (5 pts) — ✅ Done~~
 - ~~Story 5.5 — Random Backlog Picker Endpoint (2 pts) — ✅ Done~~
-- Total: 15 pts (8 pts remaining)
+- Total: 15 pts *(Complete)*
 
 **Sprint 8 — Analytics backend (full) + Dashboard frontend**
 - ~~Story 5.2 — Compatibility Score Endpoint (5 pts) — ✅ Done~~
