@@ -1,11 +1,13 @@
-import { Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomAvatarComponent } from '../../shared/ui/avatar/bloom-avatar';
 import { WatchSpaceService } from './watch-space.service';
-import { WatchSpaceAnimeListItem } from './watch-space.model';
+import { AnimeParticipantSummary, WatchSpaceAnimeListItem } from './watch-space.model';
+import { AuthService } from '../../core/auth/auth.service';
 
 type StatusTab = 'all' | 'backlog' | 'watching' | 'finished' | 'paused' | 'dropped';
 
@@ -38,7 +40,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
 @Component({
   selector: 'app-anime-list',
   standalone: true,
-  imports: [BloomCardComponent, BloomBadgeComponent, BloomButtonComponent, BloomAvatarComponent],
+  imports: [FormsModule, BloomCardComponent, BloomBadgeComponent, BloomButtonComponent, BloomAvatarComponent],
   styleUrl: './anime-list.scss',
   template: `
     <section class="anime-list">
@@ -109,9 +111,16 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
                     <span class="anime-list__card-meta-line">{{ meta }}</span>
                   }
 
-                  <bloom-badge [color]="statusBadgeColor(anime.sharedStatus)" size="sm">
-                    {{ anime.sharedStatus }}
-                  </bloom-badge>
+                  <select
+                    class="anime-list__status-select"
+                    [ngModel]="anime.sharedStatus"
+                    (ngModelChange)="onStatusChange(anime, $event)"
+                    (click)="$event.stopPropagation()"
+                  >
+                    @for (s of statusOptions; track s) {
+                      <option [value]="s">{{ s }}</option>
+                    }
+                  </select>
 
                   <span class="anime-list__card-shared-progress">
                     Shared: {{ formatProgress(anime) }}
@@ -133,13 +142,16 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
                           <bloom-avatar size="xs" [name]="p.displayName" />
                           <span class="anime-list__participant-name">{{ p.displayName }}:</span>
                           <span class="anime-list__participant-ep">Ep {{ p.episodesWatched }}</span>
-                          <button
-                            class="anime-list__plus-btn"
-                            type="button"
-                            title="Increment episode"
-                            aria-label="Increment episode for {{ p.displayName }}"
-                            (click)="incrementEpisode.emit({ animeId: anime.watchSpaceAnimeId, userId: p.userId }); $event.stopPropagation()"
-                          >+</button>
+                          @if (p.userId === currentUserId()) {
+                            <button
+                              class="anime-list__plus-btn"
+                              type="button"
+                              title="Increment episode"
+                              aria-label="Increment episode for {{ p.displayName }}"
+                              [disabled]="anime.episodeCountSnapshot != null && p.episodesWatched >= anime.episodeCountSnapshot!"
+                              (click)="onIncrementEpisode(anime, p); $event.stopPropagation()"
+                            >+</button>
+                          }
                         </div>
                       }
                     </div>
@@ -157,6 +169,10 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
                   }
                 </div>
               </div>
+
+              @if (cardErrors().get(anime.watchSpaceAnimeId); as err) {
+                <p class="anime-list__card-error" role="alert">{{ err }}</p>
+              }
 
               <div bloomCardFooter class="anime-list__card-footer">
                 <bloom-button
@@ -177,10 +193,14 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
 export class AnimeListComponent implements OnInit {
   readonly watchSpaceId = input.required<string>();
 
-  readonly incrementEpisode = output<{ animeId: string; userId: string }>();
-
   private readonly watchSpaceService = inject(WatchSpaceService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  readonly statusOptions = ['Backlog', 'Watching', 'Finished', 'Paused', 'Dropped'];
+  readonly currentUserId = computed(() => this.authService.userId());
+  readonly cardErrors = signal<Map<string, string>>(new Map());
+  private errorTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   readonly tabs = STATUS_TABS;
   readonly animeList = signal<WatchSpaceAnimeListItem[]>([]);
@@ -252,6 +272,74 @@ export class AnimeListComponent implements OnInit {
   progressPercent(anime: WatchSpaceAnimeListItem): number {
     if (!anime.episodeCountSnapshot || anime.episodeCountSnapshot === 0) return 0;
     return Math.min(100, (anime.sharedEpisodesWatched / anime.episodeCountSnapshot) * 100);
+  }
+
+  onStatusChange(anime: WatchSpaceAnimeListItem, newStatus: string): void {
+    const prev = anime.sharedStatus;
+    this.updateAnimeInList(anime.watchSpaceAnimeId, { sharedStatus: newStatus });
+    this.watchSpaceService
+      .updateSharedAnime(this.watchSpaceId(), anime.watchSpaceAnimeId, { sharedStatus: newStatus })
+      .subscribe({
+        error: () => {
+          this.updateAnimeInList(anime.watchSpaceAnimeId, { sharedStatus: prev });
+          this.showCardError(anime.watchSpaceAnimeId, 'Failed to update status.');
+        },
+      });
+  }
+
+  onIncrementEpisode(anime: WatchSpaceAnimeListItem, p: { userId: string; episodesWatched: number; individualStatus: string }): void {
+    if (anime.episodeCountSnapshot != null && p.episodesWatched >= anime.episodeCountSnapshot) return;
+    const prevEp = p.episodesWatched;
+    const newEp = prevEp + 1;
+    this.updateParticipantInList(anime.watchSpaceAnimeId, p.userId, { episodesWatched: newEp });
+    this.watchSpaceService
+      .updateParticipantProgress(this.watchSpaceId(), anime.watchSpaceAnimeId, {
+        individualStatus: p.individualStatus,
+        episodesWatched: newEp,
+      })
+      .subscribe({
+        error: () => {
+          this.updateParticipantInList(anime.watchSpaceAnimeId, p.userId, { episodesWatched: prevEp });
+          this.showCardError(anime.watchSpaceAnimeId, 'Failed to update episode.');
+        },
+      });
+  }
+
+  private updateAnimeInList(animeId: string, patch: Partial<WatchSpaceAnimeListItem>): void {
+    this.animeList.update((list) =>
+      list.map((a) => (a.watchSpaceAnimeId === animeId ? { ...a, ...patch } : a)),
+    );
+  }
+
+  private updateParticipantInList(animeId: string, userId: string, patch: { episodesWatched: number }): void {
+    this.animeList.update((list) =>
+      list.map((a) => {
+        if (a.watchSpaceAnimeId !== animeId) return a;
+        return {
+          ...a,
+          participants: a.participants.map((p) =>
+            p.userId === userId ? { ...p, ...patch } : p,
+          ),
+        };
+      }),
+    );
+  }
+
+  private showCardError(animeId: string, msg: string): void {
+    const existing = this.errorTimers.get(animeId);
+    if (existing) clearTimeout(existing);
+    this.cardErrors.update((m) => new Map(m).set(animeId, msg));
+    this.errorTimers.set(
+      animeId,
+      setTimeout(() => {
+        this.cardErrors.update((m) => {
+          const next = new Map(m);
+          next.delete(animeId);
+          return next;
+        });
+        this.errorTimers.delete(animeId);
+      }, 3000),
+    );
   }
 
   navigateToDetail(watchSpaceAnimeId: string): void {
