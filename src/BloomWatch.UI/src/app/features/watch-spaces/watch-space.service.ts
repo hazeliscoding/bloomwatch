@@ -14,6 +14,7 @@ import {
   RecordWatchSessionRequest,
   UpdateParticipantProgressRequest,
   UpdateParticipantRatingRequest,
+  UpdateSharedAnimeRequest,
   WatchSpaceAnimeDetail,
   WatchSpaceAnimeListItem,
   WatchSpaceDetail,
@@ -99,6 +100,10 @@ export class WatchSpaceService {
 
   getAnimeDetail(spaceId: string, animeId: string): Observable<WatchSpaceAnimeDetail> {
     return this.api.get<WatchSpaceAnimeDetail>(`/watchspaces/${spaceId}/anime/${animeId}`);
+  }
+
+  updateSharedAnime(spaceId: string, animeId: string, body: UpdateSharedAnimeRequest): Observable<WatchSpaceAnimeDetail> {
+    return this.api.patch<WatchSpaceAnimeDetail>(`/watchspaces/${spaceId}/anime/${animeId}`, body);
   }
 
   updateParticipantProgress(spaceId: string, animeId: string, body: UpdateParticipantProgressRequest): Observable<ParticipantDetail> {

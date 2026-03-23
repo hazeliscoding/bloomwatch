@@ -153,6 +153,11 @@ export interface WatchSpaceAnimeDetail {
   description?: string | null;
 }
 
+export interface UpdateSharedAnimeRequest {
+  sharedStatus?: string;
+  sharedEpisodesWatched?: number;
+}
+
 export interface UpdateParticipantProgressRequest {
   individualStatus: string;
   episodesWatched: number;

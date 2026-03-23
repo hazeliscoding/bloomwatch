@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { WatchSpaceService } from './watch-space.service';
-import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail } from './watch-space.model';
+import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail, WatchSpaceAnimeDetail } from './watch-space.model';
 
 describe('WatchSpaceService', () => {
   let service: WatchSpaceService;
@@ -220,6 +220,49 @@ describe('WatchSpaceService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(body);
       req.flush({ watchSessionId: 'sess-new' });
+    });
+  });
+
+  describe('updateSharedAnime', () => {
+    it('should send PATCH /watchspaces/{id}/anime/{animeId} with sharedStatus', () => {
+      const result = { watchSpaceAnimeId: 'a1', sharedStatus: 'Watching', sharedEpisodesWatched: 0 } as WatchSpaceAnimeDetail;
+
+      service.updateSharedAnime('space-1', 'a1', { sharedStatus: 'Watching' }).subscribe((res) => {
+        expect(res.sharedStatus).toBe('Watching');
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1'));
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ sharedStatus: 'Watching' });
+      req.flush(result);
+    });
+
+    it('should send PATCH with sharedEpisodesWatched', () => {
+      const result = { watchSpaceAnimeId: 'a1', sharedStatus: 'Watching', sharedEpisodesWatched: 5 } as WatchSpaceAnimeDetail;
+
+      service.updateSharedAnime('space-1', 'a1', { sharedEpisodesWatched: 5 }).subscribe((res) => {
+        expect(res.sharedEpisodesWatched).toBe(5);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1'));
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ sharedEpisodesWatched: 5 });
+      req.flush(result);
+    });
+
+    it('should send PATCH with both fields', () => {
+      const body = { sharedStatus: 'Finished', sharedEpisodesWatched: 24 };
+      const result = { watchSpaceAnimeId: 'a1', ...body } as WatchSpaceAnimeDetail;
+
+      service.updateSharedAnime('space-1', 'a1', body).subscribe((res) => {
+        expect(res.sharedStatus).toBe('Finished');
+        expect(res.sharedEpisodesWatched).toBe(24);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1'));
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual(body);
+      req.flush(result);
     });
   });
 
