@@ -1,3 +1,4 @@
+using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
@@ -7,7 +8,10 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
 /// that the specified user belongs to and projecting them into summaries.
 /// </summary>
 /// <param name="repository">The watch space repository used for querying.</param>
-public sealed class GetMyWatchSpacesQueryHandler(IWatchSpaceRepository repository)
+/// <param name="displayNameLookup">Resolves user IDs to display names for member previews.</param>
+public sealed class GetMyWatchSpacesQueryHandler(
+    IWatchSpaceRepository repository,
+    IUserDisplayNameLookup displayNameLookup)
 {
     /// <summary>
     /// Retrieves all watch spaces the user is a member of, along with their role in each.
@@ -21,11 +25,17 @@ public sealed class GetMyWatchSpacesQueryHandler(IWatchSpaceRepository repositor
     {
         var spaces = await repository.GetByMemberUserIdAsync(query.UserId, cancellationToken);
 
+        var allMemberIds = spaces.SelectMany(ws => ws.Members.Select(m => m.UserId)).Distinct();
+        var displayNames = await displayNameLookup.GetDisplayNamesAsync(allMemberIds, cancellationToken);
+
         return spaces
             .Select(ws =>
             {
                 var member = ws.Members.First(m => m.UserId == query.UserId);
-                return new WatchSpaceSummary(ws.Id.Value, ws.Name, ws.CreatedAtUtc, member.Role.ToString());
+                var previews = ws.Members
+                    .Select(m => new MemberPreview(displayNames.GetValueOrDefault(m.UserId, "Unknown")))
+                    .ToList();
+                return new WatchSpaceSummary(ws.Id.Value, ws.Name, ws.CreatedAtUtc, member.Role.ToString(), ws.Members.Count, previews);
             })
             .ToList();
     }

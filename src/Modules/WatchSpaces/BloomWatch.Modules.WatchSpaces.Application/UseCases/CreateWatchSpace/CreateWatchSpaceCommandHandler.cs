@@ -1,3 +1,4 @@
+using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 
@@ -8,7 +9,10 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 /// and persisting it to the repository.
 /// </summary>
 /// <param name="repository">The watch space repository used for persistence.</param>
-public sealed class CreateWatchSpaceCommandHandler(IWatchSpaceRepository repository)
+/// <param name="displayNameLookup">Resolves user IDs to display names for member previews.</param>
+public sealed class CreateWatchSpaceCommandHandler(
+    IWatchSpaceRepository repository,
+    IUserDisplayNameLookup displayNameLookup)
 {
     /// <summary>
     /// Creates a new watch space and assigns the requesting user as its owner.
@@ -24,10 +28,20 @@ public sealed class CreateWatchSpaceCommandHandler(IWatchSpaceRepository reposit
 
         await repository.AddAsync(watchSpace, cancellationToken);
 
+        var displayNames = await displayNameLookup.GetDisplayNamesAsync(
+            [command.RequestingUserId], cancellationToken);
+
+        var previews = new List<CreateWatchSpaceMemberPreview>
+        {
+            new(displayNames.GetValueOrDefault(command.RequestingUserId, "Unknown"))
+        };
+
         return new CreateWatchSpaceResult(
             watchSpace.Id.Value,
             watchSpace.Name,
             watchSpace.CreatedAtUtc,
-            "Owner");
+            "Owner",
+            watchSpace.Members.Count,
+            previews);
     }
 }

@@ -14,4 +14,12 @@ public sealed record CreateWatchSpaceCommand(string Name, Guid RequestingUserId)
 /// <param name="Name">The display name of the watch space.</param>
 /// <param name="CreatedAt">The UTC timestamp when the watch space was created.</param>
 /// <param name="Role">The role assigned to the creating user (always <c>"Owner"</c>).</param>
-public sealed record CreateWatchSpaceResult(Guid WatchSpaceId, string Name, DateTime CreatedAt, string Role);
+/// <param name="MemberCount">The total number of members in the watch space (always <c>1</c> at creation).</param>
+/// <param name="MemberPreviews">A lightweight list of member display names for avatar/preview rendering.</param>
+public sealed record CreateWatchSpaceResult(Guid WatchSpaceId, string Name, DateTime CreatedAt, string Role, int MemberCount, IReadOnlyList<CreateWatchSpaceMemberPreview> MemberPreviews);
+
+/// <summary>
+/// A lightweight preview of a member, carrying only the display name.
+/// </summary>
+/// <param name="DisplayName">The member's display name.</param>
+public sealed record CreateWatchSpaceMemberPreview(string DisplayName);
