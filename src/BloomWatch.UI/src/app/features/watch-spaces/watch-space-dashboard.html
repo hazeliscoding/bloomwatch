@@ -1,0 +1,194 @@
+<!-- Header -->
+<header class="dashboard__header">
+  <div>
+    <a class="dashboard__back-link" routerLink="/watch-spaces">
+      <span aria-hidden="true">&larr;</span> Back to Watch Spaces
+    </a>
+    <h1 class="dashboard__title">Dashboard</h1>
+  </div>
+  <div class="dashboard__header-actions">
+    <bloom-button variant="ghost" size="sm" (clicked)="navigateToManage()">
+      Anime List
+    </bloom-button>
+    <bloom-button variant="primary" size="sm" (clicked)="navigateToManage()">
+      + Add Anime
+    </bloom-button>
+  </div>
+</header>
+
+<!-- Loading Skeletons -->
+@if (isLoading()) {
+  <div class="dashboard__loading" role="status">
+    <!-- Stat card skeletons -->
+    <div class="dashboard__stats-grid">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="dashboard__skeleton dashboard__skeleton--stat"></div>
+      }
+    </div>
+
+    <!-- Two-column skeleton -->
+    <div class="dashboard__two-col">
+      <div class="dashboard__skeleton dashboard__skeleton--compat"></div>
+      <div class="dashboard__skeleton dashboard__skeleton--compat"></div>
+    </div>
+
+    <!-- Grid skeletons -->
+    <div class="dashboard__skeleton dashboard__skeleton--heading"></div>
+    <div class="dashboard__watching-grid">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="dashboard__skeleton dashboard__skeleton--card"></div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Error State -->
+@if (!isLoading() && loadError()) {
+  <div class="dashboard__error" role="alert">
+    <p>{{ loadError() }}</p>
+    <button class="dashboard__retry" (click)="loadDashboard()">Retry</button>
+  </div>
+}
+
+<!-- Dashboard Content -->
+@if (!isLoading() && !loadError() && dashboard(); as data) {
+  <!-- Stat Cards -->
+  <section class="dashboard__stats-grid" aria-label="Watch space statistics">
+    <bloom-card class="dashboard__stat-card dashboard__stat-card--no-hover">
+      <div class="dashboard__stat-number dashboard__stat-number--pink">{{ data.stats.totalShows }}</div>
+      <div class="dashboard__stat-label">Total Shows</div>
+    </bloom-card>
+    <bloom-card class="dashboard__stat-card dashboard__stat-card--no-hover">
+      <div class="dashboard__stat-number dashboard__stat-number--lime">{{ data.stats.currentlyWatching }}</div>
+      <div class="dashboard__stat-label">Watching</div>
+    </bloom-card>
+    <bloom-card class="dashboard__stat-card dashboard__stat-card--no-hover">
+      <div class="dashboard__stat-number dashboard__stat-number--blue">{{ data.stats.finished }}</div>
+      <div class="dashboard__stat-label">Finished</div>
+    </bloom-card>
+    <bloom-card class="dashboard__stat-card dashboard__stat-card--no-hover">
+      <div class="dashboard__stat-number dashboard__stat-number--lilac">{{ data.stats.episodesWatchedTogether }}</div>
+      <div class="dashboard__stat-label">Episodes Together</div>
+    </bloom-card>
+  </section>
+
+  <!-- Compatibility Score -->
+  <section class="dashboard__compat" aria-label="Compatibility score">
+    <bloom-card class="dashboard__compat-card">
+      <h2 class="dashboard__section-title">Compatibility Score</h2>
+      @if (data.compatibility; as compat) {
+        <div class="dashboard__compat-ring">
+          <svg class="dashboard__ring-svg" viewBox="0 0 140 140">
+            <circle class="dashboard__ring-track" cx="70" cy="70" r="56" />
+            <circle
+              class="dashboard__ring-fill"
+              cx="70" cy="70" r="56"
+              [attr.stroke]="ringColor()"
+              [attr.stroke-dasharray]="ringCircumference"
+              [attr.stroke-dashoffset]="ringStrokeDashoffset()"
+            />
+            <text class="dashboard__ring-score" x="70" y="70">{{ compat.score }}</text>
+          </svg>
+          <p class="dashboard__compat-label">{{ compat.label }}</p>
+          <p class="dashboard__compat-context">Based on {{ compat.ratedTogetherCount }} shared ratings</p>
+        </div>
+      } @else {
+        <div class="dashboard__compat-placeholder">
+          <p>Not enough ratings yet</p>
+          <p class="dashboard__compat-hint">Rate more anime together to unlock your compatibility score</p>
+        </div>
+      }
+    </bloom-card>
+  </section>
+
+  <!-- Currently Watching -->
+  <section class="dashboard__section" aria-label="Currently watching">
+    <h2 class="dashboard__section-title">Currently Watching</h2>
+    @if (data.currentlyWatching.length > 0) {
+      <div class="dashboard__watching-grid">
+        @for (anime of data.currentlyWatching; track anime.watchSpaceAnimeId) {
+          <div class="dashboard__anime-thumb" (click)="navigateToAnime(anime.watchSpaceAnimeId)">
+            <div class="dashboard__anime-cover">
+              @if (anime.coverImageUrl) {
+                <img [src]="anime.coverImageUrl" [alt]="anime.preferredTitle" loading="lazy" />
+              } @else {
+                <div class="dashboard__cover-placeholder">&#127912;</div>
+              }
+            </div>
+            <p class="dashboard__anime-title">{{ anime.preferredTitle }}</p>
+            @if (anime.episodeCountSnapshot) {
+              <div class="dashboard__progress-bar">
+                <div class="dashboard__progress-fill" [style.width.%]="progressPercent(anime)"></div>
+              </div>
+            }
+            <p class="dashboard__anime-ep">{{ formatEpisodeLabel(anime) }}</p>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="dashboard__empty">
+        <p>Nothing currently watching</p>
+      </div>
+    }
+  </section>
+
+  <!-- Backlog Highlights -->
+  <section class="dashboard__section" aria-label="Backlog highlights">
+    <h2 class="dashboard__section-title">Backlog Highlights</h2>
+    @if (data.backlogHighlights.length > 0) {
+      <div class="dashboard__watching-grid">
+        @for (anime of data.backlogHighlights; track anime.watchSpaceAnimeId) {
+          <div class="dashboard__anime-thumb" (click)="navigateToAnime(anime.watchSpaceAnimeId)">
+            <div class="dashboard__anime-cover">
+              @if (anime.coverImageUrl) {
+                <img [src]="anime.coverImageUrl" [alt]="anime.preferredTitle" loading="lazy" />
+              } @else {
+                <div class="dashboard__cover-placeholder">&#127912;</div>
+              }
+            </div>
+            <p class="dashboard__anime-title">{{ anime.preferredTitle }}</p>
+            <bloom-badge color="yellow" size="sm">Backlog</bloom-badge>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="dashboard__empty">
+        <p>No anime in backlog</p>
+      </div>
+    }
+  </section>
+
+  <!-- Rating Gap Highlights -->
+  <section class="dashboard__section" aria-label="Rating gap highlights">
+    <h2 class="dashboard__section-title">Biggest Rating Gaps</h2>
+    @if (data.ratingGapHighlights.length > 0) {
+      <div class="dashboard__gaps">
+        @for (gap of data.ratingGapHighlights; track gap.watchSpaceAnimeId) {
+          <div class="dashboard__gap-card" (click)="navigateToAnime(gap.watchSpaceAnimeId)">
+            <div class="dashboard__gap-cover">
+              @if (gap.coverImageUrl) {
+                <img [src]="gap.coverImageUrl" [alt]="gap.preferredTitle" loading="lazy" />
+              } @else {
+                <div class="dashboard__gap-cover-placeholder">&#127912;</div>
+              }
+            </div>
+            <span class="dashboard__gap-title">{{ gap.preferredTitle }}</span>
+            <span class="dashboard__gap-scores">
+              @for (r of gap.ratings; track r.userId) {
+                <span class="dashboard__gap-rater">
+                  <span class="dashboard__gap-rater-name">{{ r.displayName }}:</span>
+                  <span class="dashboard__gap-rater-score">{{ r.ratingScore }}</span>
+                </span>
+              }
+            </span>
+            <span class="dashboard__gap-delta">&Delta; {{ gap.gap }}</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="dashboard__empty">
+        <p>No rating gaps yet — rate some anime together!</p>
+      </div>
+    }
+  </section>
+}
