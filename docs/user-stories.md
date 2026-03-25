@@ -1,8 +1,8 @@
 # BloomWatch — User Stories (MVP Source of Truth)
 
-**Document version:** 1.9
+**Document version:** 2.1
 **Created:** 2026-03-13
-**Last updated:** 2026-03-23
+**Last updated:** 2026-03-24
 **Scope:** Phases 1–3 (full MVP) plus AniList discovery from Phase 4 (required by Phase 2)
 **Tech stack:** .NET 10 / ASP.NET Core Minimal APIs, PostgreSQL, EF Core, Angular, AniList GraphQL
 
@@ -1101,7 +1101,7 @@ As a watch space owner, I want to invite someone by email and manage pending inv
 ## Epic 9 — Anime Tracking Frontend
 
 **Goal:** Members can search for anime, add them to their watch space, view the shared list, update progress and status, rate anime, and log watch sessions.
-**Frontend status:** In Progress (3/4 done)
+**Frontend status:** Complete
 
 ---
 
@@ -1181,16 +1181,18 @@ As a watch space member, I want to see all details for one anime, so that I can 
 
 **Known gaps:**
 - Mood/vibe/pitch edit controls are display-only (pencil icons present but no edit form wired)
-- Shared status and shared episode stepper mutations are UI-only — no PATCH call to the backend is wired yet
 - Error state shows retry button instead of redirecting to anime list when anime is not found
 
 </details>
 
 ---
 
+<details>
+<summary>Story 9.4 — Inline Progress and Status Update Controls</summary>
+
 ### Story 9.4 — Inline Progress and Status Update Controls
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** Reusable components for updating participant progress and shared status, usable from both the list view and the detail page. Requires local state management and debounced or on-blur API calls.
 
@@ -1203,18 +1205,23 @@ As a watch space member, I want to quickly update my episode count or the shared
 - Success is reflected immediately in the UI without a full page reload
 - Validation errors (e.g. exceeding episode count) surface inline without disrupting the whole list
 
+</details>
+
 ---
 
 ## Epic 10 — Analytics and Dashboard Frontend
 
 **Goal:** The watch space dashboard gives users a visual, delightful overview of their shared tracking history, compatibility, and recommendations.
-**Frontend status:** To Do
+**Frontend status:** In Progress (2/4 done)
 
 ---
 
+<details>
+<summary>Story 10.1 — Watch Space Dashboard Page</summary>
+
 ### Story 10.1 — Watch Space Dashboard Page
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 8
 **Sizing rationale:** The primary "home" of a watch space. Loads the dashboard summary endpoint and renders multiple sections: snapshot cards, currently watching list, compatibility score, backlog highlights, rating gap highlights, and recent sessions. Significant UI composition with multiple subsections.
 
@@ -1231,11 +1238,20 @@ As a watch space member, I want to see a dashboard with a summary of our watch s
 - Loading skeleton states while data is fetching
 - Error state if the dashboard endpoint fails
 
+**Known gaps:**
+- Backlog highlights are missing mood/vibe/pitch tag display (model and template only show a "Backlog" badge)
+- No client-side limit guards for currently-watching (5) or backlog (5) sections — relies on API to cap results
+
+</details>
+
 ---
+
+<details>
+<summary>Story 10.2 — Compatibility Score Display Component</summary>
 
 ### Story 10.2 — Compatibility Score Display Component
 
-**Status:** 📋 To Do
+**Status:** ✅ Done
 **Points:** 3
 **Sizing rationale:** A standalone, visually distinct component that renders the compatibility score with a visual meter or ring, label, and contextual detail. Reusable on the dashboard and analytics page.
 
@@ -1248,6 +1264,11 @@ As a watch space member, I want to see our compatibility score displayed in a vi
 - `ratedTogetherCount` is shown as supporting context (e.g. "Based on 9 shared ratings")
 - When score is null, the component shows a soft placeholder message ("Rate more anime together to unlock your compatibility score")
 - Component accepts the full compatibility object as an input and is reusable
+
+**Known gaps:**
+- Compatibility display is inline in the dashboard template, not yet extracted as a standalone reusable component with `@Input()` binding
+
+</details>
 
 ---
 
@@ -1304,16 +1325,16 @@ As a watch space member, I want to hit a "Pick for me" button that randomly sugg
 | Epic 6 — Angular Frontend Shell | 3 ✅ Done | 3 | 8 |
 | Epic 7 — Auth Frontend | 4 ✅ Done | 4 | 9 |
 | Epic 8 — Watch Spaces Frontend | 3 ✅ Done | 3 | 11 |
-| Epic 9 — Anime Tracking Frontend | 3 ✅ Done / 1 📋 To Do | 4 | 21 |
-| Epic 10 — Analytics and Dashboard Frontend | 📋 To Do | 4 | 19 |
+| Epic 9 — Anime Tracking Frontend | 4 ✅ Done | 4 | 21 |
+| Epic 10 — Analytics and Dashboard Frontend | 2 ✅ Done / 2 📋 To Do | 4 | 19 |
 | **Total** | | **47** | **153** |
 
 ### Completed vs remaining
 
 | Category | Points |
 |---|---|
-| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Invitation flow + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker + Anime Search Modal + Shared Anime List Page + Anime Detail Page) | 131 |
-| 📋 To Do (remaining MVP) | 22 |
+| ✅ Done (Identity backend + WatchSpaces backend + AniList discovery + Angular shell + Auth frontend + Add anime + List anime + Get anime detail + Update shared status + Update participant progress + Submit participant rating + Record a Watch Session + Watch space selector + Watch space settings panel + Invitation flow + Dashboard Summary + Compatibility Score + Rating Gaps + Shared Watch Stats + Random Backlog Picker + Anime Search Modal + Shared Anime List Page + Anime Detail Page + Inline Progress Controls + Dashboard Page + Compatibility Display) | 145 |
+| 📋 To Do (remaining MVP) | 8 |
 | Grand total (full MVP scope) | 153 |
 
 ### Suggested sprint groupings
@@ -1354,11 +1375,11 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - ~~Story 4.7 — Record a Watch Session (3 pts) — ✅ Done~~
 - Total: 9 pts *(Complete)*
 
-**Sprint 6 — Anime Tracking frontend** *(In Progress)*
+**Sprint 6 — Anime Tracking frontend** *(Complete)*
 - ~~Story 9.1 — Anime Search Modal (5 pts) — ✅ Done~~
 - ~~Story 9.2 — Shared Anime List Page (5 pts) — ✅ Done~~
-- Story 9.4 — Inline Progress and Status Update Controls (3 pts)
-- Total: 13 pts (3 pts remaining)
+- ~~Story 9.4 — Inline Progress and Status Update Controls (3 pts) — ✅ Done~~
+- Total: 13 pts *(Complete)*
 
 **Sprint 7 — Anime detail frontend + Analytics backend** *(Complete)*
 - ~~Story 9.3 — Anime Detail Page (8 pts) — ✅ Done~~
@@ -1366,18 +1387,18 @@ These groupings are not prescriptive. They suggest a natural sequencing to unblo
 - ~~Story 5.5 — Random Backlog Picker Endpoint (2 pts) — ✅ Done~~
 - Total: 15 pts *(Complete)*
 
-**Sprint 8 — Analytics backend (full) + Dashboard frontend**
+**Sprint 8 — Analytics backend (full) + Dashboard frontend** *(Complete)*
 - ~~Story 5.2 — Compatibility Score Endpoint (5 pts) — ✅ Done~~
 - ~~Story 5.3 — Rating Gaps Endpoint (3 pts) — ✅ Done~~
 - ~~Story 5.4 — Shared Watch Stats Endpoint (3 pts) — ✅ Done~~
-- Story 10.1 — Watch Space Dashboard Page (8 pts)
-- Total: 19 pts (8 pts remaining)
+- ~~Story 10.1 — Watch Space Dashboard Page (8 pts) — ✅ Done~~
+- ~~Story 10.2 — Compatibility Score Display Component (3 pts) — ✅ Done~~
+- Total: 22 pts *(Complete)*
 
 **Sprint 9 — Analytics and Dashboard frontend (polish)**
-- Story 10.2 — Compatibility Score Display Component (3 pts)
 - Story 10.3 — Analytics Page (5 pts)
 - Story 10.4 — Random Backlog Picker Component (3 pts)
-- Total: 11 pts
+- Total: 8 pts
 
 ---
 
