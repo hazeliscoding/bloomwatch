@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { WatchSpaceService } from './watch-space.service';
-import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail, WatchSpaceAnimeDetail, DashboardSummary } from './watch-space.model';
+import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail, WatchSpaceAnimeDetail, DashboardSummary, CompatibilityScoreResult, RatingGapsResult, SharedStatsResult } from './watch-space.model';
 
 describe('WatchSpaceService', () => {
   let service: WatchSpaceService;
@@ -333,6 +333,71 @@ describe('WatchSpaceService', () => {
       const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime'));
       expect(req.request.url).not.toContain('status=');
       req.flush({ items: [] });
+    });
+  });
+
+  describe('getCompatibility', () => {
+    it('should send GET /watchspaces/{id}/analytics/compatibility', () => {
+      const result: CompatibilityScoreResult = {
+        compatibility: { score: 87, averageGap: 1.3, ratedTogetherCount: 9, label: 'Very synced' },
+        message: null,
+      };
+
+      service.getCompatibility('space-1').subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/analytics/compatibility'));
+      expect(req.request.method).toBe('GET');
+      req.flush(result);
+    });
+  });
+
+  describe('getRatingGaps', () => {
+    it('should send GET /watchspaces/{id}/analytics/rating-gaps', () => {
+      const result: RatingGapsResult = {
+        items: [
+          {
+            watchSpaceAnimeId: 'a1',
+            preferredTitle: 'Jujutsu Kaisen',
+            coverImageUrl: null,
+            gap: 3.5,
+            ratings: [
+              { userId: 'u1', displayName: 'hazel', ratingScore: 9.5 },
+              { userId: 'u2', displayName: 'sakura', ratingScore: 6.0 },
+            ],
+          },
+        ],
+        message: null,
+      };
+
+      service.getRatingGaps('space-1').subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/analytics/rating-gaps'));
+      expect(req.request.method).toBe('GET');
+      req.flush(result);
+    });
+  });
+
+  describe('getSharedStats', () => {
+    it('should send GET /watchspaces/{id}/analytics/shared-stats', () => {
+      const result: SharedStatsResult = {
+        totalEpisodesWatchedTogether: 184,
+        totalFinished: 11,
+        totalDropped: 1,
+        totalWatchSessions: 23,
+        mostRecentSessionDate: '2026-03-15T00:00:00Z',
+      };
+
+      service.getSharedStats('space-1').subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/analytics/shared-stats'));
+      expect(req.request.method).toBe('GET');
+      req.flush(result);
     });
   });
 });

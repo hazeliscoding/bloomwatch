@@ -6,13 +6,16 @@ import {
   AddAnimeToWatchSpaceRequest,
   AddAnimeToWatchSpaceResult,
   AnimeSearchResult,
+  CompatibilityScoreResult,
   CreateWatchSpaceRequest,
   DashboardSummary,
   InvitationDetail,
   InvitationPreview,
   InviteMemberResponse,
   ParticipantDetail,
+  RatingGapsResult,
   RecordWatchSessionRequest,
+  SharedStatsResult,
   UpdateParticipantProgressRequest,
   UpdateParticipantRatingRequest,
   UpdateSharedAnimeRequest,
@@ -121,5 +124,17 @@ export class WatchSpaceService {
 
   getDashboard(spaceId: string): Observable<DashboardSummary> {
     return this.api.get<DashboardSummary>(`/watchspaces/${spaceId}/dashboard`);
+  }
+
+  getCompatibility(spaceId: string): Observable<CompatibilityScoreResult> {
+    return this.api.get<CompatibilityScoreResult>(`/watchspaces/${spaceId}/analytics/compatibility`);
+  }
+
+  getRatingGaps(spaceId: string): Observable<RatingGapsResult> {
+    return this.api.get<RatingGapsResult>(`/watchspaces/${spaceId}/analytics/rating-gaps`);
+  }
+
+  getSharedStats(spaceId: string): Observable<SharedStatsResult> {
+    return this.api.get<SharedStatsResult>(`/watchspaces/${spaceId}/analytics/shared-stats`);
   }
 }

@@ -230,3 +230,33 @@ export interface DashboardRater {
   displayName: string;
   ratingScore: number;
 }
+
+// ---------------------------------------------------------------------------
+// Analytics
+// ---------------------------------------------------------------------------
+
+export interface CompatibilityScoreResult {
+  compatibility: DashboardCompatibility | null;
+  message: string | null;
+}
+
+export interface RatingGapsResult {
+  items: RatingGapItem[];
+  message: string | null;
+}
+
+export interface RatingGapItem {
+  watchSpaceAnimeId: string;
+  preferredTitle: string;
+  coverImageUrl: string | null;
+  gap: number;
+  ratings: DashboardRater[];
+}
+
+export interface SharedStatsResult {
+  totalEpisodesWatchedTogether: number;
+  totalFinished: number;
+  totalDropped: number;
+  totalWatchSessions: number;
+  mostRecentSessionDate: string | null;
+}
