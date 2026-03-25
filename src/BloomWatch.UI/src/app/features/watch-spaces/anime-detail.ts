@@ -45,7 +45,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
   template: `
     <!-- Back Navigation -->
     <nav class="anime-detail__back">
-      <a class="anime-detail__back-link" [routerLink]="['/watch-spaces', watchSpaceId]">
+      <a class="anime-detail__back-link" [routerLink]="['/watch-spaces', watchSpaceId, 'manage']">
         <span aria-hidden="true">&larr;</span> Back to Anime List
       </a>
     </nav>
