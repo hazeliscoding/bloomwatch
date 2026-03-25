@@ -1,23 +1,19 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomBadgeComponent } from '../../shared/ui/badge/bloom-badge';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
+import { BloomCompatRingComponent } from '../../shared/ui/compat-ring/bloom-compat-ring';
 import { WatchSpaceService } from './watch-space.service';
 import {
-  DashboardBacklogHighlight,
   DashboardCurrentlyWatchingItem,
-  DashboardRatingGapHighlight,
   DashboardSummary,
 } from './watch-space.model';
-
-const RING_RADIUS = 56;
-const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 @Component({
   selector: 'app-watch-space-dashboard',
   standalone: true,
-  imports: [RouterLink, BloomCardComponent, BloomBadgeComponent, BloomButtonComponent],
+  imports: [RouterLink, BloomCardComponent, BloomBadgeComponent, BloomButtonComponent, BloomCompatRingComponent],
   templateUrl: './watch-space-dashboard.html',
   styleUrl: './watch-space-dashboard.scss',
 })
@@ -31,23 +27,6 @@ export class WatchSpaceDashboard implements OnInit {
   readonly dashboard = signal<DashboardSummary | null>(null);
   readonly isLoading = signal(true);
   readonly loadError = signal('');
-
-  // Compatibility ring computations
-  readonly ringStrokeDashoffset = computed(() => {
-    const compat = this.dashboard()?.compatibility;
-    if (!compat) return RING_CIRCUMFERENCE;
-    const fraction = compat.score / 100;
-    return RING_CIRCUMFERENCE * (1 - fraction);
-  });
-
-  readonly ringColor = computed(() => {
-    const score = this.dashboard()?.compatibility?.score ?? 0;
-    if (score >= 80) return 'var(--bloom-green-400)';
-    if (score >= 50) return 'var(--bloom-yellow-400)';
-    return 'var(--bloom-pink-400)';
-  });
-
-  readonly ringCircumference = RING_CIRCUMFERENCE;
 
   ngOnInit(): void {
     this.loadDashboard();
@@ -85,5 +64,9 @@ export class WatchSpaceDashboard implements OnInit {
 
   navigateToManage(): void {
     this.router.navigate(['/watch-spaces', this.spaceId, 'manage']);
+  }
+
+  navigateToAnalytics(): void {
+    this.router.navigate(['/watch-spaces', this.spaceId, 'analytics']);
   }
 }

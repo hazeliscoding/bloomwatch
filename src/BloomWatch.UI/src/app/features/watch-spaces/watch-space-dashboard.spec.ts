@@ -1,12 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideRouter, Router } from '@angular/router';
-import { Component } from '@angular/core';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { WatchSpaceDashboard } from './watch-space-dashboard';
-import { WatchSpaceDetail } from './watch-space-detail';
 import { DashboardSummary } from './watch-space.model';
-import { watchSpacesRoutes } from './watch-spaces.routes';
 
 // ---------------------------------------------------------------------------
 // Mock Data
@@ -68,10 +65,6 @@ const emptyDashboard: DashboardSummary = {
   ratingGapHighlights: [],
 };
 
-// Dummy component for route targets
-@Component({ standalone: true, template: '' })
-class DummyComponent {}
-
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -82,26 +75,28 @@ describe('WatchSpaceDashboard', () => {
   let httpTesting: HttpTestingController;
   let router: Router;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [WatchSpaceDashboard],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter([
-          {
-            path: 'watch-spaces',
-            children: watchSpacesRoutes,
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: (key: string) => (key === 'id' ? 'ws-1' : null),
+              },
+            },
           },
-        ]),
+        },
       ],
     });
 
     router = TestBed.inject(Router);
     httpTesting = TestBed.inject(HttpTestingController);
-
-    // Navigate to the dashboard route to set up ActivatedRoute params
-    await router.navigateByUrl('/watch-spaces/ws-1');
 
     fixture = TestBed.createComponent(WatchSpaceDashboard);
     component = fixture.componentInstance;
@@ -189,51 +184,18 @@ describe('WatchSpaceDashboard', () => {
 
   // ---- 10.3: Compatibility ----
 
-  it('should render compatibility ring with score, label, and context', () => {
+  it('should render bloom-compat-ring component with compatibility data', () => {
     flushDashboard();
 
-    const score = fixture.nativeElement.querySelector('.dashboard__ring-score');
-    expect(score?.textContent?.trim()).toBe('87');
-
-    const label = fixture.nativeElement.querySelector('.dashboard__compat-label');
-    expect(label?.textContent?.trim()).toBe('Very synced, with a little spice');
-
-    const context = fixture.nativeElement.querySelector('.dashboard__compat-context');
-    expect(context?.textContent).toContain('9 shared ratings');
+    const ring = fixture.nativeElement.querySelector('bloom-compat-ring');
+    expect(ring).toBeTruthy();
   });
 
-  it('should show placeholder when compatibility is null', () => {
+  it('should render bloom-compat-ring when compatibility is null', () => {
     flushDashboard(emptyDashboard);
 
-    const placeholder = fixture.nativeElement.querySelector('.dashboard__compat-placeholder');
-    expect(placeholder).toBeTruthy();
-    expect(placeholder.textContent).toContain('Not enough ratings yet');
-
-    const ring = fixture.nativeElement.querySelector('.dashboard__ring-svg');
-    expect(ring).toBeFalsy();
-  });
-
-  it('should use green color for score >= 80', () => {
-    flushDashboard();
-    expect(component.ringColor()).toContain('green');
-  });
-
-  it('should use yellow color for score 50-79', () => {
-    const midDashboard = {
-      ...fullDashboard,
-      compatibility: { ...fullDashboard.compatibility!, score: 62 },
-    };
-    flushDashboard(midDashboard);
-    expect(component.ringColor()).toContain('yellow');
-  });
-
-  it('should use pink color for score < 50', () => {
-    const lowDashboard = {
-      ...fullDashboard,
-      compatibility: { ...fullDashboard.compatibility!, score: 35 },
-    };
-    flushDashboard(lowDashboard);
-    expect(component.ringColor()).toContain('pink');
+    const ring = fixture.nativeElement.querySelector('bloom-compat-ring');
+    expect(ring).toBeTruthy();
   });
 
   // ---- 10.4: Currently Watching ----

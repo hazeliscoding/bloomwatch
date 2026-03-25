@@ -7,6 +7,9 @@
     <h1 class="dashboard__title">Dashboard</h1>
   </div>
   <div class="dashboard__header-actions">
+    <bloom-button variant="ghost" size="sm" (clicked)="navigateToAnalytics()">
+      Analytics
+    </bloom-button>
     <bloom-button variant="ghost" size="sm" (clicked)="navigateToManage()">
       Anime List
     </bloom-button>
@@ -76,28 +79,7 @@
   <section class="dashboard__compat" aria-label="Compatibility score">
     <bloom-card class="dashboard__compat-card">
       <h2 class="dashboard__section-title">Compatibility Score</h2>
-      @if (data.compatibility; as compat) {
-        <div class="dashboard__compat-ring">
-          <svg class="dashboard__ring-svg" viewBox="0 0 140 140">
-            <circle class="dashboard__ring-track" cx="70" cy="70" r="56" />
-            <circle
-              class="dashboard__ring-fill"
-              cx="70" cy="70" r="56"
-              [attr.stroke]="ringColor()"
-              [attr.stroke-dasharray]="ringCircumference"
-              [attr.stroke-dashoffset]="ringStrokeDashoffset()"
-            />
-            <text class="dashboard__ring-score" x="70" y="70">{{ compat.score }}</text>
-          </svg>
-          <p class="dashboard__compat-label">{{ compat.label }}</p>
-          <p class="dashboard__compat-context">Based on {{ compat.ratedTogetherCount }} shared ratings</p>
-        </div>
-      } @else {
-        <div class="dashboard__compat-placeholder">
-          <p>Not enough ratings yet</p>
-          <p class="dashboard__compat-hint">Rate more anime together to unlock your compatibility score</p>
-        </div>
-      }
+      <bloom-compat-ring [compatibility]="data.compatibility" />
     </bloom-card>
   </section>
 

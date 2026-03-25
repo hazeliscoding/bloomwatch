@@ -32,30 +32,15 @@ The dashboard SHALL render a row of 4 stat cards showing: Total Shows, Currently
 - **THEN** the stat cards SHALL display "0" for each value
 
 ### Requirement: Compatibility score display
-The dashboard SHALL render a compatibility section with a circular SVG ring showing the score (0–100), the label text, and the rated-together count. When compatibility is null, the section SHALL display a placeholder message.
+The dashboard SHALL render the compatibility section by using the `bloom-compat-ring` component, passing the `compatibility` object from the dashboard response as input. When compatibility is null, the component handles the placeholder state internally.
 
 #### Scenario: Compatibility with valid score
-- **WHEN** the dashboard response contains `compatibility.score = 87`, `compatibility.label = "Very synced, with a little spice"`, `compatibility.ratedTogetherCount = 9`
-- **THEN** the section SHALL render a ring filled to 87%, the score "87" in the center, the label below, and "Based on 9 shared ratings" as context
+- **WHEN** the dashboard response contains a non-null `compatibility` object
+- **THEN** the dashboard SHALL render `<bloom-compat-ring>` with the compatibility data, displaying the ring, score, label, and context
 
 #### Scenario: Compatibility is null
-- **WHEN** the dashboard response contains `compatibility = null` and `compatibilityMessage = "Not enough data"`
-- **THEN** the section SHALL display "Not enough ratings yet" as a placeholder instead of the ring
-
-### Requirement: Compatibility ring color by score range
-The compatibility ring fill color SHALL vary based on score: green for 80+, yellow for 50–79, and pink for below 50.
-
-#### Scenario: High compatibility (green)
-- **WHEN** the compatibility score is 87
-- **THEN** the ring fill SHALL use a green color
-
-#### Scenario: Medium compatibility (yellow)
-- **WHEN** the compatibility score is 62
-- **THEN** the ring fill SHALL use a yellow color
-
-#### Scenario: Low compatibility (pink)
-- **WHEN** the compatibility score is 35
-- **THEN** the ring fill SHALL use a pink color
+- **WHEN** the dashboard response contains `compatibility = null`
+- **THEN** the dashboard SHALL render `<bloom-compat-ring>` with null, which displays the placeholder message
 
 ### Requirement: Currently watching grid
 The dashboard SHALL render a grid of up to 5 anime with `sharedStatus = Watching`. Each card SHALL display the cover image (or a placeholder), the preferred title, a progress bar showing `sharedEpisodesWatched / episodeCountSnapshot`, and an episode count label. Cards SHALL link to the anime detail page.
@@ -121,12 +106,16 @@ The dashboard SHALL display an error message with a retry button if the API call
 - **THEN** the system SHALL re-fetch `GET /watchspaces/{id}/dashboard` and show the loading state
 
 ### Requirement: Dashboard header with navigation
-The dashboard SHALL display a header with the watch space name, a back link to the watch spaces list, member avatars, and navigation links to the anime list/manage view and to add anime.
+The dashboard SHALL display a header with the watch space name, a back link to the watch spaces list, member avatars, and navigation links to the anime list/manage view, add anime, and the analytics page.
 
 #### Scenario: Header rendering
 - **WHEN** the dashboard loads successfully
-- **THEN** the header SHALL display the watch space name, a "Back to Watch Spaces" link, and buttons for "Anime List" and "Add Anime"
+- **THEN** the header SHALL display the watch space name, a "Back to Watch Spaces" link, and buttons for "Anime List", "Add Anime", and "Analytics"
 
 #### Scenario: Navigate to anime list
 - **WHEN** the user clicks the "Anime List" link
 - **THEN** the system SHALL navigate to `/watch-spaces/:id/manage`
+
+#### Scenario: Navigate to analytics
+- **WHEN** the user clicks the "Analytics" link
+- **THEN** the system SHALL navigate to `/watch-spaces/:id/analytics`
