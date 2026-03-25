@@ -7,6 +7,7 @@ import {
   AddAnimeToWatchSpaceResult,
   AnimeSearchResult,
   CreateWatchSpaceRequest,
+  DashboardSummary,
   InvitationDetail,
   InvitationPreview,
   InviteMemberResponse,
@@ -116,5 +117,9 @@ export class WatchSpaceService {
 
   recordWatchSession(spaceId: string, animeId: string, body: RecordWatchSessionRequest): Observable<{ watchSessionId: string }> {
     return this.api.post<{ watchSessionId: string }>(`/watchspaces/${spaceId}/anime/${animeId}/sessions`, body);
+  }
+
+  getDashboard(spaceId: string): Observable<DashboardSummary> {
+    return this.api.get<DashboardSummary>(`/watchspaces/${spaceId}/dashboard`);
   }
 }

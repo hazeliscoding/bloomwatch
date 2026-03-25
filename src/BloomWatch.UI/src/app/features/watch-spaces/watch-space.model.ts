@@ -174,3 +174,59 @@ export interface RecordWatchSessionRequest {
   endEpisode: number;
   notes?: string | null;
 }
+
+// ---------------------------------------------------------------------------
+// Dashboard
+// ---------------------------------------------------------------------------
+
+export interface DashboardSummary {
+  stats: DashboardStats;
+  compatibility: DashboardCompatibility | null;
+  compatibilityMessage: string | null;
+  currentlyWatching: DashboardCurrentlyWatchingItem[];
+  backlogHighlights: DashboardBacklogHighlight[];
+  ratingGapHighlights: DashboardRatingGapHighlight[];
+}
+
+export interface DashboardStats {
+  totalShows: number;
+  currentlyWatching: number;
+  finished: number;
+  episodesWatchedTogether: number;
+}
+
+export interface DashboardCompatibility {
+  score: number;
+  averageGap: number;
+  ratedTogetherCount: number;
+  label: string;
+}
+
+export interface DashboardCurrentlyWatchingItem {
+  watchSpaceAnimeId: string;
+  preferredTitle: string;
+  coverImageUrl: string | null;
+  sharedEpisodesWatched: number;
+  episodeCountSnapshot: number | null;
+}
+
+export interface DashboardBacklogHighlight {
+  watchSpaceAnimeId: string;
+  preferredTitle: string;
+  coverImageUrl: string | null;
+  format: string | null;
+}
+
+export interface DashboardRatingGapHighlight {
+  watchSpaceAnimeId: string;
+  preferredTitle: string;
+  coverImageUrl: string | null;
+  gap: number;
+  ratings: DashboardRater[];
+}
+
+export interface DashboardRater {
+  userId: string;
+  displayName: string;
+  ratingScore: number;
+}

@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { WatchSpaceService } from './watch-space.service';
-import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail, WatchSpaceAnimeDetail } from './watch-space.model';
+import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail, WatchSpaceAnimeDetail, DashboardSummary } from './watch-space.model';
 
 describe('WatchSpaceService', () => {
   let service: WatchSpaceService;
@@ -262,6 +262,36 @@ describe('WatchSpaceService', () => {
       const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1'));
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual(body);
+      req.flush(result);
+    });
+  });
+
+  describe('getDashboard', () => {
+    it('should send GET /watchspaces/{id}/dashboard and return summary', () => {
+      const result: DashboardSummary = {
+        stats: { totalShows: 27, currentlyWatching: 3, finished: 11, episodesWatchedTogether: 184 },
+        compatibility: { score: 87, averageGap: 1.3, ratedTogetherCount: 9, label: 'Very synced, with a little spice' },
+        compatibilityMessage: null,
+        currentlyWatching: [
+          { watchSpaceAnimeId: 'a1', preferredTitle: 'Frieren', coverImageUrl: 'https://example.com/frieren.jpg', sharedEpisodesWatched: 5, episodeCountSnapshot: 28 },
+        ],
+        backlogHighlights: [
+          { watchSpaceAnimeId: 'a2', preferredTitle: 'Vinland Saga', coverImageUrl: null, format: 'TV' },
+        ],
+        ratingGapHighlights: [
+          { watchSpaceAnimeId: 'a3', preferredTitle: 'Jujutsu Kaisen', coverImageUrl: null, gap: 3.5, ratings: [
+            { userId: 'u1', displayName: 'hazel', ratingScore: 9.5 },
+            { userId: 'u2', displayName: 'sakura', ratingScore: 6.0 },
+          ]},
+        ],
+      };
+
+      service.getDashboard('space-1').subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/dashboard'));
+      expect(req.request.method).toBe('GET');
       req.flush(result);
     });
   });
