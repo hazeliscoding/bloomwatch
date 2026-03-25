@@ -1,0 +1,431 @@
+@use '../../shared/styles/tokens' as *;
+
+// --------------------------------------------------------------------------
+// Header
+// --------------------------------------------------------------------------
+
+.analytics__header {
+  margin-bottom: var(--bloom-space-8);
+}
+
+.analytics__back-link {
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    @include bloom-focus-ring;
+  }
+}
+
+.analytics__title {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-bold);
+  font-size: var(--bloom-text-3xl);
+  color: var(--bloom-text-primary);
+  margin: var(--bloom-space-2) 0 0;
+}
+
+// --------------------------------------------------------------------------
+// Two-Column Layout
+// --------------------------------------------------------------------------
+
+.analytics__two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--bloom-space-6);
+  margin-bottom: var(--bloom-space-8);
+}
+
+// --------------------------------------------------------------------------
+// Section Title
+// --------------------------------------------------------------------------
+
+.analytics__section {
+  margin-bottom: var(--bloom-space-8);
+}
+
+.analytics__section-title {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-bold);
+  font-size: var(--bloom-text-xl);
+  color: var(--bloom-text-primary);
+  margin: 0 0 var(--bloom-space-4);
+}
+
+// --------------------------------------------------------------------------
+// Card
+// --------------------------------------------------------------------------
+
+.analytics__card {
+  padding: var(--bloom-space-6);
+}
+
+.analytics__card--no-hover {
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Compatibility Breakdown
+// --------------------------------------------------------------------------
+
+.analytics__breakdown {
+  margin-top: var(--bloom-space-4);
+  padding: var(--bloom-space-3);
+  background: var(--bloom-surface-raised);
+  border-radius: var(--bloom-radius-lg);
+}
+
+.analytics__breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--bloom-text-sm);
+
+  & + & {
+    margin-top: var(--bloom-space-1);
+  }
+}
+
+.analytics__breakdown-label {
+  color: var(--bloom-text-secondary);
+}
+
+.analytics__breakdown-value {
+  font-weight: var(--bloom-font-semibold);
+  color: var(--bloom-text-primary);
+}
+
+// --------------------------------------------------------------------------
+// Shared Stats Grid
+// --------------------------------------------------------------------------
+
+.analytics__stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--bloom-space-3);
+}
+
+.analytics__stat-item {
+  padding: var(--bloom-space-4);
+  border: 1px solid var(--bloom-border-default);
+  border-radius: var(--bloom-radius-lg);
+  background: var(--bloom-surface-base);
+}
+
+.analytics__stat-value {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-bold);
+  font-size: var(--bloom-text-2xl);
+  line-height: 1;
+  margin-bottom: var(--bloom-space-1);
+}
+
+.analytics__stat-value--lilac   { color: var(--bloom-lilac-500); }
+.analytics__stat-value--blue    { color: var(--bloom-blue-500); }
+.analytics__stat-value--neutral { color: var(--bloom-neutral-500); }
+.analytics__stat-value--lime    { color: var(--bloom-lime-500); }
+
+.analytics__stat-label {
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-text-tertiary);
+}
+
+.analytics__recent-session {
+  margin-top: var(--bloom-space-4);
+  padding: var(--bloom-space-3);
+  background: var(--bloom-surface-raised);
+  border-radius: var(--bloom-radius-lg);
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--bloom-text-sm);
+}
+
+// --------------------------------------------------------------------------
+// Rating Gap Rows
+// --------------------------------------------------------------------------
+
+.analytics__gap-row {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-3);
+  padding: var(--bloom-space-3) var(--bloom-space-4);
+  border: 1px solid var(--bloom-border-default);
+  border-radius: var(--bloom-radius-lg);
+
+  & + & {
+    margin-top: var(--bloom-space-3);
+  }
+}
+
+.analytics__gap-cover {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--bloom-radius-md);
+  overflow: hidden;
+  background: var(--bloom-surface-sunken);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.analytics__gap-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--bloom-gradient-kawaii);
+  opacity: 0.4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.analytics__gap-title {
+  flex: 1;
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-semibold);
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-text-primary);
+  min-width: 0;
+}
+
+.analytics__gap-bars {
+  flex: 1;
+  max-width: 200px;
+}
+
+.analytics__gap-bar-track {
+  height: 20px;
+  border-radius: var(--bloom-radius-pill);
+  background: var(--bloom-surface-sunken);
+  overflow: hidden;
+
+  & + & {
+    margin-top: 2px;
+  }
+}
+
+.analytics__gap-bar-fill {
+  height: 100%;
+  border-radius: var(--bloom-radius-pill);
+  transition: width 0.3s ease;
+}
+
+.analytics__gap-bar-fill--a {
+  background: var(--bloom-pink-400);
+}
+
+.analytics__gap-bar-fill--b {
+  background: var(--bloom-blue-400);
+}
+
+.analytics__gap-scores {
+  display: flex;
+  gap: var(--bloom-space-3);
+  font-size: var(--bloom-text-sm);
+}
+
+.analytics__gap-rater-score {
+  font-weight: var(--bloom-font-semibold);
+}
+
+.analytics__gap-rater-score--pink {
+  color: var(--bloom-pink-500);
+}
+
+.analytics__gap-rater-score--blue {
+  color: var(--bloom-blue-500);
+}
+
+.analytics__gap-delta {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-bold);
+  color: var(--bloom-pink-500);
+  font-size: var(--bloom-text-sm);
+  white-space: nowrap;
+}
+
+// --------------------------------------------------------------------------
+// Legend
+// --------------------------------------------------------------------------
+
+.analytics__legend {
+  display: flex;
+  gap: var(--bloom-space-6);
+  margin-top: var(--bloom-space-4);
+  padding-top: var(--bloom-space-3);
+  border-top: 1px solid var(--bloom-border-default);
+}
+
+.analytics__legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-1-5);
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-text-secondary);
+}
+
+.analytics__legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.analytics__legend-dot--pink { background: var(--bloom-pink-500); }
+.analytics__legend-dot--blue { background: var(--bloom-blue-500); }
+
+// --------------------------------------------------------------------------
+// Chart Container
+// --------------------------------------------------------------------------
+
+.analytics__chart-container {
+  position: relative;
+  height: 260px;
+}
+
+// --------------------------------------------------------------------------
+// Empty State
+// --------------------------------------------------------------------------
+
+.analytics__empty {
+  padding: var(--bloom-space-6) 0;
+  text-align: center;
+  color: var(--bloom-text-tertiary);
+  font-size: var(--bloom-text-sm);
+
+  p {
+    margin: 0;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Section Error State
+// --------------------------------------------------------------------------
+
+.analytics__section-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bloom-space-2);
+  padding: var(--bloom-space-6) 0;
+  color: var(--bloom-error-dark);
+  font-size: var(--bloom-text-sm);
+  text-align: center;
+
+  p {
+    margin: 0;
+  }
+}
+
+.analytics__retry {
+  border: 1px solid var(--bloom-border-default);
+  border-radius: var(--bloom-radius-md);
+  background: var(--bloom-surface-base);
+  color: var(--bloom-text-secondary);
+  font-family: var(--bloom-font-family-body);
+  font-size: var(--bloom-text-sm);
+  padding: var(--bloom-space-1-5) var(--bloom-space-3);
+  cursor: pointer;
+  transition:
+    border-color var(--bloom-transition-fast),
+    color var(--bloom-transition-fast);
+
+  &:hover {
+    border-color: var(--bloom-border-strong);
+    color: var(--bloom-text-primary);
+  }
+
+  &:focus-visible {
+    @include bloom-focus-ring;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Loading Skeletons
+// --------------------------------------------------------------------------
+
+.analytics__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bloom-space-6);
+}
+
+.analytics__skeleton {
+  background: var(--bloom-surface-sunken);
+  border-radius: var(--bloom-radius-md);
+  animation: analytics-skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.analytics__skeleton--compat {
+  height: 18rem;
+}
+
+.analytics__skeleton--stats {
+  height: 18rem;
+}
+
+.analytics__skeleton--heading {
+  height: 1.5rem;
+  width: 200px;
+}
+
+.analytics__skeleton--gaps {
+  height: 16rem;
+}
+
+.analytics__skeleton--chart {
+  height: 16rem;
+}
+
+@keyframes analytics-skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+// --------------------------------------------------------------------------
+// Responsive
+// --------------------------------------------------------------------------
+
+@include bp-mobile-only {
+  .analytics__two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics__gap-row {
+    flex-wrap: wrap;
+  }
+
+  .analytics__gap-bars {
+    max-width: none;
+  }
+
+  .analytics__gap-scores {
+    flex-wrap: wrap;
+    gap: var(--bloom-space-2);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Reduced Motion
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .analytics__skeleton {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  .analytics__gap-bar-fill {
+    transition: none;
+  }
+}

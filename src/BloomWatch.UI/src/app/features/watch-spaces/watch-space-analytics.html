@@ -1,0 +1,172 @@
+<!-- Header -->
+<header class="analytics__header">
+  <div>
+    <a class="analytics__back-link" (click)="navigateBack()" style="cursor:pointer">
+      <span aria-hidden="true">&larr;</span> Back to Dashboard
+    </a>
+    <h1 class="analytics__title">Analytics</h1>
+  </div>
+</header>
+
+<!-- Loading Skeletons -->
+@if (isLoading()) {
+  <div class="analytics__loading" role="status">
+    <div class="analytics__two-col">
+      <div class="analytics__skeleton analytics__skeleton--compat"></div>
+      <div class="analytics__skeleton analytics__skeleton--stats"></div>
+    </div>
+    <div class="analytics__skeleton analytics__skeleton--heading"></div>
+    <div class="analytics__skeleton analytics__skeleton--gaps"></div>
+    <div class="analytics__skeleton analytics__skeleton--heading"></div>
+    <div class="analytics__skeleton analytics__skeleton--chart"></div>
+  </div>
+}
+
+<!-- Content -->
+@if (!isLoading()) {
+  <!-- Compatibility + Shared Stats (two-column) -->
+  <div class="analytics__two-col">
+
+    <!-- Compatibility -->
+    <bloom-card class="analytics__card analytics__card--no-hover">
+      <h2 class="analytics__section-title">Compatibility</h2>
+      @if (compatError()) {
+        <div class="analytics__section-error">
+          <p>{{ compatError() }}</p>
+          <button class="analytics__retry" (click)="retryCompat()">Retry</button>
+        </div>
+      } @else if (compatData(); as compat) {
+        <bloom-compat-ring [compatibility]="compat.compatibility" />
+        @if (compat.compatibility; as c) {
+          <div class="analytics__breakdown">
+            <div class="analytics__breakdown-row">
+              <span class="analytics__breakdown-label">Average Gap</span>
+              <span class="analytics__breakdown-value">{{ c.averageGap }} points</span>
+            </div>
+            <div class="analytics__breakdown-row">
+              <span class="analytics__breakdown-label">Anime Rated Together</span>
+              <span class="analytics__breakdown-value">{{ c.ratedTogetherCount }}</span>
+            </div>
+          </div>
+        }
+      }
+    </bloom-card>
+
+    <!-- Shared Stats -->
+    <bloom-card class="analytics__card analytics__card--no-hover">
+      <h2 class="analytics__section-title">Shared Stats</h2>
+      @if (statsError()) {
+        <div class="analytics__section-error">
+          <p>{{ statsError() }}</p>
+          <button class="analytics__retry" (click)="retryStats()">Retry</button>
+        </div>
+      } @else if (statsData(); as stats) {
+        <div class="analytics__stats-grid">
+          <div class="analytics__stat-item">
+            <div class="analytics__stat-value analytics__stat-value--lilac">{{ stats.totalEpisodesWatchedTogether }}</div>
+            <div class="analytics__stat-label">Episodes together</div>
+          </div>
+          <div class="analytics__stat-item">
+            <div class="analytics__stat-value analytics__stat-value--blue">{{ stats.totalFinished }}</div>
+            <div class="analytics__stat-label">Shows finished</div>
+          </div>
+          <div class="analytics__stat-item">
+            <div class="analytics__stat-value analytics__stat-value--neutral">{{ stats.totalDropped }}</div>
+            <div class="analytics__stat-label">Shows dropped</div>
+          </div>
+          <div class="analytics__stat-item">
+            <div class="analytics__stat-value analytics__stat-value--lime">{{ stats.totalWatchSessions }}</div>
+            <div class="analytics__stat-label">Watch sessions</div>
+          </div>
+        </div>
+        <div class="analytics__recent-session">
+          <span class="analytics__breakdown-label">Most Recent Session</span>
+          <span class="analytics__breakdown-value">
+            @if (stats.mostRecentSessionDate) {
+              {{ stats.mostRecentSessionDate | date:'mediumDate' }}
+            } @else {
+              No sessions yet
+            }
+          </span>
+        </div>
+      }
+    </bloom-card>
+
+  </div>
+
+  <!-- Rating Gaps -->
+  <section class="analytics__section" aria-label="Rating gaps">
+    <h2 class="analytics__section-title">Rating Gaps</h2>
+    @if (gapsError()) {
+      <div class="analytics__section-error">
+        <p>{{ gapsError() }}</p>
+        <button class="analytics__retry" (click)="retryGaps()">Retry</button>
+      </div>
+    } @else if (gapsData(); as gaps) {
+      @if (gaps.items.length > 0) {
+        <bloom-card class="analytics__card analytics__card--no-hover">
+          @for (gap of gaps.items; track gap.watchSpaceAnimeId) {
+            <div class="analytics__gap-row">
+              <div class="analytics__gap-cover">
+                @if (gap.coverImageUrl) {
+                  <img [src]="gap.coverImageUrl" [alt]="gap.preferredTitle" loading="lazy" />
+                } @else {
+                  <div class="analytics__gap-cover-placeholder">&#127912;</div>
+                }
+              </div>
+              <div class="analytics__gap-title">{{ gap.preferredTitle }}</div>
+              <div class="analytics__gap-bars">
+                @for (r of gap.ratings; track r.userId) {
+                  <div class="analytics__gap-bar-track">
+                    <div
+                      class="analytics__gap-bar-fill analytics__gap-bar-fill--{{ $index === 0 ? 'a' : 'b' }}"
+                      [style.width.%]="scoreBarWidth(r.ratingScore)"
+                    ></div>
+                  </div>
+                }
+              </div>
+              <div class="analytics__gap-scores">
+                @for (r of gap.ratings; track r.userId) {
+                  <span class="analytics__gap-rater">
+                    <span class="analytics__gap-rater-score analytics__gap-rater-score--{{ $index === 0 ? 'pink' : 'blue' }}">{{ r.ratingScore }}</span>
+                  </span>
+                }
+              </div>
+              <span class="analytics__gap-delta">&Delta; {{ gap.gap }}</span>
+            </div>
+          }
+          @if (gaps.items.length > 0) {
+            <div class="analytics__legend">
+              @for (r of gaps.items[0].ratings; track r.userId) {
+                <div class="analytics__legend-item">
+                  <span class="analytics__legend-dot analytics__legend-dot--{{ $index === 0 ? 'pink' : 'blue' }}"></span>
+                  {{ r.displayName }}
+                </div>
+              }
+            </div>
+          }
+        </bloom-card>
+      } @else {
+        <div class="analytics__empty">
+          <p>{{ gaps.message || 'No rating gaps yet — rate some anime together!' }}</p>
+        </div>
+      }
+    }
+  </section>
+
+  <!-- Rating Comparison Chart -->
+  @if (chartData(); as chart) {
+    <section class="analytics__section" aria-label="Rating comparison chart">
+      <h2 class="analytics__section-title">Rating Comparison</h2>
+      <bloom-card class="analytics__card analytics__card--no-hover">
+        <div class="analytics__chart-container">
+          <canvas baseChart
+            type="bar"
+            [data]="chart"
+            [options]="chartOptions"
+          ></canvas>
+        </div>
+      </bloom-card>
+    </section>
+  }
+}
