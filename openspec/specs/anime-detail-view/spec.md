@@ -43,21 +43,6 @@ The system SHALL display a participants section listing every participant's indi
 - **WHEN** rendering participant entries
 - **THEN** the component SHALL resolve user IDs to display names using the watch space member data
 
-### Requirement: Anime detail page displays watch session history
-The system SHALL display a chronological list of watch sessions recorded for the anime.
-
-#### Scenario: Sessions exist
-- **WHEN** the `watchSessions` array contains one or more entries
-- **THEN** the component SHALL render each session showing `sessionDateUtc` (formatted as a readable date), episode range (`startEpisode`–`endEpisode`), `notes` (if present), and the name of the user who created it
-
-#### Scenario: No sessions recorded
-- **WHEN** the `watchSessions` array is empty
-- **THEN** the component SHALL display an empty state message such as "No watch sessions recorded yet"
-
-#### Scenario: Session list ordering
-- **WHEN** multiple watch sessions are displayed
-- **THEN** sessions SHALL be ordered by `sessionDateUtc` descending (most recent first)
-
 ### Requirement: User can update their own participant progress
 The system SHALL provide an inline form allowing the current user to update their individual status and episodes watched via `PATCH /watchspaces/{id}/anime/{animeId}/participant-progress`.
 
@@ -88,17 +73,6 @@ The system SHALL provide an inline form allowing the current user to submit or u
 - **WHEN** the user enters notes exceeding 1000 characters
 - **THEN** the form SHALL prevent submission and indicate the character limit
 
-### Requirement: User can record a watch session
-The system SHALL provide an inline form allowing any member to record a new watch session via `POST /watchspaces/{id}/anime/{animeId}/sessions`.
-
-#### Scenario: Session form submission
-- **WHEN** the user fills in session date, start episode, end episode, and optional notes, then submits
-- **THEN** the component SHALL send a `POST` request with `{ sessionDateUtc, startEpisode, endEpisode, notes }` and refresh the detail data on success
-
-#### Scenario: Session episode validation
-- **WHEN** the user enters `startEpisode` < 1 or `endEpisode` < `startEpisode`
-- **THEN** the form SHALL prevent submission
-
 ### Requirement: Back navigation to watch space
 The system SHALL provide a visible back navigation element that returns the user to the parent watch space detail page.
 
@@ -107,7 +81,7 @@ The system SHALL provide a visible back navigation element that returns the user
 - **THEN** the router SHALL navigate to `/watch-spaces/{watchSpaceId}`
 
 ### Requirement: Service methods for anime detail operations
-The `WatchSpaceService` SHALL expose methods for fetching anime detail and performing all mutation operations.
+The `WatchSpaceService` SHALL expose methods for fetching anime detail and performing participant mutation operations.
 
 #### Scenario: getAnimeDetail method
 - **WHEN** `getAnimeDetail(spaceId, animeId)` is called
@@ -121,21 +95,13 @@ The `WatchSpaceService` SHALL expose methods for fetching anime detail and perfo
 - **WHEN** `updateParticipantRating(spaceId, animeId, body)` is called
 - **THEN** it SHALL send `PATCH /watchspaces/{spaceId}/anime/{animeId}/participant-rating` with the request body
 
-#### Scenario: recordWatchSession method
-- **WHEN** `recordWatchSession(spaceId, animeId, body)` is called
-- **THEN** it SHALL send `POST /watchspaces/{spaceId}/anime/{animeId}/sessions` with the request body
-
 ### Requirement: TypeScript interfaces for detail response DTOs
 The `watch-space.model.ts` file SHALL define interfaces matching the `GetWatchSpaceAnimeDetailResult` API response shape.
 
 #### Scenario: WatchSpaceAnimeDetail interface
 - **WHEN** the detail API returns a response
-- **THEN** the response SHALL be typed as `WatchSpaceAnimeDetail` with fields: `watchSpaceAnimeId`, `anilistMediaId`, `preferredTitle`, `coverImageUrlSnapshot`, `episodeCountSnapshot`, `format`, `season`, `seasonYear`, `sharedStatus`, `sharedEpisodesWatched`, `mood`, `vibe`, `pitch`, `addedByUserId`, `addedAtUtc`, `participants` (array of `ParticipantDetail`), `watchSessions` (array of `WatchSessionDetail`)
+- **THEN** the response SHALL be typed as `WatchSpaceAnimeDetail` with fields: `watchSpaceAnimeId`, `anilistMediaId`, `preferredTitle`, `coverImageUrlSnapshot`, `episodeCountSnapshot`, `format`, `season`, `seasonYear`, `sharedStatus`, `sharedEpisodesWatched`, `mood`, `vibe`, `pitch`, `addedByUserId`, `addedAtUtc`, `participants` (array of `ParticipantDetail`)
 
 #### Scenario: ParticipantDetail interface
 - **WHEN** a participant entry is received
 - **THEN** it SHALL be typed as `ParticipantDetail` with fields: `userId`, `individualStatus`, `episodesWatched`, `ratingScore` (nullable), `ratingNotes` (nullable), `lastUpdatedAtUtc`
-
-#### Scenario: WatchSessionDetail interface
-- **WHEN** a watch session entry is received
-- **THEN** it SHALL be typed as `WatchSessionDetail` with fields: `watchSessionId`, `sessionDateUtc`, `startEpisode`, `endEpisode`, `notes` (nullable), `createdByUserId`

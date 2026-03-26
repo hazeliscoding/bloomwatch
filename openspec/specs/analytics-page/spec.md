@@ -21,15 +21,15 @@ The analytics page SHALL render a compatibility section containing the `bloom-co
 - **THEN** the section SHALL render the `bloom-compat-ring` placeholder state and SHALL NOT render the breakdown panel
 
 ### Requirement: Shared stats section
-The analytics page SHALL render a shared stats section with a 2x2 grid of stat items and a most-recent-session date row.
+The analytics page SHALL render a shared stats section with stat items for episodes watched together, shows finished, and shows dropped.
 
 #### Scenario: Stats with data
-- **WHEN** the shared stats endpoint returns `totalEpisodesWatchedTogether = 184`, `totalFinished = 11`, `totalDropped = 1`, `totalWatchSessions = 23`, `mostRecentSessionDate = "2026-03-15"`
-- **THEN** the section SHALL display stat items for "184 Episodes together", "11 Shows finished", "1 Shows dropped", "23 Watch sessions", and "Most Recent Session: Mar 15, 2026"
+- **WHEN** the shared stats endpoint returns `totalEpisodesWatchedTogether = 184`, `totalFinished = 11`, `totalDropped = 1`
+- **THEN** the section SHALL display stat items for "184 Episodes together", "11 Shows finished", and "1 Shows dropped"
 
-#### Scenario: No sessions recorded
-- **WHEN** the shared stats endpoint returns all zeroes and `mostRecentSessionDate = null`
-- **THEN** the section SHALL display "0" for all stat items and "No sessions yet" for the most recent session row
+#### Scenario: All zeroes
+- **WHEN** the shared stats endpoint returns all zeroes
+- **THEN** the section SHALL display "0" for all stat items
 
 ### Requirement: Full rating gaps list with score bars
 The analytics page SHALL render a list of all anime with rating gaps, showing each entry with a cover thumbnail, title, per-member horizontal score bars, numeric scores, and gap delta. Items SHALL be displayed in the order returned by the API (descending gap).
