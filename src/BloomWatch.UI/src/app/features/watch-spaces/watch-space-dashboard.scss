@@ -84,12 +84,17 @@
 // Compatibility Score
 // --------------------------------------------------------------------------
 
-.dashboard__compat {
-  margin-bottom: var(--bloom-space-8);
-}
-
 .dashboard__compat-card {
   padding: var(--bloom-space-6);
+}
+
+.dashboard__picker-card {
+  padding: var(--bloom-space-6);
+}
+
+.dashboard__picker-card--highlight {
+  border: 1px solid var(--bloom-lilac-200);
+  background: var(--bloom-lilac-50);
 }
 
 // --------------------------------------------------------------------------
@@ -377,6 +382,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--bloom-space-6);
+  margin-bottom: var(--bloom-space-8);
 }
 
 // --------------------------------------------------------------------------

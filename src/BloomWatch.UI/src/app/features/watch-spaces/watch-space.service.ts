@@ -13,6 +13,7 @@ import {
   InvitationPreview,
   InviteMemberResponse,
   ParticipantDetail,
+  RandomPickResult,
   RatingGapsResult,
   RecordWatchSessionRequest,
   SharedStatsResult,
@@ -136,5 +137,9 @@ export class WatchSpaceService {
 
   getSharedStats(spaceId: string): Observable<SharedStatsResult> {
     return this.api.get<SharedStatsResult>(`/watchspaces/${spaceId}/analytics/shared-stats`);
+  }
+
+  getRandomPick(spaceId: string): Observable<RandomPickResult> {
+    return this.api.get<RandomPickResult>(`/watchspaces/${spaceId}/analytics/random-pick`);
   }
 }

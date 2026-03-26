@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { WatchSpaceDashboard } from './watch-space-dashboard';
-import { DashboardSummary } from './watch-space.model';
+import { DashboardSummary, RandomPickResult } from './watch-space.model';
 
 // ---------------------------------------------------------------------------
 // Mock Data
@@ -107,12 +107,38 @@ describe('WatchSpaceDashboard', () => {
     httpTesting.verify();
   });
 
+  const defaultRandomPick: RandomPickResult = {
+    pick: {
+      watchSpaceAnimeId: 'rp-1',
+      preferredTitle: 'Spy x Family',
+      coverImageUrlSnapshot: null,
+      episodeCountSnapshot: 25,
+      mood: 'Cozy',
+      vibe: null,
+      pitch: null,
+    },
+    message: null,
+  };
+
   function flushDashboard(data: DashboardSummary = fullDashboard): void {
     const req = httpTesting.expectOne((r) =>
       r.url.includes('/watchspaces/ws-1/dashboard') && r.method === 'GET'
     );
     req.flush(data);
     fixture.detectChanges();
+  }
+
+  function flushRandomPick(data: RandomPickResult = defaultRandomPick): void {
+    const req = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/analytics/random-pick') && r.method === 'GET'
+    );
+    req.flush(data);
+    fixture.detectChanges();
+  }
+
+  function flushAll(dashboard: DashboardSummary = fullDashboard, pick: RandomPickResult = defaultRandomPick): void {
+    flushDashboard(dashboard);
+    flushRandomPick(pick);
   }
 
   function flushError(): void {
@@ -128,14 +154,14 @@ describe('WatchSpaceDashboard', () => {
   it('should show loading skeletons initially', () => {
     const skeletons = fixture.nativeElement.querySelectorAll('.dashboard__skeleton');
     expect(skeletons.length).toBeGreaterThan(0);
-    flushDashboard();
+    flushAll();
   });
 
   it('should render all sections after successful load', () => {
-    flushDashboard();
+    flushAll();
 
     expect(fixture.nativeElement.querySelector('.dashboard__stats-grid')).toBeTruthy();
-    expect(fixture.nativeElement.querySelector('.dashboard__compat')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.dashboard__two-col')).toBeTruthy();
     expect(fixture.nativeElement.querySelectorAll('.dashboard__anime-thumb').length).toBeGreaterThan(0);
     expect(fixture.nativeElement.querySelectorAll('.dashboard__gap-card').length).toBeGreaterThan(0);
   });
@@ -155,7 +181,7 @@ describe('WatchSpaceDashboard', () => {
     retryBtn.click();
     fixture.detectChanges();
 
-    flushDashboard();
+    flushAll();
     const cards = fixture.nativeElement.querySelectorAll('.dashboard__stat-card');
     expect(cards.length).toBe(4);
   });
@@ -163,7 +189,7 @@ describe('WatchSpaceDashboard', () => {
   // ---- 10.2: Stat Cards ----
 
   it('should display correct stat card values', () => {
-    flushDashboard();
+    flushAll();
 
     const statNumbers = fixture.nativeElement.querySelectorAll('.dashboard__stat-number');
     expect(statNumbers[0].textContent.trim()).toBe('27');
@@ -173,7 +199,7 @@ describe('WatchSpaceDashboard', () => {
   });
 
   it('should display zeroes for empty space', () => {
-    flushDashboard(emptyDashboard);
+    flushAll(emptyDashboard);
 
     const statNumbers = fixture.nativeElement.querySelectorAll('.dashboard__stat-number');
     expect(statNumbers[0].textContent.trim()).toBe('0');
@@ -185,14 +211,14 @@ describe('WatchSpaceDashboard', () => {
   // ---- 10.3: Compatibility ----
 
   it('should render bloom-compat-ring component with compatibility data', () => {
-    flushDashboard();
+    flushAll();
 
     const ring = fixture.nativeElement.querySelector('bloom-compat-ring');
     expect(ring).toBeTruthy();
   });
 
   it('should render bloom-compat-ring when compatibility is null', () => {
-    flushDashboard(emptyDashboard);
+    flushAll(emptyDashboard);
 
     const ring = fixture.nativeElement.querySelector('bloom-compat-ring');
     expect(ring).toBeTruthy();
@@ -201,7 +227,7 @@ describe('WatchSpaceDashboard', () => {
   // ---- 10.4: Currently Watching ----
 
   it('should render currently-watching cards with progress bars', () => {
-    flushDashboard();
+    flushAll();
 
     const section = fixture.nativeElement.querySelectorAll('.dashboard__section')[0];
     const thumbs = section.querySelectorAll('.dashboard__anime-thumb');
@@ -214,7 +240,7 @@ describe('WatchSpaceDashboard', () => {
   });
 
   it('should show empty state when no currently watching', () => {
-    flushDashboard(emptyDashboard);
+    flushAll(emptyDashboard);
 
     const sections = fixture.nativeElement.querySelectorAll('.dashboard__section');
     const watchingSection = sections[0];
@@ -223,7 +249,7 @@ describe('WatchSpaceDashboard', () => {
   });
 
   it('should navigate to anime detail on card click', () => {
-    flushDashboard();
+    flushAll();
     const spy = vi.spyOn(router, 'navigate');
 
     const thumb = fixture.nativeElement.querySelector('.dashboard__anime-thumb');
@@ -235,7 +261,7 @@ describe('WatchSpaceDashboard', () => {
   // ---- 10.5: Backlog & Rating Gaps ----
 
   it('should render backlog highlight cards', () => {
-    flushDashboard();
+    flushAll();
 
     const sections = fixture.nativeElement.querySelectorAll('.dashboard__section');
     const backlogSection = sections[1];
@@ -245,7 +271,7 @@ describe('WatchSpaceDashboard', () => {
   });
 
   it('should render rating gap entries with scores and delta', () => {
-    flushDashboard();
+    flushAll();
 
     const gapCards = fixture.nativeElement.querySelectorAll('.dashboard__gap-card');
     expect(gapCards.length).toBe(2);
@@ -261,7 +287,7 @@ describe('WatchSpaceDashboard', () => {
   });
 
   it('should show empty states for backlog and rating gaps', () => {
-    flushDashboard(emptyDashboard);
+    flushAll(emptyDashboard);
 
     const empties = fixture.nativeElement.querySelectorAll('.dashboard__empty');
     // Currently watching, backlog, and rating gaps empty states
@@ -273,7 +299,7 @@ describe('WatchSpaceDashboard', () => {
   // ---- 10.6: Header & Navigation ----
 
   it('should render header with navigation buttons', () => {
-    flushDashboard();
+    flushAll();
 
     const header = fixture.nativeElement.querySelector('.dashboard__header');
     expect(header).toBeTruthy();
@@ -286,9 +312,18 @@ describe('WatchSpaceDashboard', () => {
   });
 
   it('should navigate to manage view on Anime List click', () => {
-    flushDashboard();
+    flushAll();
     const spy = vi.spyOn(router, 'navigate');
     component.navigateToManage();
     expect(spy).toHaveBeenCalledWith(['/watch-spaces', 'ws-1', 'manage']);
+  });
+
+  // ---- 10.7: Backlog Picker ----
+
+  it('should render bloom-backlog-picker in dashboard', () => {
+    flushAll();
+
+    const picker = fixture.nativeElement.querySelector('bloom-backlog-picker');
+    expect(picker).toBeTruthy();
   });
 });

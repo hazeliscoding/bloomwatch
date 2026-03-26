@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { WatchSpaceService } from './watch-space.service';
-import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail, WatchSpaceAnimeDetail, DashboardSummary, CompatibilityScoreResult, RatingGapsResult, SharedStatsResult } from './watch-space.model';
+import { InvitationDetail, InviteMemberResponse, InvitationPreview, AcceptInvitationResponse, WatchSpaceSummary, ParticipantDetail, WatchSpaceAnimeDetail, DashboardSummary, CompatibilityScoreResult, RatingGapsResult, SharedStatsResult, RandomPickResult } from './watch-space.model';
 
 describe('WatchSpaceService', () => {
   let service: WatchSpaceService;
@@ -396,6 +396,31 @@ describe('WatchSpaceService', () => {
       });
 
       const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/analytics/shared-stats'));
+      expect(req.request.method).toBe('GET');
+      req.flush(result);
+    });
+  });
+
+  describe('getRandomPick', () => {
+    it('should send GET /watchspaces/{id}/analytics/random-pick', () => {
+      const result: RandomPickResult = {
+        pick: {
+          watchSpaceAnimeId: 'a1',
+          preferredTitle: 'Spy x Family',
+          coverImageUrlSnapshot: 'https://example.com/spy.jpg',
+          episodeCountSnapshot: 25,
+          mood: 'Cozy',
+          vibe: 'Weekend binge',
+          pitch: 'A found family story',
+        },
+        message: null,
+      };
+
+      service.getRandomPick('space-1').subscribe((res) => {
+        expect(res).toEqual(result);
+      });
+
+      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/analytics/random-pick'));
       expect(req.request.method).toBe('GET');
       req.flush(result);
     });

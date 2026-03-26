@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomBadgeComponent } from '../../shared/ui/badge/bloom-badge';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
+import { BloomBacklogPickerComponent } from '../../shared/ui/backlog-picker/bloom-backlog-picker';
 import { BloomCompatRingComponent } from '../../shared/ui/compat-ring/bloom-compat-ring';
 import { WatchSpaceService } from './watch-space.service';
 import {
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: 'app-watch-space-dashboard',
   standalone: true,
-  imports: [RouterLink, BloomCardComponent, BloomBadgeComponent, BloomButtonComponent, BloomCompatRingComponent],
+  imports: [RouterLink, BloomCardComponent, BloomBadgeComponent, BloomButtonComponent, BloomBacklogPickerComponent, BloomCompatRingComponent],
   templateUrl: './watch-space-dashboard.html',
   styleUrl: './watch-space-dashboard.scss',
 })
@@ -22,7 +23,7 @@ export class WatchSpaceDashboard implements OnInit {
   private readonly router = inject(Router);
   private readonly watchSpaceService = inject(WatchSpaceService);
 
-  private readonly spaceId = this.route.snapshot.paramMap.get('id') ?? '';
+  readonly spaceId = this.route.snapshot.paramMap.get('id') ?? '';
 
   readonly dashboard = signal<DashboardSummary | null>(null);
   readonly isLoading = signal(true);

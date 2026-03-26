@@ -260,3 +260,18 @@ export interface SharedStatsResult {
   totalWatchSessions: number;
   mostRecentSessionDate: string | null;
 }
+
+export interface RandomPickResult {
+  pick: RandomPickAnimeResult | null;
+  message: string | null;
+}
+
+export interface RandomPickAnimeResult {
+  watchSpaceAnimeId: string;
+  preferredTitle: string;
+  coverImageUrlSnapshot: string | null;
+  episodeCountSnapshot: number | null;
+  mood: string | null;
+  vibe: string | null;
+  pitch: string | null;
+}

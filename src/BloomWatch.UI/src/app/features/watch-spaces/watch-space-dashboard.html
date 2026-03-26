@@ -78,11 +78,15 @@
     </bloom-card>
   </section>
 
-  <!-- Compatibility Score -->
-  <section class="dashboard__compat" aria-label="Compatibility score">
+  <!-- Compatibility + Backlog Picker -->
+  <section class="dashboard__two-col" aria-label="Compatibility and backlog picker">
     <bloom-card class="dashboard__compat-card">
       <h2 class="dashboard__section-title">Compatibility Score</h2>
       <bloom-compat-ring [compatibility]="data.compatibility" />
+    </bloom-card>
+    <bloom-card class="dashboard__picker-card dashboard__picker-card--highlight">
+      <h2 class="dashboard__section-title">Pick Something to Watch</h2>
+      <bloom-backlog-picker [spaceId]="spaceId" (picked)="navigateToAnime($event)" />
     </bloom-card>
   </section>
 
