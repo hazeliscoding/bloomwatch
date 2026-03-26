@@ -66,6 +66,10 @@ export class WatchSpaceDashboard implements OnInit {
     this.router.navigate(['/watch-spaces', this.spaceId, 'manage']);
   }
 
+  navigateToSettings(): void {
+    this.router.navigate(['/watch-spaces', this.spaceId, 'settings']);
+  }
+
   navigateToAnalytics(): void {
     this.router.navigate(['/watch-spaces', this.spaceId, 'analytics']);
   }
