@@ -1,13 +1,11 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloom-badge';
-import { BloomModalComponent } from '../../shared/ui/modal/bloom-modal';
 import { BloomAvatarComponent } from '../../shared/ui/avatar/bloom-avatar';
 import { WatchSpaceService } from './watch-space.service';
 import {
@@ -31,13 +29,11 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
   selector: 'app-anime-detail',
   standalone: true,
   imports: [
-    DatePipe,
     FormsModule,
     RouterLink,
     BloomCardComponent,
     BloomButtonComponent,
     BloomBadgeComponent,
-    BloomModalComponent,
     BloomAvatarComponent,
   ],
   styleUrl: './anime-detail.scss',
@@ -346,7 +342,10 @@ export class AnimeDetail implements OnInit, OnDestroy {
     if (!a) return '';
     const parts: string[] = [];
     if (a.format) parts.push(a.format);
-    if (a.season && a.seasonYear) parts.push(`${a.season} ${a.seasonYear}`);
+    if (a.season && a.seasonYear) {
+      const season = a.season.charAt(0).toUpperCase() + a.season.slice(1).toLowerCase();
+      parts.push(`${season} ${a.seasonYear}`);
+    }
     if (a.episodeCountSnapshot != null) parts.push(`${a.episodeCountSnapshot} Episodes`);
     return parts.join(' \u00B7 ');
   });

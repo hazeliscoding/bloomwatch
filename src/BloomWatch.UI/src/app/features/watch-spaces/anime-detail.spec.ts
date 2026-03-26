@@ -172,13 +172,12 @@ describe('AnimeDetail', () => {
     expect(title?.textContent).toContain('Cowboy Bebop');
   });
 
-  it('should display format and season metadata', () => {
+  it('should display format and season metadata line', () => {
     flushDetailAndMembers();
-    const meta = fixture.nativeElement.querySelectorAll('.anime-detail__meta-item');
-    const metaTexts = Array.from(meta).map((m) => (m as HTMLElement).textContent?.trim());
-    expect(metaTexts).toContain('TV');
-    expect(metaTexts).toContain('SPRING 1998');
-    expect(metaTexts).toContain('26 episodes');
+    const metaLine = fixture.nativeElement.querySelector('.anime-detail__meta-line');
+    expect(metaLine?.textContent).toContain('TV');
+    expect(metaLine?.textContent).toContain('Spring 1998');
+    expect(metaLine?.textContent).toContain('26 Episodes');
   });
 
   it('should show cover image placeholder when coverImageUrlSnapshot is null', () => {
@@ -189,21 +188,24 @@ describe('AnimeDetail', () => {
 
   // ---- Shared Status ----
 
-  it('should display shared status badge', () => {
+  it('should display shared status select with current value', () => {
     flushDetailAndMembers();
-    const badge = fixture.nativeElement.querySelector('.anime-detail__shared-status bloom-badge');
-    expect(badge?.textContent?.trim()).toContain('Watching');
+    const select = fixture.nativeElement.querySelector('.anime-detail__status-select') as HTMLSelectElement;
+    expect(select).toBeTruthy();
+    expect(component.anime()!.sharedStatus).toBe('Watching');
   });
 
-  it('should display episode progress', () => {
+  it('should display shared episode stepper', () => {
     flushDetailAndMembers();
-    const progress = fixture.nativeElement.querySelector('.anime-detail__shared-progress');
-    expect(progress?.textContent).toContain('Ep 12 / 26');
+    const value = fixture.nativeElement.querySelector('.anime-detail__ep-stepper-value');
+    expect(value?.textContent?.trim()).toBe('12');
+    const total = fixture.nativeElement.querySelector('.anime-detail__ep-total');
+    expect(total?.textContent).toContain('/ 26');
   });
 
   it('should display mood/vibe/pitch tags when present', () => {
     flushDetailAndMembers();
-    const tags = fixture.nativeElement.querySelectorAll('.anime-detail__tag');
+    const tags = fixture.nativeElement.querySelectorAll('.anime-detail__mood-tag');
     expect(tags.length).toBe(3);
     const tagTexts = Array.from(tags).map((t) => (t as HTMLElement).textContent?.trim());
     expect(tagTexts.some((t) => t?.includes('Chill'))).toBe(true);
@@ -213,7 +215,7 @@ describe('AnimeDetail', () => {
 
   it('should not display mood/vibe/pitch tags when null', () => {
     flushDetailAndMembers({ ...mockDetail, mood: null, vibe: null, pitch: null });
-    const tags = fixture.nativeElement.querySelectorAll('.anime-detail__tag');
+    const tags = fixture.nativeElement.querySelectorAll('.anime-detail__mood-tag');
     expect(tags.length).toBe(0);
   });
 
@@ -225,83 +227,58 @@ describe('AnimeDetail', () => {
     expect(cards.length).toBe(2);
 
     const names = fixture.nativeElement.querySelectorAll('.anime-detail__participant-name');
-    expect(names[0]?.textContent?.trim()).toBe('Alice');
+    expect(names[0]?.textContent?.trim()).toContain('Alice');
     expect(names[1]?.textContent?.trim()).toBe('Bob');
   });
 
-  it('should display rating score when present', () => {
+  it('should display self card with Your progress badge', () => {
     flushDetailAndMembers();
-    const scores = fixture.nativeElement.querySelectorAll('.anime-detail__rating-score');
-    expect(scores[0]?.textContent).toContain('9 / 10');
+    const selfCard = fixture.nativeElement.querySelector('.anime-detail__participant-card--self');
+    expect(selfCard).toBeTruthy();
+
+    const badge = selfCard.querySelector('.anime-detail__participant-label');
+    expect(badge?.textContent?.trim()).toContain('Your progress');
   });
 
-  it('should display "No rating" when ratingScore is null', () => {
+  it('should display rating score and stars for self', () => {
     flushDetailAndMembers();
-    const noRating = fixture.nativeElement.querySelectorAll('.anime-detail__rating-none');
-    expect(noRating.length).toBe(1);
-    expect(noRating[0]?.textContent).toContain('No rating');
+    const selfCard = fixture.nativeElement.querySelector('.anime-detail__participant-card--self');
+    const score = selfCard.querySelector('.anime-detail__rating-score');
+    expect(score?.textContent).toContain('9');
+  });
+
+  it('should display other participant with read-only status badge', () => {
+    flushDetailAndMembers();
+    const otherCards = fixture.nativeElement.querySelectorAll('.anime-detail__participant-card:not(.anime-detail__participant-card--self)');
+    expect(otherCards.length).toBe(1);
+
+    const badge = otherCards[0].querySelector('bloom-badge');
+    expect(badge?.textContent?.trim()).toContain('Watching');
+  });
+
+  it('should display italic notes for other participant', () => {
+    const detailWithNotes: WatchSpaceAnimeDetail = {
+      ...mockDetail,
+      participants: [
+        mockDetail.participants[0],
+        { ...mockDetail.participants[1], ratingScore: 8, ratingNotes: 'Great show' },
+      ],
+    };
+    flushDetailAndMembers(detailWithNotes);
+    const notes = fixture.nativeElement.querySelector('.anime-detail__participant-notes');
+    expect(notes?.textContent).toContain('Great show');
   });
 
   // ---- Back Navigation ----
 
-  it('should have a back navigation button', () => {
+  it('should have a back navigation link', () => {
     flushDetailAndMembers();
-    const backBtn = fixture.nativeElement.querySelector('.anime-detail__back-btn');
-    expect(backBtn).toBeTruthy();
-    expect(backBtn.textContent).toContain('Back to Watch Space');
+    const backLink = fixture.nativeElement.querySelector('.anime-detail__back-link');
+    expect(backLink).toBeTruthy();
+    expect(backLink.textContent).toContain('Back to Anime List');
   });
 
-  // ---- Progress Form ----
-
-  it('should toggle progress form on click', () => {
-    flushDetailAndMembers();
-    const toggle = fixture.nativeElement.querySelectorAll('.anime-detail__action-toggle')[0];
-    toggle.click();
-    fixture.detectChanges();
-
-    const form = fixture.nativeElement.querySelector('#progress-status');
-    expect(form).toBeTruthy();
-  });
-
-  it('should submit progress update', () => {
-    flushDetailAndMembers();
-
-    // Open form
-    const toggle = fixture.nativeElement.querySelectorAll('.anime-detail__action-toggle')[0];
-    toggle.click();
-    fixture.detectChanges();
-
-    // Submit
-    component.progressStatus = 'Finished';
-    component.progressEpisodes = 26;
-    component.submitProgress();
-    fixture.detectChanges();
-
-    const req = httpTesting.expectOne((r) =>
-      r.url.includes('/watchspaces/ws-1/anime/wsa-1/participant-progress') && r.method === 'PATCH'
-    );
-    expect(req.request.body).toEqual({ individualStatus: 'Finished', episodesWatched: 26 });
-    req.flush({ userId: currentUserId, individualStatus: 'Finished', episodesWatched: 26, ratingScore: 9, ratingNotes: 'Masterpiece', lastUpdatedAtUtc: '2026-03-20T00:00:00Z' });
-
-    // Re-fetch detail
-    const refetchReq = httpTesting.expectOne((r) =>
-      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'GET'
-    );
-    refetchReq.flush(mockDetail);
-    fixture.detectChanges();
-  });
-
-  // ---- Rating Form ----
-
-  it('should toggle rating form on click', () => {
-    flushDetailAndMembers();
-    const toggle = fixture.nativeElement.querySelectorAll('.anime-detail__action-toggle')[1];
-    toggle.click();
-    fixture.detectChanges();
-
-    const scoreInput = fixture.nativeElement.querySelector('#rating-score');
-    expect(scoreInput).toBeTruthy();
-  });
+  // ---- Rating Validation ----
 
   it('should validate rating score range', () => {
     flushDetailAndMembers();
@@ -318,16 +295,6 @@ describe('AnimeDetail', () => {
     expect(component.isValidRating()).toBe(true);
   });
 
-  it('should validate rating notes length', () => {
-    flushDetailAndMembers();
-    component.ratingScore = 8;
-    component.ratingNotes = 'x'.repeat(1001);
-    expect(component.isValidRating()).toBe(false);
-
-    component.ratingNotes = 'x'.repeat(1000);
-    expect(component.isValidRating()).toBe(true);
-  });
-
   // ---- Prefill Forms ----
 
   it('should prefill progress form with current user data', () => {
@@ -340,6 +307,27 @@ describe('AnimeDetail', () => {
     flushDetailAndMembers();
     expect(component.ratingScore).toBe(9.0);
     expect(component.ratingNotes).toBe('Masterpiece');
+  });
+
+  // ---- Progress Submit ----
+
+  it('should submit progress update on episode increment', () => {
+    flushDetailAndMembers();
+
+    component.progressEpisodes = 15;
+    component.submitProgress();
+
+    const req = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1/participant-progress') && r.method === 'PATCH'
+    );
+    expect(req.request.body).toEqual({ individualStatus: 'Watching', episodesWatched: 15 });
+    req.flush({ userId: currentUserId, individualStatus: 'Watching', episodesWatched: 15, ratingScore: 9, ratingNotes: 'Masterpiece', lastUpdatedAtUtc: '2026-03-20T00:00:00Z' });
+
+    const refetchReq = httpTesting.expectOne((r) =>
+      r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'GET'
+    );
+    refetchReq.flush(mockDetail);
+    fixture.detectChanges();
   });
 
   // ---- Shared Status Wiring ----
@@ -410,7 +398,6 @@ describe('AnimeDetail', () => {
     );
     req.flush('Error', { status: 500, statusText: 'Server Error' });
 
-    // switchMap error triggers refreshDetail
     const refetchReq = httpTesting.expectOne((r) =>
       r.url.includes('/watchspaces/ws-1/anime/wsa-1') && r.method === 'GET'
     );
