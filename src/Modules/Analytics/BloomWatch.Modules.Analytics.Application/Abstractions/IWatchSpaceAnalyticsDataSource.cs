@@ -13,11 +13,4 @@ public interface IWatchSpaceAnalyticsDataSource
     /// </summary>
     Task<IReadOnlyList<WatchSpaceAnimeData>> GetAnimeWithParticipantsAsync(
         Guid watchSpaceId, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Returns the total count of watch sessions and the most recent session date
-    /// for all anime in a watch space.
-    /// </summary>
-    Task<(int Count, DateTime? MostRecentDate)> GetWatchSessionAggregateAsync(
-        Guid watchSpaceId, CancellationToken cancellationToken = default);
 }

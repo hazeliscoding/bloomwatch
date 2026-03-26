@@ -92,16 +92,5 @@ internal sealed class WatchSpaceAnimeConfiguration : IEntityTypeConfiguration<Wa
         builder.Navigation(a => a.ParticipantEntries)
             .HasField("_participantEntries")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-        // Relationship to WatchSessions
-        builder.HasMany(a => a.WatchSessions)
-            .WithOne()
-            .HasForeignKey(s => s.WatchSpaceAnimeId)
-            .HasPrincipalKey(a => a.Id)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(a => a.WatchSessions)
-            .HasField("_watchSessions")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

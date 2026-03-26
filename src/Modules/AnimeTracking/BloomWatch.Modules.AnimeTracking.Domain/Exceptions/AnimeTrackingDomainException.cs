@@ -43,10 +43,3 @@ public sealed class InvalidParticipantProgressException(string message)
 /// </summary>
 public sealed class InvalidRatingException(string message)
     : AnimeTrackingDomainException(message);
-
-/// <summary>
-/// Thrown when a watch session violates domain constraints
-/// (e.g. invalid episode range).
-/// </summary>
-public sealed class InvalidWatchSessionException(string message)
-    : AnimeTrackingDomainException(message);

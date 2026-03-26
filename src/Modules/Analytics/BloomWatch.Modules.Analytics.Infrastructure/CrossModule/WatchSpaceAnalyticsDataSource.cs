@@ -36,28 +36,4 @@ internal sealed class WatchSpaceAnalyticsDataSource(
             a.Vibe,
             a.Pitch)).ToList();
     }
-
-    public async Task<(int Count, DateTime? MostRecentDate)> GetWatchSessionAggregateAsync(
-        Guid watchSpaceId, CancellationToken cancellationToken = default)
-    {
-        var animeIds = await dbContext.Anime
-            .AsNoTracking()
-            .Where(a => a.WatchSpaceId == watchSpaceId)
-            .Select(a => a.Id)
-            .ToListAsync(cancellationToken);
-
-        if (animeIds.Count == 0)
-            return (0, null);
-
-        var sessions = dbContext.WatchSessions
-            .AsNoTracking()
-            .Where(s => animeIds.Contains(s.WatchSpaceAnimeId));
-
-        var count = await sessions.CountAsync(cancellationToken);
-        var mostRecent = count > 0
-            ? await sessions.MaxAsync(s => (DateTime?)s.SessionDateUtc, cancellationToken)
-            : null;
-
-        return (count, mostRecent);
-    }
 }

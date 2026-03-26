@@ -11,7 +11,6 @@ namespace BloomWatch.Modules.AnimeTracking.Domain.Aggregates;
 public sealed class WatchSpaceAnime
 {
     private readonly List<ParticipantEntry> _participantEntries = [];
-    private readonly List<WatchSession> _watchSessions = [];
 
     public WatchSpaceAnimeId Id { get; private set; }
     public Guid WatchSpaceId { get; private set; }
@@ -31,7 +30,6 @@ public sealed class WatchSpaceAnime
     public DateTime AddedAtUtc { get; private set; }
 
     public IReadOnlyList<ParticipantEntry> ParticipantEntries => _participantEntries.AsReadOnly();
-    public IReadOnlyList<WatchSession> WatchSessions => _watchSessions.AsReadOnly();
 
     // Required by EF Core
     private WatchSpaceAnime() { }
@@ -147,28 +145,6 @@ public sealed class WatchSpaceAnime
         }
 
         return entry;
-    }
-
-    /// <summary>
-    /// Records a new watch session for this anime.
-    /// Returns the created <see cref="WatchSession"/>.
-    /// </summary>
-    public WatchSession RecordWatchSession(
-        DateTime sessionDateUtc,
-        int startEpisode,
-        int endEpisode,
-        string? notes,
-        Guid createdByUserId)
-    {
-        if (startEpisode < 1)
-            throw new InvalidWatchSessionException("Start episode must be at least 1.");
-
-        if (endEpisode < startEpisode)
-            throw new InvalidWatchSessionException("End episode must be greater than or equal to start episode.");
-
-        var session = new WatchSession(Id, sessionDateUtc, startEpisode, endEpisode, notes, createdByUserId);
-        _watchSessions.Add(session);
-        return session;
     }
 
     /// <summary>

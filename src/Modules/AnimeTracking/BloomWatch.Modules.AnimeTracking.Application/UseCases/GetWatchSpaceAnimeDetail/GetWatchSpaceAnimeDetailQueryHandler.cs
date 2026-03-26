@@ -53,13 +53,6 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandler(
                 p.EpisodesWatched,
                 p.RatingScore,
                 p.RatingNotes,
-                p.LastUpdatedAtUtc)).ToList(),
-            anime.WatchSessions.Select(s => new WatchSessionDetail(
-                s.Id,
-                s.SessionDateUtc,
-                s.StartEpisode,
-                s.EndEpisode,
-                s.Notes,
-                s.CreatedByUserId)).ToList());
+                p.LastUpdatedAtUtc)).ToList());
     }
 }

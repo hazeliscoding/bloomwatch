@@ -3,7 +3,6 @@ using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
-using BloomWatch.Modules.AnimeTracking.Application.UseCases.RecordWatchSession;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRating;
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
@@ -30,7 +29,6 @@ public static class AnimeTrackingEndpoints
     ///   <item><description>Shared status: update the group's collective tracking state (status, episodes, mood/vibe/pitch).</description></item>
     ///   <item><description>Individual progress: each member tracks their own status and episode count independently.</description></item>
     ///   <item><description>Ratings: each member submits a personal score and optional notes.</description></item>
-    ///   <item><description>Watch sessions: log when and which episodes the group watched together.</description></item>
     /// </list>
     /// </remarks>
     /// <param name="app">The endpoint route builder to add the AnimeTracking routes to.</param>
@@ -55,7 +53,7 @@ public static class AnimeTrackingEndpoints
             .WithSummary("Get full detail for a single anime in a watch space")
             .WithDescription(
                 "Returns the full aggregate for a single tracked anime including all participant entries " +
-                "(with ratings) and watch session history. The caller must be a member of the watch space.")
+                "(with ratings). The caller must be a member of the watch space.")
             .Produces<GetWatchSpaceAnimeDetailResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound);
@@ -105,17 +103,6 @@ public static class AnimeTrackingEndpoints
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status409Conflict);
-
-        group.MapPost("/{watchSpaceAnimeId:guid}/sessions", RecordWatchSessionAsync)
-            .WithName("RecordWatchSession")
-            .WithSummary("Record a watch session for an anime in a watch space")
-            .WithDescription(
-                "Creates a new watch session with an episode range and date for an anime " +
-                "in the specified watch space. The caller must be a member of the watch space.")
-            .Produces<RecordWatchSessionResult>(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status403Forbidden)
-            .Produces(StatusCodes.Status404NotFound);
 
         return app;
     }
@@ -356,52 +343,6 @@ public static class AnimeTrackingEndpoints
             return result is null
                 ? Results.NotFound(new { error = "Anime not found in this watch space." })
                 : Results.Ok(result);
-        }
-        catch (NotAWatchSpaceMemberException)
-        {
-            return Results.Forbid();
-        }
-        catch (AnimeTrackingDomainException ex)
-        {
-            return Results.BadRequest(new { error = ex.Message });
-        }
-    }
-
-    /// <summary>
-    /// Handles recording a new watch session (date, episode range, optional notes) for an anime.
-    /// </summary>
-    /// <returns>
-    /// A 201 Created result with the new session record, a 400 Bad Request if validation fails,
-    /// a 404 Not Found if the anime is not tracked, or a 403 Forbidden if the caller is not a member.
-    /// </returns>
-    private static async Task<IResult> RecordWatchSessionAsync(
-        Guid watchSpaceId,
-        Guid watchSpaceAnimeId,
-        [FromBody] RecordWatchSessionRequest request,
-        ClaimsPrincipal user,
-        RecordWatchSessionCommandHandler handler,
-        CancellationToken ct)
-    {
-        var userId = GetUserId(user);
-
-        try
-        {
-            var result = await handler.HandleAsync(
-                new RecordWatchSessionCommand(
-                    watchSpaceId,
-                    watchSpaceAnimeId,
-                    userId,
-                    request.SessionDateUtc,
-                    request.StartEpisode,
-                    request.EndEpisode,
-                    request.Notes),
-                ct);
-
-            return result is null
-                ? Results.NotFound(new { error = "Anime not found in this watch space." })
-                : Results.Created(
-                    $"/watchspaces/{watchSpaceId}/anime/{watchSpaceAnimeId}/sessions/{result.Id}",
-                    result);
         }
         catch (NotAWatchSpaceMemberException)
         {

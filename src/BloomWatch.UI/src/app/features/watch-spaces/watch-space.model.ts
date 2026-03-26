@@ -120,15 +120,6 @@ export interface ParticipantDetail {
   lastUpdatedAtUtc: string;
 }
 
-export interface WatchSessionDetail {
-  watchSessionId: string;
-  sessionDateUtc: string;
-  startEpisode: number;
-  endEpisode: number;
-  notes: string | null;
-  createdByUserId: string;
-}
-
 export interface WatchSpaceAnimeDetail {
   watchSpaceAnimeId: string;
   anilistMediaId: number;
@@ -146,7 +137,6 @@ export interface WatchSpaceAnimeDetail {
   addedByUserId: string;
   addedAtUtc: string;
   participants: ParticipantDetail[];
-  watchSessions: WatchSessionDetail[];
   genres?: string[];
   anilistScore?: number | null;
   anilistPopularity?: number | null;
@@ -166,13 +156,6 @@ export interface UpdateParticipantProgressRequest {
 export interface UpdateParticipantRatingRequest {
   ratingScore: number;
   ratingNotes?: string | null;
-}
-
-export interface RecordWatchSessionRequest {
-  sessionDateUtc: string;
-  startEpisode: number;
-  endEpisode: number;
-  notes?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -257,8 +240,6 @@ export interface SharedStatsResult {
   totalEpisodesWatchedTogether: number;
   totalFinished: number;
   totalDropped: number;
-  totalWatchSessions: number;
-  mostRecentSessionDate: string | null;
 }
 
 export interface RandomPickResult {

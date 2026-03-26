@@ -43,24 +43,6 @@ const mockDetail: WatchSpaceAnimeDetail = {
       lastUpdatedAtUtc: '2026-03-02T00:00:00Z',
     },
   ],
-  watchSessions: [
-    {
-      watchSessionId: 'sess-1',
-      sessionDateUtc: '2026-03-15T00:00:00Z',
-      startEpisode: 10,
-      endEpisode: 12,
-      notes: 'Great episodes!',
-      createdByUserId: currentUserId,
-    },
-    {
-      watchSessionId: 'sess-2',
-      sessionDateUtc: '2026-03-10T00:00:00Z',
-      startEpisode: 7,
-      endEpisode: 9,
-      notes: null,
-      createdByUserId: 'user-2',
-    },
-  ],
 };
 
 const mockWatchSpaceDetail = {
@@ -260,29 +242,6 @@ describe('AnimeDetail', () => {
     expect(noRating[0]?.textContent).toContain('No rating');
   });
 
-  // ---- Watch Sessions ----
-
-  it('should display watch sessions in descending order', () => {
-    flushDetailAndMembers();
-    const dates = fixture.nativeElement.querySelectorAll('.anime-detail__session-date');
-    expect(dates.length).toBe(2);
-    // Most recent first
-    expect(dates[0]?.textContent).toContain('Mar');
-  });
-
-  it('should display session episode ranges', () => {
-    flushDetailAndMembers();
-    const eps = fixture.nativeElement.querySelectorAll('.anime-detail__session-eps');
-    expect(eps[0]?.textContent).toContain('10');
-    expect(eps[0]?.textContent).toContain('12');
-  });
-
-  it('should show empty state when no sessions', () => {
-    flushDetailAndMembers({ ...mockDetail, watchSessions: [] });
-    const empty = fixture.nativeElement.querySelector('.anime-detail__empty');
-    expect(empty?.textContent).toContain('No watch sessions recorded yet');
-  });
-
   // ---- Back Navigation ----
 
   it('should have a back navigation button', () => {
@@ -367,34 +326,6 @@ describe('AnimeDetail', () => {
 
     component.ratingNotes = 'x'.repeat(1000);
     expect(component.isValidRating()).toBe(true);
-  });
-
-  // ---- Session Form ----
-
-  it('should toggle session form on click', () => {
-    flushDetailAndMembers();
-    const toggle = fixture.nativeElement.querySelectorAll('.anime-detail__action-toggle')[2];
-    toggle.click();
-    fixture.detectChanges();
-
-    const dateInput = fixture.nativeElement.querySelector('#session-date');
-    expect(dateInput).toBeTruthy();
-  });
-
-  it('should validate session episode range', () => {
-    flushDetailAndMembers();
-    component.sessionDate = '2026-03-20';
-    component.sessionStartEp = 0;
-    component.sessionEndEp = 1;
-    expect(component.isValidSession()).toBe(false);
-
-    component.sessionStartEp = 5;
-    component.sessionEndEp = 3;
-    expect(component.isValidSession()).toBe(false);
-
-    component.sessionStartEp = 3;
-    component.sessionEndEp = 5;
-    expect(component.isValidSession()).toBe(true);
   });
 
   // ---- Prefill Forms ----

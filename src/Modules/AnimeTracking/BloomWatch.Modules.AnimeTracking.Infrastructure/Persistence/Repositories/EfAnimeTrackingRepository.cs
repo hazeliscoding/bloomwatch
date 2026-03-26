@@ -23,7 +23,6 @@ internal sealed class EfAnimeTrackingRepository(AnimeTrackingDbContext dbContext
         Guid watchSpaceId, WatchSpaceAnimeId id, CancellationToken cancellationToken = default)
         => dbContext.WatchSpaceAnimes
             .Include(a => a.ParticipantEntries)
-            .Include(a => a.WatchSessions)
             .FirstOrDefaultAsync(
                 a => a.WatchSpaceId == watchSpaceId && a.Id == id,
                 cancellationToken);

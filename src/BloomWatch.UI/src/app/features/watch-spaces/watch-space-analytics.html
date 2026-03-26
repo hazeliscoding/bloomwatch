@@ -74,20 +74,6 @@
             <div class="analytics__stat-value analytics__stat-value--neutral">{{ stats.totalDropped }}</div>
             <div class="analytics__stat-label">Shows dropped</div>
           </div>
-          <div class="analytics__stat-item">
-            <div class="analytics__stat-value analytics__stat-value--lime">{{ stats.totalWatchSessions }}</div>
-            <div class="analytics__stat-label">Watch sessions</div>
-          </div>
-        </div>
-        <div class="analytics__recent-session">
-          <span class="analytics__breakdown-label">Most Recent Session</span>
-          <span class="analytics__breakdown-value">
-            @if (stats.mostRecentSessionDate) {
-              {{ stats.mostRecentSessionDate | date:'mediumDate' }}
-            } @else {
-              No sessions yet
-            }
-          </span>
         </div>
       }
     </bloom-card>

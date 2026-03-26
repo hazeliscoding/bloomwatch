@@ -87,10 +87,12 @@ describe('BloomBacklogPickerComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
 
     expect(el.querySelector('.picker__title')?.textContent).toContain('Spy x Family');
-    expect(el.querySelector('.picker__episodes')?.textContent).toContain('25 episodes');
-    expect(el.querySelector('.picker__badge--mood')?.textContent).toContain('Cozy');
-    expect(el.querySelector('.picker__badge--vibe')?.textContent).toContain('Weekend binge');
-    expect(el.querySelector('.picker__pitch')?.textContent).toContain('A found family story');
+    expect(el.querySelector('.picker__meta')?.textContent).toContain('25 episodes');
+
+    const badges = el.querySelectorAll('bloom-badge');
+    const badgeTexts = Array.from(badges).map((b) => b.textContent?.trim());
+    expect(badgeTexts).toContain('Mood: Cozy');
+    expect(badgeTexts).toContain('Vibe: Weekend binge');
 
     const img = el.querySelector('.picker__cover img') as HTMLImageElement;
     expect(img?.src).toContain('spy.jpg');
@@ -101,9 +103,7 @@ describe('BloomBacklogPickerComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
 
     expect(el.querySelector('.picker__title')?.textContent).toContain('Mystery Show');
-    expect(el.querySelector('.picker__badge--mood')).toBeNull();
-    expect(el.querySelector('.picker__badge--vibe')).toBeNull();
-    expect(el.querySelector('.picker__pitch')).toBeNull();
+    expect(el.querySelectorAll('bloom-badge').length).toBe(0);
     expect(el.querySelector('.picker__cover-placeholder')).toBeTruthy();
   });
 
@@ -113,14 +113,14 @@ describe('BloomBacklogPickerComponent', () => {
 
     expect(el.querySelector('.picker__empty-message')?.textContent).toContain('Your backlog is empty');
     expect(el.querySelector('.picker__card')).toBeNull();
-    expect(el.querySelector('.picker__btn--reroll')).toBeNull();
+    expect(el.querySelector('.bloom-btn--secondary')).toBeNull();
   });
 
   it('should reroll on button click', () => {
     flushPick(FULL_PICK);
     const el: HTMLElement = fixture.nativeElement;
 
-    const rerollBtn = el.querySelector('.picker__btn--reroll') as HTMLButtonElement;
+    const rerollBtn = el.querySelector('.bloom-btn--secondary') as HTMLButtonElement;
     rerollBtn.click();
     fixture.detectChanges();
 
@@ -135,7 +135,7 @@ describe('BloomBacklogPickerComponent', () => {
     flushPick(FULL_PICK);
     const el: HTMLElement = fixture.nativeElement;
 
-    const viewBtn = el.querySelector('.picker__btn--view') as HTMLButtonElement;
+    const viewBtn = el.querySelector('.bloom-btn--ghost') as HTMLButtonElement;
     viewBtn.click();
     fixture.detectChanges();
 
@@ -158,6 +158,6 @@ describe('BloomBacklogPickerComponent', () => {
     flushPick(noPick);
     const el: HTMLElement = fixture.nativeElement;
 
-    expect(el.querySelector('.picker__episodes')).toBeNull();
+    expect(el.querySelector('.picker__meta')).toBeNull();
   });
 });

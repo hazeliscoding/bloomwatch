@@ -19,8 +19,7 @@ public sealed record GetWatchSpaceAnimeDetailResult(
     string? Pitch,
     Guid AddedByUserId,
     DateTime AddedAtUtc,
-    IReadOnlyList<ParticipantDetail> Participants,
-    IReadOnlyList<WatchSessionDetail> WatchSessions);
+    IReadOnlyList<ParticipantDetail> Participants);
 
 /// <summary>
 /// Full participant entry including ratings.
@@ -32,14 +31,3 @@ public sealed record ParticipantDetail(
     decimal? RatingScore,
     string? RatingNotes,
     DateTime LastUpdatedAtUtc);
-
-/// <summary>
-/// A single watch session record.
-/// </summary>
-public sealed record WatchSessionDetail(
-    Guid WatchSessionId,
-    DateTime SessionDateUtc,
-    int StartEpisode,
-    int EndEpisode,
-    string? Notes,
-    Guid CreatedByUserId);

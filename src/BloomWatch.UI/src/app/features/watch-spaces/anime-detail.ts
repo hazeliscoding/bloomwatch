@@ -14,7 +14,6 @@ import {
   MemberDetail,
   ParticipantDetail,
   WatchSpaceAnimeDetail,
-  WatchSessionDetail,
 } from './watch-space.model';
 import { AuthService } from '../../core/auth/auth.service';
 
@@ -311,103 +310,6 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
           </div>
         }
       </div>
-
-      <!-- Watch Sessions -->
-      <div class="anime-detail__sessions-header">
-        <h2 class="anime-detail__section-heading bloom-font-display">Watch Sessions</h2>
-        <bloom-button variant="accent" size="sm" (clicked)="openSessionModal()">+ Log Session</bloom-button>
-      </div>
-      @if (sortedSessions().length === 0) {
-        <p class="anime-detail__empty">No watch sessions recorded yet</p>
-      } @else {
-        <div class="anime-detail__sessions">
-          @for (session of sortedSessions(); track session.watchSessionId) {
-            <div class="anime-detail__session-row">
-              <div class="anime-detail__session-left">
-                <span class="anime-detail__session-date">{{ session.sessionDateUtc | date:'mediumDate' }}</span>
-                <span class="anime-detail__session-author">Logged by {{ resolveDisplayName(session.createdByUserId) }}</span>
-              </div>
-              <div class="anime-detail__session-right">
-                <span class="anime-detail__session-eps">
-                  @if (session.startEpisode === session.endEpisode) {
-                    Episode {{ session.startEpisode }}
-                  } @else {
-                    Episodes {{ session.startEpisode }} &ndash; {{ session.endEpisode }}
-                  }
-                </span>
-                @if (session.notes) {
-                  <span class="anime-detail__session-notes">&ldquo;{{ session.notes }}&rdquo;</span>
-                }
-              </div>
-            </div>
-          }
-        </div>
-      }
-
-      <!-- Log Session Modal -->
-      <bloom-modal [open]="showSessionModal()" (closed)="closeSessionModal()" width="28rem">
-        <h3 bloomModalHeader class="bloom-font-display">Log Watch Session</h3>
-        <form class="anime-detail__modal-form" (ngSubmit)="submitSession()">
-          <div class="anime-detail__form-row">
-            <label class="anime-detail__form-label" for="session-date">Date <span class="anime-detail__required">*</span></label>
-            <input
-              id="session-date"
-              type="date"
-              class="anime-detail__date-input"
-              [(ngModel)]="sessionDate"
-              name="sessionDate"
-            />
-          </div>
-          <div class="anime-detail__form-row-inline">
-            <div class="anime-detail__form-row">
-              <label class="anime-detail__form-label" for="session-start">Start Episode <span class="anime-detail__required">*</span></label>
-              <input
-                id="session-start"
-                type="number"
-                class="anime-detail__number-input"
-                [(ngModel)]="sessionStartEp"
-                name="sessionStartEp"
-                min="1"
-              />
-            </div>
-            <div class="anime-detail__form-row">
-              <label class="anime-detail__form-label" for="session-end">End Episode <span class="anime-detail__required">*</span></label>
-              <input
-                id="session-end"
-                type="number"
-                class="anime-detail__number-input"
-                [(ngModel)]="sessionEndEp"
-                name="sessionEndEp"
-                min="1"
-              />
-            </div>
-          </div>
-          <div class="anime-detail__form-row">
-            <label class="anime-detail__form-label" for="session-notes">Notes <span class="anime-detail__optional">(optional)</span></label>
-            <input
-              id="session-notes"
-              type="text"
-              class="anime-detail__text-input"
-              [(ngModel)]="sessionNotes"
-              name="sessionNotes"
-              placeholder="What did you think?"
-            />
-          </div>
-          @if (sessionError()) {
-            <p class="anime-detail__form-error" role="alert">{{ sessionError() }}</p>
-          }
-        </form>
-        <div bloomModalFooter class="anime-detail__modal-footer">
-          <bloom-button variant="ghost" size="md" (clicked)="closeSessionModal()">Cancel</bloom-button>
-          <bloom-button
-            variant="primary"
-            size="md"
-            [loading]="isSubmittingSession()"
-            [disabled]="!isValidSession()"
-            (clicked)="submitSession()"
-          >Log Session</bloom-button>
-        </div>
-      </bloom-modal>
     }
   `,
 })
@@ -475,14 +377,6 @@ export class AnimeDetail implements OnInit, OnDestroy {
     return Math.min(100, (this.progressEpisodes / a.episodeCountSnapshot) * 100);
   });
 
-  readonly sortedSessions = computed<WatchSessionDetail[]>(() => {
-    const a = this.anime();
-    if (!a) return [];
-    return [...a.watchSessions].sort(
-      (x, y) => new Date(y.sessionDateUtc).getTime() - new Date(x.sessionDateUtc).getTime(),
-    );
-  });
-
   // Progress form (inline in self card)
   progressStatus = 'Backlog';
   progressEpisodes = 0;
@@ -494,15 +388,6 @@ export class AnimeDetail implements OnInit, OnDestroy {
   ratingNotes = '';
   readonly isSubmittingRating = signal(false);
   readonly ratingError = signal('');
-
-  // Session modal
-  readonly showSessionModal = signal(false);
-  sessionDate = new Date().toISOString().split('T')[0];
-  sessionStartEp = 1;
-  sessionEndEp = 1;
-  sessionNotes = '';
-  readonly isSubmittingSession = signal(false);
-  readonly sessionError = signal('');
 
   ngOnInit(): void {
     this.watchSpaceId = this.route.snapshot.paramMap.get('id') ?? '';
@@ -710,51 +595,6 @@ export class AnimeDetail implements OnInit, OnDestroy {
         error: () => {
           this.isSubmittingRating.set(false);
           this.ratingError.set('Failed to submit rating. Please try again.');
-        },
-      });
-  }
-
-  // --- Session modal ---
-
-  openSessionModal(): void {
-    this.showSessionModal.set(true);
-  }
-
-  closeSessionModal(): void {
-    this.showSessionModal.set(false);
-    this.sessionError.set('');
-  }
-
-  isValidSession(): boolean {
-    return (
-      !!this.sessionDate &&
-      this.sessionStartEp >= 1 &&
-      this.sessionEndEp >= this.sessionStartEp
-    );
-  }
-
-  submitSession(): void {
-    if (!this.isValidSession()) return;
-    this.isSubmittingSession.set(true);
-    this.sessionError.set('');
-
-    this.watchSpaceService
-      .recordWatchSession(this.watchSpaceId, this.animeId, {
-        sessionDateUtc: new Date(this.sessionDate).toISOString(),
-        startEpisode: this.sessionStartEp,
-        endEpisode: this.sessionEndEp,
-        notes: this.sessionNotes || null,
-      })
-      .subscribe({
-        next: () => {
-          this.isSubmittingSession.set(false);
-          this.showSessionModal.set(false);
-          this.sessionNotes = '';
-          this.refreshDetail();
-        },
-        error: () => {
-          this.isSubmittingSession.set(false);
-          this.sessionError.set('Failed to record session. Please try again.');
         },
       });
   }

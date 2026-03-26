@@ -166,7 +166,7 @@ describe('WatchSpaceService', () => {
 
   describe('getAnimeDetail', () => {
     it('should send GET /watchspaces/{id}/anime/{animeId}', () => {
-      const detail = { watchSpaceAnimeId: 'a1', preferredTitle: 'Cowboy Bebop', participants: [], watchSessions: [] };
+      const detail = { watchSpaceAnimeId: 'a1', preferredTitle: 'Cowboy Bebop', participants: [] };
 
       service.getAnimeDetail('space-1', 'a1').subscribe((res) => {
         expect(res.watchSpaceAnimeId).toBe('a1');
@@ -205,21 +205,6 @@ describe('WatchSpaceService', () => {
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual({ ratingScore: 8.5, ratingNotes: 'Great' });
       req.flush(result);
-    });
-  });
-
-  describe('recordWatchSession', () => {
-    it('should send POST /watchspaces/{id}/anime/{animeId}/sessions', () => {
-      const body = { sessionDateUtc: '2026-03-20T00:00:00Z', startEpisode: 1, endEpisode: 3, notes: 'Fun!' };
-
-      service.recordWatchSession('space-1', 'a1', body).subscribe((res) => {
-        expect(res.watchSessionId).toBe('sess-new');
-      });
-
-      const req = httpTesting.expectOne((r) => r.url.endsWith('/watchspaces/space-1/anime/a1/sessions'));
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(body);
-      req.flush({ watchSessionId: 'sess-new' });
     });
   });
 
@@ -387,8 +372,6 @@ describe('WatchSpaceService', () => {
         totalEpisodesWatchedTogether: 184,
         totalFinished: 11,
         totalDropped: 1,
-        totalWatchSessions: 23,
-        mostRecentSessionDate: '2026-03-15T00:00:00Z',
       };
 
       service.getSharedStats('space-1').subscribe((res) => {

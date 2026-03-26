@@ -63,16 +63,12 @@ const fullStats: SharedStatsResult = {
   totalEpisodesWatchedTogether: 184,
   totalFinished: 11,
   totalDropped: 1,
-  totalWatchSessions: 23,
-  mostRecentSessionDate: '2026-03-15T00:00:00Z',
 };
 
 const emptyStats: SharedStatsResult = {
   totalEpisodesWatchedTogether: 0,
   totalFinished: 0,
   totalDropped: 0,
-  totalWatchSessions: 0,
-  mostRecentSessionDate: null,
 };
 
 // ---------------------------------------------------------------------------
@@ -205,22 +201,10 @@ describe('WatchSpaceAnalytics', () => {
     flushAll();
 
     const statValues = fixture.nativeElement.querySelectorAll('.analytics__stat-value');
-    expect(statValues.length).toBe(4);
+    expect(statValues.length).toBe(3);
     expect(statValues[0].textContent.trim()).toBe('184');
     expect(statValues[1].textContent.trim()).toBe('11');
     expect(statValues[2].textContent.trim()).toBe('1');
-    expect(statValues[3].textContent.trim()).toBe('23');
-
-    const recentSession = fixture.nativeElement.querySelector('.analytics__recent-session');
-    expect(recentSession?.textContent).toContain('Mar');
-    expect(recentSession?.textContent).toContain('2026');
-  });
-
-  it('should show "No sessions yet" when mostRecentSessionDate is null', () => {
-    flushAll(fullCompat, fullGaps, emptyStats);
-
-    const recentSession = fixture.nativeElement.querySelector('.analytics__recent-session');
-    expect(recentSession?.textContent).toContain('No sessions yet');
   });
 
   // ---- Rating Gaps Section ----
@@ -282,7 +266,7 @@ describe('WatchSpaceAnalytics', () => {
 
     // Other sections should still render
     const statValues = fixture.nativeElement.querySelectorAll('.analytics__stat-value');
-    expect(statValues.length).toBe(4);
+    expect(statValues.length).toBe(3);
   });
 
   it('should show stats error when stats endpoint fails', () => {

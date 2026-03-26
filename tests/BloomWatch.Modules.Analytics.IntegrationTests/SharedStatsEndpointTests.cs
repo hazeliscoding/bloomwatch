@@ -95,11 +95,6 @@ public sealed class SharedStatsEndpointTests : IClassFixture<AnalyticsWebAppFact
         var anime3 = await AddAnimeToSpaceAsync(spaceId, TestMediaId3, "Watching Anime");
         await UpdateSharedStatusAsync(spaceId, anime3, "Watching", 10);
 
-        // Seed watch sessions
-        _factory.SeedWatchSession(anime1, new DateTime(2026, 1, 10, 18, 0, 0, DateTimeKind.Utc));
-        _factory.SeedWatchSession(anime1, new DateTime(2026, 2, 15, 20, 0, 0, DateTimeKind.Utc));
-        _factory.SeedWatchSession(anime3, new DateTime(2026, 3, 1, 19, 0, 0, DateTimeKind.Utc));
-
         var response = await _client.GetAsync($"/watchspaces/{spaceId}/analytics/shared-stats");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -108,8 +103,6 @@ public sealed class SharedStatsEndpointTests : IClassFixture<AnalyticsWebAppFact
         body.GetProperty("totalEpisodesWatchedTogether").GetInt32().Should().Be(39); // 24+5+10
         body.GetProperty("totalFinished").GetInt32().Should().Be(1);
         body.GetProperty("totalDropped").GetInt32().Should().Be(1);
-        body.GetProperty("totalWatchSessions").GetInt32().Should().Be(3);
-        body.GetProperty("mostRecentSessionDate").GetString().Should().Contain("2026-03-01");
     }
 
     [Fact]
@@ -126,8 +119,6 @@ public sealed class SharedStatsEndpointTests : IClassFixture<AnalyticsWebAppFact
         body.GetProperty("totalEpisodesWatchedTogether").GetInt32().Should().Be(0);
         body.GetProperty("totalFinished").GetInt32().Should().Be(0);
         body.GetProperty("totalDropped").GetInt32().Should().Be(0);
-        body.GetProperty("totalWatchSessions").GetInt32().Should().Be(0);
-        body.GetProperty("mostRecentSessionDate").ValueKind.Should().Be(JsonValueKind.Null);
     }
 
     [Fact]

@@ -11,7 +11,6 @@ public sealed class AnimeTrackingReadDbContext(
 {
     public DbSet<AnimeRow> Anime => Set<AnimeRow>();
     public DbSet<ParticipantRow> Participants => Set<ParticipantRow>();
-    public DbSet<WatchSessionRow> WatchSessions => Set<WatchSessionRow>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,15 +45,6 @@ public sealed class AnimeTrackingReadDbContext(
             entity.Property(p => p.UserId).HasColumnName("user_id");
             entity.Property(p => p.RatingScore).HasColumnName("rating_score");
         });
-
-        modelBuilder.Entity<WatchSessionRow>(entity =>
-        {
-            entity.ToTable("watch_sessions", "anime_tracking");
-            entity.HasKey(s => s.Id);
-            entity.Property(s => s.Id).HasColumnName("id");
-            entity.Property(s => s.WatchSpaceAnimeId).HasColumnName("watch_space_anime_id");
-            entity.Property(s => s.SessionDateUtc).HasColumnName("session_date_utc");
-        });
     }
 }
 
@@ -81,11 +71,4 @@ public sealed class ParticipantRow
     public Guid WatchSpaceAnimeId { get; set; }
     public Guid UserId { get; set; }
     public decimal? RatingScore { get; set; }
-}
-
-public sealed class WatchSessionRow
-{
-    public Guid Id { get; set; }
-    public Guid WatchSpaceAnimeId { get; set; }
-    public DateTime SessionDateUtc { get; set; }
 }

@@ -39,17 +39,11 @@ public sealed class SharedStatsQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(animeList);
 
-        var mostRecentDate = new DateTime(2026, 3, 15, 20, 0, 0, DateTimeKind.Utc);
-        _dataSource.GetWatchSessionAggregateAsync(watchSpaceId, Arg.Any<CancellationToken>())
-            .Returns((7, mostRecentDate));
-
         var result = await _handler.HandleAsync(new GetSharedStatsQuery(watchSpaceId, userId));
 
         result.TotalEpisodesWatchedTogether.Should().Be(51); // 24+12+10+5+0
         result.TotalFinished.Should().Be(2);
         result.TotalDropped.Should().Be(1);
-        result.TotalWatchSessions.Should().Be(7);
-        result.MostRecentSessionDate.Should().Be(mostRecentDate);
     }
 
     [Fact]
@@ -64,16 +58,11 @@ public sealed class SharedStatsQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(new List<WatchSpaceAnimeData>());
 
-        _dataSource.GetWatchSessionAggregateAsync(watchSpaceId, Arg.Any<CancellationToken>())
-            .Returns((0, (DateTime?)null));
-
         var result = await _handler.HandleAsync(new GetSharedStatsQuery(watchSpaceId, userId));
 
         result.TotalEpisodesWatchedTogether.Should().Be(0);
         result.TotalFinished.Should().Be(0);
         result.TotalDropped.Should().Be(0);
-        result.TotalWatchSessions.Should().Be(0);
-        result.MostRecentSessionDate.Should().BeNull();
     }
 
     [Fact]

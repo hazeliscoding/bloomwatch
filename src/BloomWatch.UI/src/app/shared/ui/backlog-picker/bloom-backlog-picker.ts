@@ -1,10 +1,13 @@
 import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { RandomPickAnimeResult, RandomPickResult } from '../../../features/watch-spaces/watch-space.model';
 import { WatchSpaceService } from '../../../features/watch-spaces/watch-space.service';
+import { BloomBadgeComponent } from '../badge/bloom-badge';
+import { BloomButtonComponent } from '../button/bloom-button';
 
 @Component({
   selector: 'bloom-backlog-picker',
   standalone: true,
+  imports: [BloomBadgeComponent, BloomButtonComponent],
   styleUrl: './bloom-backlog-picker.scss',
   template: `
     @if (loading()) {
@@ -26,28 +29,25 @@ import { WatchSpaceService } from '../../../features/watch-spaces/watch-space.se
           @if (p.coverImageUrlSnapshot) {
             <img [src]="p.coverImageUrlSnapshot" [alt]="p.preferredTitle" loading="lazy" />
           } @else {
-            <div class="picker__cover-placeholder">&#127912;</div>
+            <div class="picker__cover-placeholder">&#127916;</div>
           }
         </div>
         <div class="picker__info">
-          <h3 class="picker__title">{{ p.preferredTitle }}</h3>
+          <h4 class="picker__title">{{ p.preferredTitle }}</h4>
           @if (p.episodeCountSnapshot) {
-            <p class="picker__episodes">{{ p.episodeCountSnapshot }} episodes</p>
+            <p class="picker__meta">{{ p.episodeCountSnapshot }} episodes</p>
           }
           <div class="picker__badges">
             @if (p.mood) {
-              <span class="picker__badge picker__badge--mood">{{ p.mood }}</span>
+              <bloom-badge color="lilac" size="sm">Mood: {{ p.mood }}</bloom-badge>
             }
             @if (p.vibe) {
-              <span class="picker__badge picker__badge--vibe">{{ p.vibe }}</span>
+              <bloom-badge color="blue" size="sm">Vibe: {{ p.vibe }}</bloom-badge>
             }
           </div>
-          @if (p.pitch) {
-            <p class="picker__pitch">{{ p.pitch }}</p>
-          }
           <div class="picker__actions">
-            <button class="picker__btn picker__btn--view" (click)="onViewDetails()">View Details</button>
-            <button class="picker__btn picker__btn--reroll" (click)="reroll()">Reroll</button>
+            <bloom-button variant="secondary" size="sm" (clicked)="reroll()">&#127922; Reroll</bloom-button>
+            <bloom-button variant="ghost" size="sm" (clicked)="onViewDetails()">View Details &rarr;</bloom-button>
           </div>
         </div>
       </div>

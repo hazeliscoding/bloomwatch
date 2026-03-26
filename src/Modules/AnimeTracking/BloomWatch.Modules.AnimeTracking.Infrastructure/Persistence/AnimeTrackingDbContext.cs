@@ -17,6 +17,5 @@ public sealed class AnimeTrackingDbContext(DbContextOptions<AnimeTrackingDbConte
         modelBuilder.HasDefaultSchema("anime_tracking");
         modelBuilder.ApplyConfiguration(new WatchSpaceAnimeConfiguration());
         modelBuilder.ApplyConfiguration(new ParticipantEntryConfiguration());
-        modelBuilder.ApplyConfiguration(new WatchSessionConfiguration());
     }
 }

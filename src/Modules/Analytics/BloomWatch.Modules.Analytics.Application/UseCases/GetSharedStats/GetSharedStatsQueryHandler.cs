@@ -26,14 +26,9 @@ public sealed class GetSharedStatsQueryHandler(
         var totalDropped = allAnime.Count(a =>
             a.SharedStatus.Equals("Dropped", StringComparison.OrdinalIgnoreCase));
 
-        var (sessionCount, mostRecentDate) = await dataSource.GetWatchSessionAggregateAsync(
-            query.WatchSpaceId, cancellationToken);
-
         return new SharedStatsResult(
             totalEpisodes,
             totalFinished,
-            totalDropped,
-            sessionCount,
-            mostRecentDate);
+            totalDropped);
     }
 }

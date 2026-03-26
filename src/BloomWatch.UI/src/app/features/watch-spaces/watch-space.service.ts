@@ -15,7 +15,6 @@ import {
   ParticipantDetail,
   RandomPickResult,
   RatingGapsResult,
-  RecordWatchSessionRequest,
   SharedStatsResult,
   UpdateParticipantProgressRequest,
   UpdateParticipantRatingRequest,
@@ -117,10 +116,6 @@ export class WatchSpaceService {
 
   updateParticipantRating(spaceId: string, animeId: string, body: UpdateParticipantRatingRequest): Observable<ParticipantDetail> {
     return this.api.patch<ParticipantDetail>(`/watchspaces/${spaceId}/anime/${animeId}/participant-rating`, body);
-  }
-
-  recordWatchSession(spaceId: string, animeId: string, body: RecordWatchSessionRequest): Observable<{ watchSessionId: string }> {
-    return this.api.post<{ watchSessionId: string }>(`/watchspaces/${spaceId}/anime/${animeId}/sessions`, body);
   }
 
   getDashboard(spaceId: string): Observable<DashboardSummary> {

@@ -62,7 +62,6 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandlerTests
         result.Participants[0].EpisodesWatched.Should().Be(0);
         result.Participants[0].RatingScore.Should().BeNull();
         result.Participants[0].RatingNotes.Should().BeNull();
-        result.WatchSessions.Should().BeEmpty();
     }
 
     [Fact]
