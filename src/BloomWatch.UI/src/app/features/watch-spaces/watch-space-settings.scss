@@ -1,0 +1,290 @@
+@use '../../shared/styles/tokens' as *;
+
+// ============================================================================
+// Watch Space Settings
+// ============================================================================
+
+.ws-settings {
+  max-width: var(--bloom-container-xl);
+  margin: 0 auto;
+  padding: var(--bloom-space-8);
+}
+
+.ws-settings__loading {
+  text-align: center;
+  padding: var(--bloom-space-16) var(--bloom-space-4);
+  color: var(--bloom-text-secondary);
+}
+
+.ws-settings__error {
+  text-align: center;
+  padding: var(--bloom-space-12) var(--bloom-space-4);
+  color: var(--bloom-error-dark);
+}
+
+.ws-settings__back-link {
+  display: inline-block;
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-primary);
+  text-decoration: none;
+  margin-bottom: var(--bloom-space-6);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Panel & Card
+// --------------------------------------------------------------------------
+
+.ws-settings__panel {
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.ws-settings__title {
+  font-size: var(--bloom-text-xl);
+  font-weight: var(--bloom-font-bold);
+  color: var(--bloom-text-primary);
+  margin: 0;
+  padding-top: var(--bloom-space-2);
+}
+
+.ws-settings__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bloom-space-6);
+}
+
+// --------------------------------------------------------------------------
+// Section Headings
+// --------------------------------------------------------------------------
+
+.ws-settings__section-title {
+  font-family: var(--bloom-font-family-display);
+  font-size: var(--bloom-text-xs);
+  font-weight: var(--bloom-font-bold);
+  color: var(--bloom-text-tertiary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0 0 var(--bloom-space-3);
+}
+
+// --------------------------------------------------------------------------
+// Inline Edit (Space Name)
+// --------------------------------------------------------------------------
+
+.ws-settings__inline-edit {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-2);
+  padding: var(--bloom-space-2) var(--bloom-space-4);
+  border: 1px dashed var(--bloom-border-default);
+  border-radius: 16px;
+  font-family: var(--bloom-font-family-display);
+  font-size: 1.125rem;
+  font-weight: var(--bloom-font-bold);
+  color: var(--bloom-text-primary);
+}
+
+.ws-settings__edit-icon {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  color: var(--bloom-text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+
+  &:hover {
+    color: var(--bloom-primary);
+  }
+}
+
+.ws-settings__hint {
+  display: block;
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-text-tertiary);
+  margin-top: var(--bloom-space-1);
+}
+
+// --------------------------------------------------------------------------
+// Rename Form
+// --------------------------------------------------------------------------
+
+.ws-settings__rename-form {
+  max-width: 100%;
+}
+
+.ws-settings__rename-actions {
+  display: flex;
+  gap: var(--bloom-space-2);
+  margin-top: var(--bloom-space-3);
+}
+
+.ws-settings__save-error {
+  color: var(--bloom-error-dark);
+  font-size: var(--bloom-text-sm);
+  margin: var(--bloom-space-2) 0 0;
+}
+
+// --------------------------------------------------------------------------
+// Members
+// --------------------------------------------------------------------------
+
+.ws-settings__member-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bloom-space-3);
+}
+
+.ws-settings__member-row {
+  display: flex;
+  align-items: center;
+  gap: var(--bloom-space-3);
+  padding: var(--bloom-space-3) var(--bloom-space-4);
+  border: 1px solid var(--bloom-border-default);
+  border-radius: 16px;
+  background: var(--bloom-surface-base);
+}
+
+.ws-settings__member-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ws-settings__member-name {
+  font-family: var(--bloom-font-family-display);
+  font-weight: var(--bloom-font-semibold);
+  font-size: 0.9375rem;
+  color: var(--bloom-text-primary);
+}
+
+.ws-settings__member-date {
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-text-tertiary);
+}
+
+.ws-settings__member-actions {
+  display: flex;
+  gap: 0.375rem;
+}
+
+// --------------------------------------------------------------------------
+// Invite Form
+// --------------------------------------------------------------------------
+
+.ws-settings__invite-row {
+  display: flex;
+  gap: var(--bloom-space-2);
+  align-items: flex-end;
+
+  bloom-input {
+    flex: 1;
+  }
+}
+
+.ws-settings__invite-error {
+  color: var(--bloom-error-dark);
+  font-size: var(--bloom-text-sm);
+  margin: var(--bloom-space-2) 0 0;
+}
+
+.ws-settings__invite-success {
+  color: var(--bloom-success-dark);
+  font-size: var(--bloom-text-sm);
+  margin: var(--bloom-space-2) 0 0;
+}
+
+// --------------------------------------------------------------------------
+// Pending Invitations
+// --------------------------------------------------------------------------
+
+.ws-settings__pending-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bloom-space-3);
+}
+
+.ws-settings__pending-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem var(--bloom-space-4);
+  border: 1px solid var(--bloom-border-default);
+  border-radius: 16px;
+}
+
+.ws-settings__pending-email {
+  font-weight: var(--bloom-font-semibold);
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-text-primary);
+}
+
+.ws-settings__pending-dates {
+  font-size: var(--bloom-text-xs);
+  color: var(--bloom-text-tertiary);
+}
+
+// --------------------------------------------------------------------------
+// Danger Zone
+// --------------------------------------------------------------------------
+
+.ws-settings__danger-zone {
+  border: 1px solid #fecaca;
+  background: var(--bloom-error-bg);
+  border-radius: 16px;
+  padding: var(--bloom-space-4);
+
+  p {
+    font-size: var(--bloom-text-sm);
+    color: var(--bloom-error-dark);
+    margin: 0 0 var(--bloom-space-4);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Action Error
+// --------------------------------------------------------------------------
+
+.ws-settings__action-error {
+  background: var(--bloom-error-bg);
+  border: 1px solid var(--bloom-error-light);
+  border-radius: var(--bloom-radius-md);
+  padding: var(--bloom-space-3) var(--bloom-space-4);
+  color: var(--bloom-error-dark);
+  font-size: var(--bloom-text-sm);
+
+  p { margin: 0; }
+}
+
+// --------------------------------------------------------------------------
+// Mobile
+// --------------------------------------------------------------------------
+
+@include bp-mobile-only {
+  .ws-settings {
+    padding: var(--bloom-space-4);
+  }
+
+  .ws-settings__member-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ws-settings__member-actions {
+    margin-left: 0;
+  }
+
+  .ws-settings__invite-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ws-settings__pending-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--bloom-space-2);
+  }
+}
