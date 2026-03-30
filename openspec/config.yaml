@@ -1,20 +1,44 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Project: BloomWatch — shared anime tracking platform for pairs/small groups
+  Repo: https://github.com/hazeliscoding/bloomwatch
+  GitHub Project Board: https://github.com/users/hazeliscoding/projects/4
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Tech stack:
+  - Backend: .NET 10, ASP.NET Core Minimal APIs, EF Core 9, PostgreSQL
+  - Architecture: DDD modular monolith — 5 modules (Identity, WatchSpaces, AniListSync, AnimeTracking, Analytics)
+  - Each module: Domain / Application / Infrastructure / Contracts layers
+  - Cross-module reads: read-only DbContext in Infrastructure/CrossModule/ — no service calls across modules
+  - API endpoints: static Map*Endpoints() extension classes in src/BloomWatch.Api/Modules/<Name>/
+  - Frontend: Angular 21, standalone components, signals-based state, SCSS design tokens
+  - Design system: kawaii/Y2K, bloom-* component prefix, tokens in shared/styles/_tokens.scss
+  - Solution file: BloomWatch.slnx (not .sln)
+  - Tests: xUnit + FluentAssertions + NSubstitute; integration tests use SQLite in-memory
+
+  GitHub issue label taxonomy:
+  - Priority: P0:critical, P1:high, P2:medium, P3:low
+  - Area: area:api, area:frontend, area:infrastructure, area:ux, area:security, area:email,
+          area:observability, area:data-integrity, area:legal, area:tooling, area:growth
+  - Lifecycle: post-mvp
+  - MVP is complete (all 47 stories / 153 pts shipped). All open issues are post-MVP backlog.
+
+  Conventions:
+  - Conventional commits: feat, fix, docs, refactor, test, chore
+  - OpenSpec change folder names: YYYY-MM-DD-<kebab-slug>
+  - When proposing a change, check if a matching GitHub issue already exists (use `gh issue list`)
+    and reference it in the proposal (e.g. "Closes #N" or "Related: #N").
+  - When archiving a change, close or reference the linked GitHub issue if one exists.
+
+rules:
+  proposal:
+    - Include a "GitHub issue" line near the top referencing the related issue number if one exists, or note "No existing issue — create one with gh issue create".
+    - Include a "Non-goals" section to keep scope tight.
+    - Suggest appropriate area:* and P*: labels for a new issue if none exists.
+  tasks:
+    - Each task should be completable in a single focused session.
+    - Backend tasks must specify which module layer is affected (Domain / Application / Infrastructure / Api).
+    - Frontend tasks must specify the feature folder and whether a shared bloom-* component is involved.
+  design:
+    - Reference the UI/UX doctrine at docs/ui-ux-doctrine.md for component and token rules.
+    - Reference wireframes in docs/wireframes/ for layout guidance.
