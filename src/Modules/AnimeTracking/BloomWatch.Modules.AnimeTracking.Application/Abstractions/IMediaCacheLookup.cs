@@ -18,4 +18,16 @@ public sealed record MediaCacheSnapshot(
     string? CoverImageUrl,
     string? Format,
     string? Season,
-    int? SeasonYear);
+    int? SeasonYear,
+    IReadOnlyList<string>? Genres = null,
+    string? Description = null,
+    int? AverageScore = null,
+    int? Popularity = null,
+    IReadOnlyList<MediaCacheTagSnapshot>? Tags = null,
+    string? SiteUrl = null,
+    string? AiringStatus = null);
+
+/// <summary>
+/// A read-only snapshot of an AniList tag.
+/// </summary>
+public sealed record MediaCacheTagSnapshot(string Name, int Rank, bool IsMediaSpoiler);

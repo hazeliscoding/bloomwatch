@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
@@ -9,6 +10,7 @@ import { BloomBadgeComponent, BloomBadgeColor } from '../../shared/ui/badge/bloo
 import { BloomAvatarComponent } from '../../shared/ui/avatar/bloom-avatar';
 import { WatchSpaceService } from './watch-space.service';
 import {
+  AnimeTag,
   MemberDetail,
   ParticipantDetail,
   WatchSpaceAnimeDetail,
@@ -23,6 +25,22 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
   Finished: 'green',
   Paused: 'yellow',
   Dropped: 'neutral',
+};
+
+const AIRING_STATUS_COLORS: Record<string, BloomBadgeColor> = {
+  RELEASING: 'green',
+  FINISHED: 'neutral',
+  NOT_YET_RELEASED: 'blue',
+  CANCELLED: 'yellow',
+  HIATUS: 'yellow',
+};
+
+const AIRING_STATUS_LABELS: Record<string, string> = {
+  RELEASING: 'Airing',
+  FINISHED: 'Finished Airing',
+  NOT_YET_RELEASED: 'Not Yet Aired',
+  CANCELLED: 'Cancelled',
+  HIATUS: 'On Hiatus',
 };
 
 @Component({
@@ -83,7 +101,16 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
           </div>
           <div class="anime-detail__hero-info">
             <h1 class="anime-detail__title bloom-font-display">{{ anime()!.preferredTitle }}</h1>
-            <div class="anime-detail__meta-line">{{ metaLine() }}</div>
+            <div class="anime-detail__meta-line">
+              {{ metaLine() }}
+              @if (anime()!.airingStatus) {
+                <bloom-badge
+                  [color]="airingStatusColor(anime()!.airingStatus!)"
+                  size="sm"
+                  class="anime-detail__airing-badge"
+                >{{ airingStatusLabel(anime()!.airingStatus!) }}</bloom-badge>
+              }
+            </div>
             @if (anime()!.genres && anime()!.genres!.length > 0) {
               <div class="anime-detail__genres">
                 @for (genre of anime()!.genres!; track genre) {
@@ -92,15 +119,40 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
               </div>
             }
             <div class="anime-detail__anilist-stats">
-              @if (anime()!.anilistScore != null) {
-                <span>AniList Score: <strong>{{ anime()!.anilistScore }}</strong></span>
+              @if (anime()!.averageScore != null) {
+                <span>AniList Score: <strong>{{ anime()!.averageScore }}</strong></span>
               }
-              @if (anime()!.anilistPopularity != null) {
-                <span>Popularity: <strong>#{{ anime()!.anilistPopularity }}</strong></span>
+              @if (anime()!.popularity != null) {
+                <span>Popularity: <strong>#{{ anime()!.popularity }}</strong></span>
               }
             </div>
+            @if (displayTags().length > 0) {
+              <div class="anime-detail__tags">
+                @for (tag of displayTags(); track tag.name) {
+                  @if (tag.isMediaSpoiler) {
+                    <bloom-badge
+                      color="neutral"
+                      size="sm"
+                      class="anime-detail__tag"
+                      [class.anime-detail__tag--spoiler]="!revealedSpoilers().has(tag.name)"
+                      [class.anime-detail__tag--revealed]="revealedSpoilers().has(tag.name)"
+                      (click)="revealSpoilerTag(tag.name)"
+                      [attr.role]="revealedSpoilers().has(tag.name) ? undefined : 'button'"
+                      [attr.aria-label]="revealedSpoilers().has(tag.name) ? undefined : 'Reveal spoiler tag'"
+                    >{{ tag.name }}</bloom-badge>
+                  } @else {
+                    <bloom-badge color="neutral" size="sm" class="anime-detail__tag">{{ tag.name }}</bloom-badge>
+                  }
+                }
+              </div>
+            }
             @if (anime()!.description) {
-              <p class="anime-detail__description">{{ anime()!.description }}</p>
+              <div class="anime-detail__description" [innerHTML]="sanitizedDescription()"></div>
+            }
+            @if (anilistUrl()) {
+              <a class="anime-detail__anilist-link" [href]="anilistUrl()" target="_blank" rel="noopener noreferrer">
+                View on AniList &rarr;
+              </a>
             }
           </div>
         </section>
@@ -314,6 +366,7 @@ export class AnimeDetail implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly watchSpaceService = inject(WatchSpaceService);
   private readonly authService = inject(AuthService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly statusOptions = STATUS_OPTIONS;
   private readonly GENRE_BADGE_COLORS: BloomBadgeColor[] = ['lilac', 'blue', 'pink', 'green', 'yellow', 'neutral'];
@@ -374,6 +427,27 @@ export class AnimeDetail implements OnInit, OnDestroy {
     const a = this.anime();
     if (!a || !a.episodeCountSnapshot || a.episodeCountSnapshot === 0) return 0;
     return Math.min(100, (this.progressEpisodes / a.episodeCountSnapshot) * 100);
+  });
+
+  readonly revealedSpoilers = signal<Set<string>>(new Set());
+
+  readonly displayTags = computed<AnimeTag[]>(() => {
+    const a = this.anime();
+    if (!a?.tags) return [];
+    return [...a.tags].sort((x, y) => y.rank - x.rank).slice(0, 15);
+  });
+
+  readonly sanitizedDescription = computed<SafeHtml>(() => {
+    const a = this.anime();
+    if (!a?.description) return '';
+    return this.sanitizer.bypassSecurityTrustHtml(a.description);
+  });
+
+  readonly anilistUrl = computed<string | null>(() => {
+    const a = this.anime();
+    if (!a) return null;
+    if (a.siteUrl) return a.siteUrl;
+    return `https://anilist.co/anime/${a.anilistMediaId}`;
   });
 
   // Progress form (inline in self card)
@@ -460,6 +534,21 @@ export class AnimeDetail implements OnInit, OnDestroy {
 
   genreBadgeColor(index: number): BloomBadgeColor {
     return this.GENRE_BADGE_COLORS[index % this.GENRE_BADGE_COLORS.length];
+  }
+
+  airingStatusColor(status: string): BloomBadgeColor {
+    return AIRING_STATUS_COLORS[status] ?? 'neutral';
+  }
+
+  airingStatusLabel(status: string): string {
+    return AIRING_STATUS_LABELS[status] ?? status;
+  }
+
+  revealSpoilerTag(tagName: string): void {
+    const current = this.revealedSpoilers();
+    const next = new Set(current);
+    next.add(tagName);
+    this.revealedSpoilers.set(next);
   }
 
   resolveDisplayName(userId: string): string {

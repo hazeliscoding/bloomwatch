@@ -19,7 +19,19 @@ public sealed record GetWatchSpaceAnimeDetailResult(
     string? Pitch,
     Guid AddedByUserId,
     DateTime AddedAtUtc,
-    IReadOnlyList<ParticipantDetail> Participants);
+    IReadOnlyList<ParticipantDetail> Participants,
+    IReadOnlyList<string>? Genres = null,
+    string? Description = null,
+    int? AverageScore = null,
+    int? Popularity = null,
+    IReadOnlyList<AnimeTagDetail>? Tags = null,
+    string? SiteUrl = null,
+    string? AiringStatus = null);
+
+/// <summary>
+/// Tag detail included in the anime detail response.
+/// </summary>
+public sealed record AnimeTagDetail(string Name, int Rank, bool IsMediaSpoiler);
 
 /// <summary>
 /// Full participant entry including ratings.

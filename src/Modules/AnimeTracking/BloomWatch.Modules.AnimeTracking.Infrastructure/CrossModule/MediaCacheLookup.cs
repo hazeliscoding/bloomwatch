@@ -26,6 +26,13 @@ internal sealed class MediaCacheLookup(AniListMediaCacheReadDbContext dbContext)
             CoverImageUrl: row.CoverImageUrl,
             Format: row.Format,
             Season: row.Season,
-            SeasonYear: row.SeasonYear);
+            SeasonYear: row.SeasonYear,
+            Genres: row.Genres,
+            Description: row.Description,
+            AverageScore: row.AverageScore,
+            Popularity: row.Popularity,
+            Tags: row.Tags?.Select(t => new MediaCacheTagSnapshot(t.Name, t.Rank, t.IsMediaSpoiler)).ToList(),
+            SiteUrl: row.SiteUrl,
+            AiringStatus: row.Status);
     }
 }

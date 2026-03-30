@@ -269,6 +269,92 @@ describe('AnimeDetail', () => {
     expect(notes?.textContent).toContain('Great show');
   });
 
+  // ---- Enriched Metadata ----
+
+  it('should display AniList score and popularity when present', () => {
+    flushDetailAndMembers({ ...mockDetail, averageScore: 86, popularity: 12345 });
+    const stats = fixture.nativeElement.querySelector('.anime-detail__anilist-stats');
+    expect(stats?.textContent).toContain('86');
+    expect(stats?.textContent).toContain('#12345');
+  });
+
+  it('should not display AniList stats when absent', () => {
+    flushDetailAndMembers({ ...mockDetail });
+    const stats = fixture.nativeElement.querySelector('.anime-detail__anilist-stats');
+    expect(stats?.textContent?.trim()).toBe('');
+  });
+
+  it('should display airing status badge when present', () => {
+    flushDetailAndMembers({ ...mockDetail, airingStatus: 'RELEASING' });
+    const badge = fixture.nativeElement.querySelector('.anime-detail__airing-badge');
+    expect(badge).toBeTruthy();
+    expect(badge?.textContent?.trim()).toContain('Airing');
+  });
+
+  it('should not display airing status badge when absent', () => {
+    flushDetailAndMembers({ ...mockDetail });
+    const badge = fixture.nativeElement.querySelector('.anime-detail__airing-badge');
+    expect(badge).toBeFalsy();
+  });
+
+  it('should display tags sorted by rank and limited to 15', () => {
+    const tags = Array.from({ length: 20 }, (_, i) => ({
+      name: `Tag ${i}`,
+      rank: i * 5,
+      isMediaSpoiler: false,
+    }));
+    flushDetailAndMembers({ ...mockDetail, tags });
+    const tagBadges = fixture.nativeElement.querySelectorAll('.anime-detail__tag');
+    expect(tagBadges.length).toBe(15);
+    // First tag should be the highest ranked
+    expect(tagBadges[0]?.textContent?.trim()).toBe('Tag 19');
+  });
+
+  it('should blur spoiler tags and reveal on click', () => {
+    const tags = [
+      { name: 'Action', rank: 90, isMediaSpoiler: false },
+      { name: 'Plot Twist', rank: 80, isMediaSpoiler: true },
+    ];
+    flushDetailAndMembers({ ...mockDetail, tags });
+
+    const spoilerTag = fixture.nativeElement.querySelector('.anime-detail__tag--spoiler');
+    expect(spoilerTag).toBeTruthy();
+    expect(spoilerTag?.textContent?.trim()).toBe('Plot Twist');
+
+    spoilerTag.click();
+    fixture.detectChanges();
+
+    const revealed = fixture.nativeElement.querySelector('.anime-detail__tag--revealed');
+    expect(revealed).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.anime-detail__tag--spoiler')).toBeFalsy();
+  });
+
+  it('should render description as HTML', () => {
+    flushDetailAndMembers({ ...mockDetail, description: 'A <b>great</b> show about <i>space</i>.' });
+    const desc = fixture.nativeElement.querySelector('.anime-detail__description');
+    expect(desc).toBeTruthy();
+    const bold = desc.querySelector('b');
+    expect(bold?.textContent).toBe('great');
+    const italic = desc.querySelector('i');
+    expect(italic?.textContent).toBe('space');
+  });
+
+  it('should display AniList external link with siteUrl', () => {
+    flushDetailAndMembers({ ...mockDetail, siteUrl: 'https://anilist.co/anime/1' });
+    const link = fixture.nativeElement.querySelector('.anime-detail__anilist-link') as HTMLAnchorElement;
+    expect(link).toBeTruthy();
+    expect(link.textContent).toContain('View on AniList');
+    expect(link.href).toBe('https://anilist.co/anime/1');
+    expect(link.target).toBe('_blank');
+  });
+
+  it('should construct fallback AniList link from anilistMediaId', () => {
+    flushDetailAndMembers({ ...mockDetail });
+    const link = fixture.nativeElement.querySelector('.anime-detail__anilist-link') as HTMLAnchorElement;
+    expect(link).toBeTruthy();
+    expect(link.href).toContain('/anime/1');
+  });
+
   // ---- Back Navigation ----
 
   it('should have a back navigation link', () => {

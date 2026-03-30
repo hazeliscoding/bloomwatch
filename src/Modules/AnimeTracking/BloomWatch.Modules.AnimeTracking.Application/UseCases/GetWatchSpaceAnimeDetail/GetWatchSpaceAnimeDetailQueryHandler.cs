@@ -11,7 +11,8 @@ namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAni
 /// </summary>
 public sealed class GetWatchSpaceAnimeDetailQueryHandler(
     IMembershipChecker membershipChecker,
-    IAnimeTrackingRepository repository)
+    IAnimeTrackingRepository repository,
+    IMediaCacheLookup mediaCacheLookup)
 {
     public async Task<GetWatchSpaceAnimeDetailResult?> HandleAsync(
         GetWatchSpaceAnimeDetailQuery query,
@@ -30,6 +31,9 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandler(
 
         if (anime is null)
             return null;
+
+        var mediaCache = await mediaCacheLookup.GetByAnilistMediaIdAsync(
+            anime.AniListMediaId, cancellationToken);
 
         return new GetWatchSpaceAnimeDetailResult(
             anime.Id.Value,
@@ -53,6 +57,13 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandler(
                 p.EpisodesWatched,
                 p.RatingScore,
                 p.RatingNotes,
-                p.LastUpdatedAtUtc)).ToList());
+                p.LastUpdatedAtUtc)).ToList(),
+            Genres: mediaCache?.Genres,
+            Description: mediaCache?.Description,
+            AverageScore: mediaCache?.AverageScore,
+            Popularity: mediaCache?.Popularity,
+            Tags: mediaCache?.Tags?.Select(t => new AnimeTagDetail(t.Name, t.Rank, t.IsMediaSpoiler)).ToList(),
+            SiteUrl: mediaCache?.SiteUrl,
+            AiringStatus: mediaCache?.AiringStatus);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace BloomWatch.Modules.AnimeTracking.Infrastructure.CrossModule;
@@ -26,6 +27,13 @@ public sealed class AniListMediaCacheReadDbContext(
             entity.Property(m => m.Format).HasColumnName("format");
             entity.Property(m => m.Season).HasColumnName("season");
             entity.Property(m => m.SeasonYear).HasColumnName("season_year");
+            entity.Property(m => m.Genres).HasColumnName("genres").HasColumnType("jsonb");
+            entity.Property(m => m.Description).HasColumnName("description");
+            entity.Property(m => m.AverageScore).HasColumnName("average_score");
+            entity.Property(m => m.Popularity).HasColumnName("popularity");
+            entity.Property(m => m.Tags).HasColumnName("tags").HasColumnType("jsonb");
+            entity.Property(m => m.SiteUrl).HasColumnName("site_url");
+            entity.Property(m => m.Status).HasColumnName("status");
         });
     }
 }
@@ -44,4 +52,21 @@ public sealed class MediaCacheRow
     public string? Format { get; set; }
     public string? Season { get; set; }
     public int? SeasonYear { get; set; }
+    public IReadOnlyList<string>? Genres { get; set; }
+    public string? Description { get; set; }
+    public int? AverageScore { get; set; }
+    public int? Popularity { get; set; }
+    public IReadOnlyList<MediaCacheTagRow>? Tags { get; set; }
+    public string? SiteUrl { get; set; }
+    public string? Status { get; set; }
+}
+
+/// <summary>
+/// Read-only projection of a tag from the media cache JSONB column.
+/// </summary>
+public sealed class MediaCacheTagRow
+{
+    public string Name { get; set; } = "";
+    public int Rank { get; set; }
+    public bool IsMediaSpoiler { get; set; }
 }

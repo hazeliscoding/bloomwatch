@@ -120,6 +120,12 @@ export interface ParticipantDetail {
   lastUpdatedAtUtc: string;
 }
 
+export interface AnimeTag {
+  name: string;
+  rank: number;
+  isMediaSpoiler: boolean;
+}
+
 export interface WatchSpaceAnimeDetail {
   watchSpaceAnimeId: string;
   anilistMediaId: number;
@@ -138,9 +144,12 @@ export interface WatchSpaceAnimeDetail {
   addedAtUtc: string;
   participants: ParticipantDetail[];
   genres?: string[];
-  anilistScore?: number | null;
-  anilistPopularity?: number | null;
   description?: string | null;
+  averageScore?: number | null;
+  popularity?: number | null;
+  tags?: AnimeTag[] | null;
+  siteUrl?: string | null;
+  airingStatus?: string | null;
 }
 
 export interface UpdateSharedAnimeRequest {
