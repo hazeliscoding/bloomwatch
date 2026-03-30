@@ -1,440 +1,103 @@
-# BloomWatch
+# 🌸 BloomWatch
 
-A shared anime tracking platform for pairs and small groups. BloomWatch lets friends maintain a joint backlog, log watch history, leave separate ratings, and surface compatibility analytics -- without relying on spreadsheets or Discord threads.
+> A shared anime tracking platform for pairs and small groups.
 
-## Tech Stack
+BloomWatch lets friends maintain a joint backlog, track watch progress, leave separate ratings, and discover how compatible their taste really is — no more spreadsheets or Discord threads.
 
-**Backend**
+## ✨ Features
 
-- .NET 10 / ASP.NET Core (Minimal APIs)
-- PostgreSQL -- one schema per module
-- Entity Framework Core 9 + Npgsql
-- JWT HS256 (1-hour expiry) + BCrypt password hashing (work factor 12)
-- OpenAPI + [Scalar](https://scalar.com/) interactive API docs
-- DDD-inspired modular monolith architecture
+- **Watch Spaces** — Create shared spaces for you and your watch partner(s)
+- **AniList Integration** — Search and add anime directly from AniList, with cached metadata
+- **Individual Progress** — Everyone tracks their own episodes and status independently
+- **Ratings & Reviews** — Personal 0.5–10 ratings with optional notes
+- **Compatibility Analytics** — See how your ratings align, find your biggest disagreements, and get random backlog picks
+- **Kawaii/Y2K Design** — A playful pastel design system with gel effects, light/dark themes, and custom components
 
-**Frontend**
+## 🛠 Tech Stack
 
-- Angular 21 with standalone components and signal-based APIs
-- SCSS design system with CSS custom property tokens
-- Kawaii/Y2K visual theme (Quicksand + Nunito typefaces, gel effects, pastel palette)
-- Vitest for unit testing
+| Layer | Tech |
+|-------|------|
+| **Backend** | .NET 10 · ASP.NET Core Minimal APIs · PostgreSQL · EF Core 9 · JWT auth |
+| **Frontend** | Angular 21 · SCSS design tokens · Vitest |
+| **Architecture** | DDD-inspired modular monolith (5 modules, one DB schema each) |
+| **Testing** | 446 automated tests (xUnit + Vitest) |
+| **API Docs** | OpenAPI + [Scalar](https://scalar.com/) interactive explorer at `/scalar/v1` |
 
-**Testing**
+## 🚀 Quick Start
 
-- xUnit, NSubstitute, FluentAssertions (backend)
-- 446 automated tests (177 backend across 10 xUnit projects + 269 frontend via Vitest)
+**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) · [Node.js 18+](https://nodejs.org/) · PostgreSQL
 
-## Project Structure
+```bash
+# 1. Clone and restore
+git clone <repo-url> && cd bloomwatch
+dotnet restore
+
+# 2. Configure the database (override if your setup differs)
+#    Default: Host=localhost;Database=bloomwatch;Username=postgres;Password=postgres
+export ConnectionStrings__DefaultConnection="Host=localhost;Database=bloomwatch;Username=youruser;Password=yourpass"
+
+# 3. Apply migrations and start the API
+./scripts/apply-migrations.sh
+dotnet run --project src/BloomWatch.Api
+# → http://localhost:5192  (API docs at /scalar/v1)
+
+# 4. Start the frontend
+cd src/BloomWatch.UI && npm install && npm start
+# → http://localhost:4200
+```
+
+## 🧪 Running Tests
+
+```bash
+dotnet test                          # All backend tests
+cd src/BloomWatch.UI && npm test     # Frontend tests
+```
+
+Backend integration tests use in-memory SQLite via `WebApplicationFactory` — no running database needed.
+
+## 📁 Project Structure
 
 ```
 src/
-├── BloomWatch.Api/                          # HTTP host -- entry point, middleware, endpoint registration
-├── BloomWatch.SharedKernel/                 # Shared abstractions used across modules
-├── BloomWatch.UI/                           # Angular 21 frontend application
-│   └── src/
-│       ├── app/
-│       │   ├── core/auth/guards/             # Auth and guest route guards
-│       │   ├── core/layout/                 # Shell layout (nav bar) and minimal layout (auth pages)
-│       │   ├── features/                    # Feature modules: landing, auth (register, login), dashboard, watch-spaces, settings, showcase
-│       │   └── shared/
-│       │       ├── styles/                  # Design tokens, base styles, animations, utilities
-│       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar, modal, compat-ring, backlog-picker)
-│       └── styles.scss                      # Global stylesheet
+├── BloomWatch.Api/              # HTTP host, endpoint registration, middleware
+├── BloomWatch.SharedKernel/     # Cross-cutting abstractions
+├── BloomWatch.UI/               # Angular frontend (features, shared UI, design system)
 └── Modules/
-    ├── Identity/
-    │   ├── BloomWatch.Modules.Identity.Domain/          # Aggregates, value objects, repository interfaces
-    │   ├── BloomWatch.Modules.Identity.Application/     # Use case handlers, service abstractions
-    │   ├── BloomWatch.Modules.Identity.Infrastructure/  # EF Core, BCrypt, JWT, migrations
-    │   └── BloomWatch.Modules.Identity.Contracts/       # Integration events for inter-module communication
-    ├── WatchSpaces/
-    │   ├── BloomWatch.Modules.WatchSpaces.Domain/          # WatchSpace aggregate, Invitation entity, member rules
-    │   ├── BloomWatch.Modules.WatchSpaces.Application/     # 13 use case handlers (create, invite, accept, leave, transfer, ...)
-    │   ├── BloomWatch.Modules.WatchSpaces.Infrastructure/  # EF Core, email lookup, migrations
-    │   └── BloomWatch.Modules.WatchSpaces.Contracts/       # Integration events for downstream modules
-    ├── AniListSync/
-    │   ├── BloomWatch.Modules.AniListSync.Domain/          # MediaCacheEntry entity, persistent caching
-    │   ├── BloomWatch.Modules.AniListSync.Application/     # Search + media detail query handlers
-    │   ├── BloomWatch.Modules.AniListSync.Infrastructure/  # AniList GraphQL client, EF Core + in-memory caching
-    │   └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
-    ├── AnimeTracking/
-    │   ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, ParticipantEntry entities
-    │   ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail, update status, update progress, rating use cases
-    │   ├── BloomWatch.Modules.AnimeTracking.Infrastructure/  # EF Core, cross-module adapters
-    │   └── BloomWatch.Modules.AnimeTracking.Contracts/       # (reserved for integration events)
-    └── Analytics/
-        ├── BloomWatch.Modules.Analytics.Domain/              # Compatibility score, rating gap computation
-        ├── BloomWatch.Modules.Analytics.Application/         # Dashboard summary query handler
-        ├── BloomWatch.Modules.Analytics.Infrastructure/      # EF Core, cross-module read-model queries
-        └── BloomWatch.Modules.Analytics.Contracts/           # (reserved for integration events)
+    ├── Identity/                # Registration, login, JWT, user profiles
+    ├── WatchSpaces/             # Watch space CRUD, invitations, membership
+    ├── AniListSync/             # AniList GraphQL proxy with persistent caching
+    ├── AnimeTracking/           # Anime lifecycle, progress, ratings per watch space
+    └── Analytics/               # Compatibility scores, rating gaps, shared stats
 
-tests/
-├── BloomWatch.Modules.Identity.UnitTests/              # Domain + use case unit tests
-├── BloomWatch.Modules.Identity.IntegrationTests/       # HTTP endpoint integration tests
-├── BloomWatch.Modules.WatchSpaces.UnitTests/           # Domain unit tests
-├── BloomWatch.Modules.WatchSpaces.IntegrationTests/    # HTTP endpoint integration tests
-├── BloomWatch.Modules.AniListSync.UnitTests/           # Handler + caching unit tests
-├── BloomWatch.Modules.AniListSync.IntegrationTests/    # HTTP endpoint integration tests
-├── BloomWatch.Modules.AnimeTracking.UnitTests/         # Domain + use case unit tests
-├── BloomWatch.Modules.AnimeTracking.IntegrationTests/  # HTTP endpoint integration tests
-├── BloomWatch.Modules.Analytics.UnitTests/             # Compatibility score + rating gap unit tests
-└── BloomWatch.Modules.Analytics.IntegrationTests/      # Dashboard endpoint integration tests
-
-docs/
-├── architecture.md     # Full system design, module breakdown, and planned feature phases
-├── ui-ux-doctrine.md   # Authoritative UI/UX design doctrine (kawaii/Y2K system, tokens, component patterns)
-├── user-stories.md     # Product user stories and completion tracking
-└── wireframes/         # HTML/CSS wireframes for all frontend stories
-
-openspec/               # Spec-driven change management (see below)
+tests/                           # Unit + integration tests per module (10 xUnit projects)
+docs/                            # Architecture, UI/UX doctrine, user stories, wireframes
+openspec/                        # Spec-driven change tracking (see below)
 ```
 
-## Prerequisites
+Each module follows a consistent DDD layering: **Domain → Application → Infrastructure → Contracts**.
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js 18+](https://nodejs.org/) and npm 10+ (for the Angular frontend)
-- PostgreSQL running locally (default: `localhost:5432`)
+## 🎨 Design System
 
-## Getting Started
+The frontend ships a custom `bloom-*` component library with a kawaii/Y2K aesthetic (Quicksand + Nunito typefaces, pastel palette, gel effects). Components include buttons, cards, inputs, badges, avatars, modals, a compatibility ring, and a backlog picker.
 
-### 1. Clone and restore dependencies
+Design tokens, animations, and utilities live in `src/BloomWatch.UI/src/app/shared/styles/`. See [`docs/ui-ux-doctrine.md`](docs/ui-ux-doctrine.md) for the full design system reference.
 
-```bash
-git clone <repo-url>
-cd bloomwatch
-dotnet restore
-```
+## 📐 Architecture
 
-### 2. Configure the database connection
+This is a **modular monolith** — five domain modules sharing a single deployment but separated by schema, bounded context, and clean cross-module contracts.
 
-The default connection string in `appsettings.json` targets a local PostgreSQL instance:
+See [`docs/architecture.md`](docs/architecture.md) for the full design doc covering module boundaries, database strategy, and planned feature phases.
+
+## 📝 OpenSpec Workflow
+
+BloomWatch uses a spec-driven change management workflow. Every feature is planned as a proposal with a design doc, feature specs, and a task checklist before implementation begins.
 
 ```
-Host=localhost;Database=bloomwatch;Username=postgres;Password=postgres
+propose → apply → archive
 ```
 
-Override it in `appsettings.Development.json` or via environment variable if your setup differs:
+Completed changes are archived in `openspec/changes/archive/`. Feature specs live in `openspec/specs/`.
 
-```bash
-export ConnectionStrings__DefaultConnection="Host=localhost;Database=bloomwatch;Username=youruser;Password=yourpass"
-```
+## 📜 License
 
-### 3. Apply migrations
-
-```bash
-./scripts/apply-migrations.sh
-```
-
-### 4. Run the API
-
-```bash
-dotnet run --project src/BloomWatch.Api
-```
-
-The API is available at `http://localhost:5192` (or `https://localhost:7073`).
-
-In development mode, interactive API documentation is served by Scalar at `/scalar/v1`.
-
-### 5. Run the frontend
-
-```bash
-cd src/BloomWatch.UI
-npm install
-npm start
-```
-
-The Angular dev server starts at `http://localhost:4200`.
-
-## API Endpoints
-
-### Interactive documentation
-
-When running in Development mode, visit `/scalar/v1` for a full interactive API reference powered by Scalar and the OpenAPI spec.
-
-### Identity
-
-```http
-POST /auth/register                                    # Create a new user account
-POST /auth/login                                       # Authenticate and receive a JWT
-GET  /users/me                                         # Get the authenticated user's profile
-```
-
-### WatchSpaces
-
-All WatchSpace endpoints require a valid JWT (`Authorization: Bearer <token>`).
-
-```http
-POST   /watchspaces                                      # Create a new watch space
-GET    /watchspaces                                      # List spaces you belong to
-GET    /watchspaces/{id}                                 # Get a single space (members only)
-PATCH  /watchspaces/{id}                                 # Rename a space (owner only)
-POST   /watchspaces/{id}/transfer-ownership              # Transfer ownership to a member
-
-POST   /watchspaces/{id}/invitations                     # Invite a user by email (owner only)
-GET    /watchspaces/{id}/invitations                     # List pending invitations (owner only)
-DELETE /watchspaces/{id}/invitations/{invitationId}      # Revoke an invitation (owner only)
-
-GET    /watchspaces/invitations/{token}                   # Preview an invitation (invitee only)
-POST   /watchspaces/invitations/{token}/accept           # Accept an invitation by token
-POST   /watchspaces/invitations/{token}/decline          # Decline an invitation by token
-
-DELETE /watchspaces/{id}/members/{userId}                # Remove a member (owner only)
-DELETE /watchspaces/{id}/members/me                      # Leave a space
-```
-
-### AniList
-
-Requires a valid JWT.
-
-```http
-GET /api/anilist/search?query=cowboy+bebop              # Search for anime via AniList (cached in-memory, 5 min)
-GET /api/anilist/media/{anilistMediaId}                  # Get full media detail (cached in PostgreSQL)
-```
-
-### AnimeTracking
-
-All AnimeTracking endpoints require a valid JWT and watch space membership.
-
-```http
-POST  /watchspaces/{id}/anime                                          # Add an anime by AniList media ID
-GET   /watchspaces/{id}/anime                                          # List anime in a watch space (optional ?status= filter)
-GET   /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Get full anime detail with participants
-PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Update shared status, progress, mood/vibe/pitch
-PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-progress  # Update caller's individual progress and status
-PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-rating    # Update caller's personal rating (0.5–10 scale)
-```
-
-### Analytics
-
-Requires a valid JWT and watch space membership.
-
-```http
-GET /watchspaces/{id}/dashboard                                        # Dashboard summary (stats, compatibility, highlights)
-GET /watchspaces/{id}/analytics/compatibility                          # Compatibility score between members
-GET /watchspaces/{id}/analytics/rating-gaps                            # Anime with largest rating divergences
-GET /watchspaces/{id}/analytics/shared-stats                           # Aggregate watch statistics
-GET /watchspaces/{id}/analytics/random-pick                            # Random backlog anime suggestion
-```
-
-A `.http` file (`src/BloomWatch.Api/BloomWatch.Api.http`) is included for quick manual testing in VS Code or Rider.
-
-## Frontend
-
-The Angular frontend lives in `src/BloomWatch.UI/` and provides the user-facing application shell.
-
-### Routing structure
-
-| Route | Layout | Description |
-|-------|--------|-------------|
-| `/` | Minimal | Landing page (public, no nav bar) |
-| `/login` | Minimal | Login page (no nav bar) |
-| `/register` | Minimal | Registration page (no nav bar) |
-| `/dashboard` | Shell | Dashboard |
-| `/watch-spaces` | Shell | Watch space list |
-| `/watch-spaces/invitations/:token` | Shell | Invitation accept/decline response page |
-| `/watch-spaces/:id` | Shell | Watch space dashboard (at-a-glance overview) |
-| `/watch-spaces/:id/manage` | Shell | Anime list and management |
-| `/watch-spaces/:id/settings` | Shell | Watch space settings (rename, members, ownership) |
-| `/watch-spaces/:id/analytics` | Shell | Full analytics (rating gaps, compatibility, shared stats) |
-| `/watch-spaces/:id/anime/:animeId` | Shell | Anime detail with progress, ratings, and metadata |
-| `/settings` | Shell | User settings |
-| `/showcase` | Shell | Component library showcase |
-
-### Bloom component library
-
-The frontend includes a custom component library under `src/app/shared/ui/`, built with the kawaii/Y2K design system. All components use the `bloom-` selector prefix and follow Angular standalone component patterns with signal-based inputs and outputs.
-
-| Component | Selector | Description |
-|-----------|----------|-------------|
-| Button | `bloom-button` | Primary, secondary, ghost, and danger variants with gel shine effects |
-| Card | `bloom-card` | Content container with multiple visual variants |
-| Input | `bloom-input` | Form input with label, validation states, and size options |
-| Badge | `bloom-badge` | Status and category badges with color options |
-| Avatar | `bloom-avatar` | User avatar with status indicators |
-| Theme Toggle | `bloom-theme-toggle` | Light/dark theme switcher |
-| Modal | `bloom-modal` | Dialog overlay with backdrop, focus trapping, and keyboard dismissal |
-| Compat Ring | `bloom-compat-ring` | SVG compatibility score ring with color-coded feedback |
-| Backlog Picker | `bloom-backlog-picker` | Random anime backlog picker with reroll and view actions |
-
-### Design system
-
-The design system is defined through SCSS partials in `src/app/shared/styles/`:
-
-- **`_tokens.scss`** -- CSS custom property design tokens (colors, typography, spacing, shadows, radii, animation timings)
-- **`_base.scss`** -- Global resets and base element styles
-- **`_animations.scss`** -- Keyframe animations (sparkle, float, bounce, shimmer, gel press effects)
-- **`_utilities.scss`** -- Utility classes for common patterns
-
-## Configuration
-
-All configuration lives in `appsettings.json`. The key sections:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "<postgres connection string>"
-  },
-  "Identity": {
-    "Jwt": {
-      "SecretKey": "<long random secret -- change before deploying>",
-      "Issuer": "BloomWatch",
-      "Audience": "BloomWatch"
-    }
-  }
-}
-```
-
-## Running Tests
-
-```bash
-# All backend tests
-dotnet test
-
-# By module
-dotnet test tests/BloomWatch.Modules.Identity.UnitTests
-dotnet test tests/BloomWatch.Modules.Identity.IntegrationTests
-dotnet test tests/BloomWatch.Modules.WatchSpaces.UnitTests
-dotnet test tests/BloomWatch.Modules.WatchSpaces.IntegrationTests
-dotnet test tests/BloomWatch.Modules.AniListSync.UnitTests
-dotnet test tests/BloomWatch.Modules.AniListSync.IntegrationTests
-dotnet test tests/BloomWatch.Modules.AnimeTracking.UnitTests
-dotnet test tests/BloomWatch.Modules.AnimeTracking.IntegrationTests
-dotnet test tests/BloomWatch.Modules.Analytics.UnitTests
-dotnet test tests/BloomWatch.Modules.Analytics.IntegrationTests
-
-# Frontend tests
-cd src/BloomWatch.UI && npm test
-```
-
-Backend integration tests use an in-memory SQLite database via `WebApplicationFactory` -- no running database required.
-
-## OpenSpec Workflow
-
-BloomWatch uses [OpenSpec](openspec/config.yaml) -- a spec-driven change management workflow -- to plan, document, and track every meaningful feature change before and during implementation.
-
-### How it works
-
-Each change moves through three stages:
-
-```
-propose -> apply -> archive
-```
-
-| Stage | What happens |
-|-------|-------------|
-| **propose** | A change is described with a proposal (why/what/impact), a design doc, feature specs, and a task list |
-| **apply** | Tasks are worked through one at a time, guided by the specs |
-| **archive** | The completed change is moved to `openspec/changes/archive/` for historical reference |
-
-### Directory layout
-
-```
-openspec/
-├── config.yaml                   # OpenSpec configuration
-├── specs/                        # Standalone feature specs (reusable across changes)
-│   ├── user-registration/
-│   ├── user-authentication/
-│   ├── user-profile/
-│   ├── auth-token-management/
-│   ├── watch-space-management/
-│   ├── watch-space-invitations/
-│   ├── watch-space-membership/
-│   ├── anilist-search/
-│   ├── anilist-media-detail/
-│   ├── add-anime-to-watch-space/
-│   ├── list-watch-space-anime/
-│   ├── watch-space-anime-detail/
-│   ├── angular-routing-shell/
-│   ├── http-client-setup/
-│   ├── auth-interceptor/
-│   ├── theme-switching/
-│   ├── landing-page/
-│   ├── registration-form/
-│   ├── login-form/
-│   ├── update-participant-progress/
-│   ├── update-shared-anime-status/
-│   ├── auth-route-guards/
-│   ├── submit-participant-rating/
-│   ├── record-watch-session/
-│   ├── dashboard-summary/
-│   ├── watch-space-selector/
-│   ├── compatibility-score/
-│   ├── rating-gaps/
-│   ├── shared-watch-stats/
-│   ├── random-backlog-pick/
-│   ├── watch-space-settings-panel/
-│   ├── invitation-send-form/
-│   ├── invitation-list-manage/
-│   ├── invitation-accept-decline/
-│   ├── bloom-modal/
-│   ├── anime-search-modal/
-│   ├── analytics-page/
-│   ├── anime-detail-view/
-│   ├── backlog-picker/
-│   ├── compat-ring-component/
-│   ├── inline-progress-controls/
-│   ├── shared-anime-list/
-│   └── watch-space-dashboard/
-└── changes/
-    └── archive/                  # Completed changes
-```
-
-### Completed changes
-
-| Change | Date | Summary |
-|--------|------|---------|
-| `scaffold-identity-module` | 2026-03-13 | User registration, JWT login, full Identity module (domain to API) |
-| `watchspaces-module` | 2026-03-13 | Watch space creation, email invitations, membership management |
-| `user-profile-endpoint` | 2026-03-13 | `GET /users/me` authenticated profile retrieval |
-| `anilist-search-proxy` | 2026-03-16 | `GET /api/anilist/search` with GraphQL proxy and in-memory caching |
-| `angular-project-setup-routing-shell` | 2026-03-16 | Angular 21 frontend scaffold, routing shell, kawaii/Y2K design system, component library |
-| `anilist-media-detail-backend` | 2026-03-16 | `GET /api/anilist/media/{id}` with persistent PostgreSQL caching |
-| `http-client-and-auth-interceptor` | 2026-03-16 | Angular HTTP client, API service, JWT auth interceptor |
-| `theme-system-light-dark-mode` | 2026-03-17 | Signal-based ThemeService with light/dark toggle and persistence |
-| `add-anime-to-watch-space` | 2026-03-17 | AnimeTracking module: add anime to watch space with media cache integration |
-| `landing-page` | 2026-03-17 | Landing page with hero section, feature cards, and CTAs |
-| `list-anime-in-watch-space-backend` | 2026-03-17 | `GET /watchspaces/{id}/anime` with status filter and participant summaries |
-| `registration-page-frontend` | 2026-03-17 | Registration form with validation, auto-login, and error handling |
-| `get-anime-detail-backend` | 2026-03-18 | `GET /watchspaces/{id}/anime/{animeId}` with full aggregate detail |
-| `login-page` | 2026-03-18 | Login form with validation and error handling |
-| `update-shared-anime-status-metadata` | 2026-03-18 | `PATCH /watchspaces/{id}/anime/{animeId}` shared status and metadata updates |
-| `update-participant-progress-status` | 2026-03-18 | `PATCH .../participant-progress` individual progress and status tracking |
-| `story-4-6-submit-update-personal-rating` | 2026-03-18 | `PATCH .../participant-rating` personal rating with 0.5–10 scale |
-| `record-watch-session-backend` | 2026-03-18 | `POST .../sessions` watch session recording *(later removed in sunset-watch-sessions)* |
-| `story-7-4-auth-route-guards` | 2026-03-18 | Angular auth and guest route guards with JWT expiry checks |
-| `story-5-1-watch-space-dashboard-summary` | 2026-03-18 | `GET /watchspaces/{id}/dashboard` analytics dashboard summary endpoint |
-| `story-5-2-compatibility-score-endpoint` | 2026-03-18 | `GET /watchspaces/{id}/analytics/compatibility` dedicated compatibility score endpoint |
-| `story-5-3-rating-gaps-endpoint` | 2026-03-19 | `GET /watchspaces/{id}/analytics/rating-gaps` full rating gaps list endpoint |
-| `shared-watch-stats-endpoint` | 2026-03-19 | `GET /watchspaces/{id}/analytics/shared-stats` aggregate watch statistics endpoint |
-| `random-backlog-picker-endpoint` | 2026-03-19 | `GET /watchspaces/{id}/analytics/random-pick` random backlog anime suggestion |
-| `watch-space-settings-panel` | 2026-03-19 | Watch space settings panel: rename, member list, remove members, transfer ownership |
-| `invitation-flow-send-and-manage` | 2026-03-19 | Invitation send/manage UI and accept/decline pages for invitees |
-| `anime-search-modal` | 2026-03-20 | Anime search modal with debounced AniList search and add-to-space flow |
-| `anime-detail-page` | 2026-03-20 | Anime detail page with metadata, progress tracking, and ratings |
-| `shared-anime-list-page` | 2026-03-20 | Status-filtered anime list view for watch space browsing |
-| `inline-progress-status-controls` | 2026-03-23 | Wired inline progress/status controls to backend PATCH endpoints |
-| `watch-space-dashboard-page` | 2026-03-24 | Watch space dashboard with activity overview and compatibility ring |
-| `analytics-page` | 2026-03-25 | Full analytics page with rating gaps, compatibility, and shared stats |
-| `compatibility-score-component` | 2026-03-25 | Extracted reusable `bloom-compat-ring` component from dashboard |
-| `random-backlog-picker` | 2026-03-26 | "Pick for me" widget for random backlog anime selection |
-| `sunset-watch-sessions` | 2026-03-26 | Removed watch sessions feature (redundant with per-participant progress) |
-
-### Working with OpenSpec
-
-The workflow is integrated with Claude Code via slash commands:
-
-```
-/opsx:propose   -- describe a new feature and generate proposal + specs + tasks
-/opsx:explore   -- think through requirements or investigate an existing change
-/opsx:apply     -- implement tasks from an active change
-/opsx:archive   -- finalize and archive a completed change
-```
-
-## Architecture
-
-See [`docs/architecture.md`](docs/architecture.md) for the full system design, including:
-
-- Modular monolith structure and module boundaries
-- DDD layer responsibilities (Domain / Application / Infrastructure / Contracts)
-- Database schema strategy (one PostgreSQL schema per module)
-- Planned feature phases (joint backlog, AniList integration, compatibility analytics)
+MIT
