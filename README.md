@@ -23,7 +23,7 @@ A shared anime tracking platform for pairs and small groups. BloomWatch lets fri
 **Testing**
 
 - xUnit, NSubstitute, FluentAssertions (backend)
-- 351 automated tests (214 backend across 10 xUnit projects + 137 frontend via Vitest)
+- 446 automated tests (177 backend across 10 xUnit projects + 269 frontend via Vitest)
 
 ## Project Structure
 
@@ -39,7 +39,7 @@ src/
 │       │   ├── features/                    # Feature modules: landing, auth (register, login), dashboard, watch-spaces, settings, showcase
 │       │   └── shared/
 │       │       ├── styles/                  # Design tokens, base styles, animations, utilities
-│       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar, modal)
+│       │       └── ui/                      # Bloom component library (button, card, input, badge, avatar, modal, compat-ring, backlog-picker)
 │       └── styles.scss                      # Global stylesheet
 └── Modules/
     ├── Identity/
@@ -49,7 +49,7 @@ src/
     │   └── BloomWatch.Modules.Identity.Contracts/       # Integration events for inter-module communication
     ├── WatchSpaces/
     │   ├── BloomWatch.Modules.WatchSpaces.Domain/          # WatchSpace aggregate, Invitation entity, member rules
-    │   ├── BloomWatch.Modules.WatchSpaces.Application/     # 12 use case handlers (create, invite, accept, leave, ...)
+    │   ├── BloomWatch.Modules.WatchSpaces.Application/     # 13 use case handlers (create, invite, accept, leave, transfer, ...)
     │   ├── BloomWatch.Modules.WatchSpaces.Infrastructure/  # EF Core, email lookup, migrations
     │   └── BloomWatch.Modules.WatchSpaces.Contracts/       # Integration events for downstream modules
     ├── AniListSync/
@@ -58,8 +58,8 @@ src/
     │   ├── BloomWatch.Modules.AniListSync.Infrastructure/  # AniList GraphQL client, EF Core + in-memory caching
     │   └── BloomWatch.Modules.AniListSync.Contracts/       # (reserved for integration events)
     ├── AnimeTracking/
-    │   ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, ParticipantEntry, WatchSession entities
-    │   ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail, update status, update progress use cases
+    │   ├── BloomWatch.Modules.AnimeTracking.Domain/          # WatchSpaceAnime aggregate, ParticipantEntry entities
+    │   ├── BloomWatch.Modules.AnimeTracking.Application/     # Add, list, detail, update status, update progress, rating use cases
     │   ├── BloomWatch.Modules.AnimeTracking.Infrastructure/  # EF Core, cross-module adapters
     │   └── BloomWatch.Modules.AnimeTracking.Contracts/       # (reserved for integration events)
     └── Analytics/
@@ -198,11 +198,10 @@ All AnimeTracking endpoints require a valid JWT and watch space membership.
 ```http
 POST  /watchspaces/{id}/anime                                          # Add an anime by AniList media ID
 GET   /watchspaces/{id}/anime                                          # List anime in a watch space (optional ?status= filter)
-GET   /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Get full anime detail with participants and sessions
+GET   /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Get full anime detail with participants
 PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}                      # Update shared status, progress, mood/vibe/pitch
 PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-progress  # Update caller's individual progress and status
 PATCH /watchspaces/{id}/anime/{watchSpaceAnimeId}/participant-rating    # Update caller's personal rating (0.5–10 scale)
-POST  /watchspaces/{id}/anime/{watchSpaceAnimeId}/sessions             # Record a watch session with episode range and date
 ```
 
 ### Analytics
@@ -231,8 +230,13 @@ The Angular frontend lives in `src/BloomWatch.UI/` and provides the user-facing 
 | `/login` | Minimal | Login page (no nav bar) |
 | `/register` | Minimal | Registration page (no nav bar) |
 | `/dashboard` | Shell | Dashboard |
-| `/watch-spaces` | Shell | Watch space list and detail views |
+| `/watch-spaces` | Shell | Watch space list |
 | `/watch-spaces/invitations/:token` | Shell | Invitation accept/decline response page |
+| `/watch-spaces/:id` | Shell | Watch space dashboard (at-a-glance overview) |
+| `/watch-spaces/:id/manage` | Shell | Anime list and management |
+| `/watch-spaces/:id/settings` | Shell | Watch space settings (rename, members, ownership) |
+| `/watch-spaces/:id/analytics` | Shell | Full analytics (rating gaps, compatibility, shared stats) |
+| `/watch-spaces/:id/anime/:animeId` | Shell | Anime detail with progress, ratings, and metadata |
 | `/settings` | Shell | User settings |
 | `/showcase` | Shell | Component library showcase |
 
@@ -247,9 +251,10 @@ The frontend includes a custom component library under `src/app/shared/ui/`, bui
 | Input | `bloom-input` | Form input with label, validation states, and size options |
 | Badge | `bloom-badge` | Status and category badges with color options |
 | Avatar | `bloom-avatar` | User avatar with status indicators |
-| Avatar Stack | `bloom-avatar-stack` | Overlapping avatar group display |
 | Theme Toggle | `bloom-theme-toggle` | Light/dark theme switcher |
 | Modal | `bloom-modal` | Dialog overlay with backdrop, focus trapping, and keyboard dismissal |
+| Compat Ring | `bloom-compat-ring` | SVG compatibility score ring with color-coded feedback |
+| Backlog Picker | `bloom-backlog-picker` | Random anime backlog picker with reroll and view actions |
 
 ### Design system
 
@@ -362,7 +367,14 @@ openspec/
 │   ├── invitation-list-manage/
 │   ├── invitation-accept-decline/
 │   ├── bloom-modal/
-│   └── anime-search-modal/
+│   ├── anime-search-modal/
+│   ├── analytics-page/
+│   ├── anime-detail-view/
+│   ├── backlog-picker/
+│   ├── compat-ring-component/
+│   ├── inline-progress-controls/
+│   ├── shared-anime-list/
+│   └── watch-space-dashboard/
 └── changes/
     └── archive/                  # Completed changes
 ```
@@ -388,7 +400,7 @@ openspec/
 | `update-shared-anime-status-metadata` | 2026-03-18 | `PATCH /watchspaces/{id}/anime/{animeId}` shared status and metadata updates |
 | `update-participant-progress-status` | 2026-03-18 | `PATCH .../participant-progress` individual progress and status tracking |
 | `story-4-6-submit-update-personal-rating` | 2026-03-18 | `PATCH .../participant-rating` personal rating with 0.5–10 scale |
-| `record-watch-session-backend` | 2026-03-18 | `POST .../sessions` watch session recording with episode ranges |
+| `record-watch-session-backend` | 2026-03-18 | `POST .../sessions` watch session recording *(later removed in sunset-watch-sessions)* |
 | `story-7-4-auth-route-guards` | 2026-03-18 | Angular auth and guest route guards with JWT expiry checks |
 | `story-5-1-watch-space-dashboard-summary` | 2026-03-18 | `GET /watchspaces/{id}/dashboard` analytics dashboard summary endpoint |
 | `story-5-2-compatibility-score-endpoint` | 2026-03-18 | `GET /watchspaces/{id}/analytics/compatibility` dedicated compatibility score endpoint |
@@ -398,6 +410,14 @@ openspec/
 | `watch-space-settings-panel` | 2026-03-19 | Watch space settings panel: rename, member list, remove members, transfer ownership |
 | `invitation-flow-send-and-manage` | 2026-03-19 | Invitation send/manage UI and accept/decline pages for invitees |
 | `anime-search-modal` | 2026-03-20 | Anime search modal with debounced AniList search and add-to-space flow |
+| `anime-detail-page` | 2026-03-20 | Anime detail page with metadata, progress tracking, and ratings |
+| `shared-anime-list-page` | 2026-03-20 | Status-filtered anime list view for watch space browsing |
+| `inline-progress-status-controls` | 2026-03-23 | Wired inline progress/status controls to backend PATCH endpoints |
+| `watch-space-dashboard-page` | 2026-03-24 | Watch space dashboard with activity overview and compatibility ring |
+| `analytics-page` | 2026-03-25 | Full analytics page with rating gaps, compatibility, and shared stats |
+| `compatibility-score-component` | 2026-03-25 | Extracted reusable `bloom-compat-ring` component from dashboard |
+| `random-backlog-picker` | 2026-03-26 | "Pick for me" widget for random backlog anime selection |
+| `sunset-watch-sessions` | 2026-03-26 | Removed watch sessions feature (redundant with per-participant progress) |
 
 ### Working with OpenSpec
 
