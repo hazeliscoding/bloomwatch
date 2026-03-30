@@ -1,0 +1,188 @@
+<main class="home">
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="home__loading" role="status" aria-label="Loading home overview">
+      <!-- Greeting skeleton -->
+      <div class="home__skeleton-greeting bloom-animate-shimmer"></div>
+
+      <!-- Stats skeleton -->
+      <div class="home__stats">
+        <div class="home__stat-card home__skeleton-stat bloom-animate-shimmer"></div>
+        <div class="home__stat-card home__skeleton-stat bloom-animate-shimmer"></div>
+        <div class="home__stat-card home__skeleton-stat bloom-animate-shimmer"></div>
+      </div>
+
+      <!-- Grid skeleton -->
+      <div class="home__skeleton-section-title bloom-animate-shimmer"></div>
+      <div class="home__grid">
+        <div class="home__skeleton-card bloom-animate-shimmer"></div>
+        <div class="home__skeleton-card bloom-animate-shimmer"></div>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!isLoading() && loadError()) {
+    <bloom-card [hoverable]="false">
+      <div class="home__error">
+        <span class="home__error-icon" aria-hidden="true">&#9888;</span>
+        <h2 class="home__error-heading">Something Went Wrong</h2>
+        <p class="home__error-text">We couldn't load your overview. Please try again.</p>
+        <bloom-button variant="secondary" (clicked)="retry()">Try Again</bloom-button>
+      </div>
+    </bloom-card>
+  }
+
+  <!-- Loaded with Data -->
+  @if (!isLoading() && !loadError() && data()) {
+
+    <!-- Greeting -->
+    <header class="home__greeting">
+      <h1 class="home__greeting-text">
+        Welcome back, <span class="home__greeting-name bloom-gradient-text">{{ data()!.displayName }}</span>
+      </h1>
+    </header>
+
+    <!-- Empty State (no watch spaces) -->
+    @if (data()!.watchSpaces.length === 0) {
+      <bloom-card [hoverable]="false">
+        <div class="home__empty">
+          <span class="home__empty-icon" aria-hidden="true">&#10047;</span>
+          <h2 class="home__empty-heading">Your anime journey starts here</h2>
+          <p class="home__empty-text">
+            Create your first Watch Space to start tracking anime with friends or your watch partner.
+          </p>
+          <bloom-button variant="primary" (clicked)="navigateToCreateWatchSpace()">
+            Create Your First Watch Space
+          </bloom-button>
+        </div>
+      </bloom-card>
+    }
+
+    <!-- Data Sections -->
+    @if (data()!.watchSpaces.length > 0) {
+
+      <!-- Stats Strip -->
+      <section class="home__stats" aria-label="Your stats">
+        <div class="home__stat-card">
+          <span class="home__stat-number home__stat-number--pink">{{ data()!.stats.watchSpaceCount }}</span>
+          <span class="home__stat-label">Watch Spaces</span>
+        </div>
+        <div class="home__stat-card">
+          <span class="home__stat-number home__stat-number--lilac">{{ data()!.stats.totalAnimeTracked }}</span>
+          <span class="home__stat-label">Anime Tracked</span>
+        </div>
+        <div class="home__stat-card">
+          <span class="home__stat-number home__stat-number--blue">{{ data()!.stats.totalEpisodesWatchedTogether }}</span>
+          <span class="home__stat-label">Episodes Together</span>
+        </div>
+      </section>
+
+      <!-- Watch Spaces Grid -->
+      <section class="home__section" aria-label="Your watch spaces">
+        <h2 class="home__section-title">Your Watch Spaces</h2>
+        <div class="home__grid">
+          @for (space of data()!.watchSpaces; track space.watchSpaceId) {
+            <bloom-card [hoverable]="true" [ariaLabel]="'Watch space: ' + space.name">
+              <div bloomCardHeader class="home__card-header">
+                <h3 class="home__card-name">{{ space.name }}</h3>
+                <bloom-badge [color]="roleBadgeColor(space.role)" size="sm">
+                  {{ space.role }}
+                </bloom-badge>
+              </div>
+
+              <div class="home__card-body">
+                @if (space.memberPreviews.length > 0) {
+                  <div class="home__card-members">
+                    <bloom-avatar-stack [ariaLabel]="space.memberCount + ' members'">
+                      @for (member of space.memberPreviews; track $index) {
+                        <bloom-avatar size="sm" [name]="member.displayName" />
+                      }
+                    </bloom-avatar-stack>
+                    <span class="home__card-member-count">{{ space.memberCount }} members</span>
+                  </div>
+                }
+                <div class="home__card-counts">
+                  <span class="home__card-count">
+                    <span class="home__card-count-number">{{ space.watchingCount }}</span> watching
+                  </span>
+                  <span class="home__card-count">
+                    <span class="home__card-count-number">{{ space.backlogCount }}</span> backlog
+                  </span>
+                </div>
+              </div>
+
+              <div bloomCardFooter class="home__card-footer">
+                <bloom-button
+                  variant="ghost"
+                  size="sm"
+                  (clicked)="navigateToWatchSpace(space.watchSpaceId)"
+                >
+                  Enter &rarr;
+                </bloom-button>
+              </div>
+            </bloom-card>
+          }
+        </div>
+      </section>
+
+      <!-- Recent Activity -->
+      @if (data()!.recentActivity.length > 0) {
+        <section class="home__section" aria-label="Recent activity">
+          <h2 class="home__section-title">Recent Activity</h2>
+          <div class="home__activity-list">
+            @for (activity of data()!.recentActivity; track activity.watchSpaceAnimeId) {
+              <button
+                class="home__activity-item"
+                type="button"
+                (click)="navigateToAnimeDetail(activity)"
+              >
+                <div class="home__activity-cover">
+                  @if (activity.coverImageUrl) {
+                    <img
+                      [src]="activity.coverImageUrl"
+                      [alt]="activity.preferredTitle + ' cover'"
+                      class="home__activity-img"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <div class="home__activity-placeholder" aria-hidden="true">&#127916;</div>
+                  }
+                </div>
+                <div class="home__activity-info">
+                  <span class="home__activity-title">{{ activity.preferredTitle }}</span>
+                  <span class="home__activity-space">{{ activity.watchSpaceName }}</span>
+                </div>
+                <div class="home__activity-meta">
+                  <bloom-badge [color]="statusBadgeColor(activity.sharedStatus)" size="sm">
+                    {{ activity.sharedStatus }}
+                  </bloom-badge>
+                  <span class="home__activity-time">{{ relativeTime(activity.lastUpdatedAt) }}</span>
+                </div>
+              </button>
+            }
+          </div>
+        </section>
+      }
+
+      @if (data()!.recentActivity.length === 0) {
+        <section class="home__section" aria-label="Recent activity">
+          <h2 class="home__section-title">Recent Activity</h2>
+          <p class="home__empty-section-text">No recent activity yet</p>
+        </section>
+      }
+
+      <!-- Quick Actions -->
+      <section class="home__actions" aria-label="Quick actions">
+        <bloom-button variant="primary" (clicked)="navigateToCreateWatchSpace()">
+          Create Watch Space
+        </bloom-button>
+        <bloom-button variant="secondary" (clicked)="navigateToBrowseAnime()">
+          Browse Anime
+        </bloom-button>
+      </section>
+    }
+  }
+
+</main>
