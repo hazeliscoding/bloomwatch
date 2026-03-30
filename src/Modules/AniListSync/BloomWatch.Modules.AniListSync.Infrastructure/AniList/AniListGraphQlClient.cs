@@ -3,6 +3,7 @@ using System.Text.Json;
 using BloomWatch.Modules.AniListSync.Application.Abstractions;
 using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
+using BloomWatch.Modules.AniListSync.Domain.Entities;
 
 namespace BloomWatch.Modules.AniListSync.Infrastructure.AniList;
 
@@ -61,6 +62,12 @@ internal sealed class AniListGraphQlClient : IAniListClient
             description
             averageScore
             popularity
+            tags {
+              name
+              rank
+              isMediaSpoiler
+            }
+            siteUrl
           }
         }
         """;
@@ -180,6 +187,11 @@ internal sealed class AniListGraphQlClient : IAniListClient
             Description: media.Description,
             AverageScore: media.AverageScore,
             Popularity: media.Popularity,
+            Tags: (media.Tags ?? [])
+                .Where(t => t.Name is not null)
+                .Select(t => new Domain.Entities.MediaTag(t.Name!, t.Rank, t.IsMediaSpoiler))
+                .ToList(),
+            SiteUrl: media.SiteUrl,
             CachedAt: default);
     }
 }

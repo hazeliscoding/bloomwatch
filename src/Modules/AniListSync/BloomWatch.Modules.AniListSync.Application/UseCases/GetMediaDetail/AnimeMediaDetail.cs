@@ -1,3 +1,5 @@
+using BloomWatch.Modules.AniListSync.Domain.Entities;
+
 namespace BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 /// <remarks>
 /// This is a superset of <see cref="SearchAnime.AnimeSearchResult"/>, adding
 /// <c>TitleNative</c>, <c>Description</c>, <c>AverageScore</c>, <c>Popularity</c>,
-/// and the <c>CachedAt</c> timestamp indicating data freshness.
+/// <c>Tags</c>, <c>SiteUrl</c>, and the <c>CachedAt</c> timestamp indicating data freshness.
 /// </remarks>
 public sealed record AnimeMediaDetail(
     int AnilistMediaId,
@@ -23,4 +25,6 @@ public sealed record AnimeMediaDetail(
     string? Description,
     int? AverageScore,
     int? Popularity,
+    IReadOnlyList<MediaTag> Tags,
+    string? SiteUrl,
     DateTime CachedAt);

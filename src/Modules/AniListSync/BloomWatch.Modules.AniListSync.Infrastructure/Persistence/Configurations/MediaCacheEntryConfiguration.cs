@@ -67,6 +67,14 @@ internal sealed class MediaCacheEntryConfiguration : IEntityTypeConfiguration<Me
         builder.Property(e => e.Popularity)
             .HasColumnName("popularity");
 
+        builder.Property(e => e.Tags)
+            .HasColumnName("tags")
+            .HasColumnType("jsonb");
+
+        builder.Property(e => e.SiteUrl)
+            .HasColumnName("site_url")
+            .HasMaxLength(2000);
+
         builder.Property(e => e.CachedAt)
             .HasColumnName("cached_at")
             .IsRequired();

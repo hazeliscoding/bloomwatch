@@ -74,6 +74,8 @@ public sealed class GetMediaDetailQueryHandler
                 fetched.Description,
                 fetched.AverageScore,
                 fetched.Popularity,
+                fetched.Tags,
+                fetched.SiteUrl,
                 now);
             await _cacheRepository.UpsertAsync(entry, cancellationToken);
         }
@@ -93,6 +95,8 @@ public sealed class GetMediaDetailQueryHandler
                 fetched.Description,
                 fetched.AverageScore,
                 fetched.Popularity,
+                fetched.Tags,
+                fetched.SiteUrl,
                 now);
             await _cacheRepository.UpsertAsync(cached, cancellationToken);
         }
@@ -119,5 +123,7 @@ public sealed class GetMediaDetailQueryHandler
             entry.Description,
             entry.AverageScore,
             entry.Popularity,
+            entry.Tags,
+            entry.SiteUrl,
             entry.CachedAt);
 }

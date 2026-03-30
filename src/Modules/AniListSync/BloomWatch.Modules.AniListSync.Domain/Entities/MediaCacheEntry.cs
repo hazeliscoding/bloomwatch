@@ -76,6 +76,16 @@ public sealed class MediaCacheEntry
     public int? Popularity { get; private set; }
 
     /// <summary>
+    /// Gets the list of tags associated with this media entry.
+    /// </summary>
+    public IReadOnlyList<MediaTag> Tags { get; private set; } = [];
+
+    /// <summary>
+    /// Gets the URL of the media's page on AniList, or <c>null</c> if unavailable.
+    /// </summary>
+    public string? SiteUrl { get; private set; }
+
+    /// <summary>
     /// Gets the UTC timestamp of when this entry was last fetched from AniList.
     /// </summary>
     public DateTime CachedAt { get; private set; }
@@ -101,6 +111,8 @@ public sealed class MediaCacheEntry
         string? description,
         int? averageScore,
         int? popularity,
+        IReadOnlyList<MediaTag> tags,
+        string? siteUrl,
         DateTime cachedAt)
     {
         return new MediaCacheEntry
@@ -119,6 +131,8 @@ public sealed class MediaCacheEntry
             Description = description,
             AverageScore = averageScore,
             Popularity = popularity,
+            Tags = tags,
+            SiteUrl = siteUrl,
             CachedAt = cachedAt
         };
     }
@@ -140,6 +154,8 @@ public sealed class MediaCacheEntry
         string? description,
         int? averageScore,
         int? popularity,
+        IReadOnlyList<MediaTag> tags,
+        string? siteUrl,
         DateTime cachedAt)
     {
         TitleRomaji = titleRomaji;
@@ -155,6 +171,8 @@ public sealed class MediaCacheEntry
         Description = description;
         AverageScore = averageScore;
         Popularity = popularity;
+        Tags = tags;
+        SiteUrl = siteUrl;
         CachedAt = cachedAt;
     }
 }
