@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, isDevMode, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ThemeService } from '../../theme/theme.service';
 import { BloomThemeToggleComponent } from '../../../shared/ui/theme-toggle/bloom-theme-toggle';
@@ -13,6 +13,7 @@ import { BloomThemeToggleComponent } from '../../../shared/ui/theme-toggle/bloom
 export class ShellLayout {
   private readonly themeService = inject(ThemeService);
   readonly mobileOpen = signal(false);
+  readonly isDev = isDevMode();
 
   toggleMobile(): void {
     this.mobileOpen.update((v) => !v);

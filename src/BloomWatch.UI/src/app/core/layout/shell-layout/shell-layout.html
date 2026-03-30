@@ -33,15 +33,14 @@
     >
       <li role="none">
         <a
-          routerLink="/"
+          routerLink="/home"
           routerLinkActive="shell-nav__link--active"
-          [routerLinkActiveOptions]="{ exact: true }"
           class="shell-nav__link"
           role="menuitem"
           (click)="closeMobile()"
         >
-          <span class="shell-nav__link-icon" aria-hidden="true">&#9733;</span>
-          Dashboard
+          <span class="shell-nav__link-icon" aria-hidden="true">&#8962;</span>
+          Home
         </a>
       </li>
       <li role="none">
@@ -68,18 +67,20 @@
           Settings
         </a>
       </li>
-      <li role="none">
-        <a
-          routerLink="/showcase"
-          routerLinkActive="shell-nav__link--active"
-          class="shell-nav__link"
-          role="menuitem"
-          (click)="closeMobile()"
-        >
-          <span class="shell-nav__link-icon" aria-hidden="true">&#127912;</span>
-          Showcase
-        </a>
-      </li>
+      @if (isDev) {
+        <li role="none">
+          <a
+            routerLink="/showcase"
+            routerLinkActive="shell-nav__link--active"
+            class="shell-nav__link"
+            role="menuitem"
+            (click)="closeMobile()"
+          >
+            <span class="shell-nav__link-icon" aria-hidden="true">&#127912;</span>
+            Showcase
+          </a>
+        </li>
+      }
     </ul>
   </div>
 </nav>
