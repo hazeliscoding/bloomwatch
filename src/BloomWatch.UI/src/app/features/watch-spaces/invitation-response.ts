@@ -26,6 +26,8 @@ export class InvitationResponse implements OnInit {
 
   private token = '';
 
+  private autoAction: 'accept' | 'decline' | null = null;
+
   ngOnInit(): void {
     this.token = this.route.snapshot.paramMap.get('token') ?? '';
     if (!this.token) {
@@ -33,6 +35,7 @@ export class InvitationResponse implements OnInit {
       this.errorMessage.set('No invitation token provided.');
       return;
     }
+    this.autoAction = this.route.snapshot.data['action'] ?? null;
     this.loadPreview();
   }
 
@@ -80,7 +83,13 @@ export class InvitationResponse implements OnInit {
           return;
         }
         this.preview.set(preview);
-        this.state.set('ready');
+        if (this.autoAction === 'accept') {
+          this.accept();
+        } else if (this.autoAction === 'decline') {
+          this.decline();
+        } else {
+          this.state.set('ready');
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.setErrorState(err.status);
