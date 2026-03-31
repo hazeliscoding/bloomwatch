@@ -23,6 +23,10 @@ public sealed class IdentityReadDbContext(
     }
 }
 
+/// <summary>
+/// Read-only projection of a row from the <c>identity.users</c> table,
+/// carrying only the fields needed for display name lookups.
+/// </summary>
 public sealed class IdentityUserRow
 {
     public Guid UserId { get; set; }

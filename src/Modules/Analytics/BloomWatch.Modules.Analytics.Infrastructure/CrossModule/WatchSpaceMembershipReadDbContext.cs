@@ -23,6 +23,10 @@ public sealed class WatchSpaceMembershipReadDbContext(
     }
 }
 
+/// <summary>
+/// Read-only projection of a row from the <c>watch_spaces.watch_space_members</c> table,
+/// carrying only the fields needed for membership checks.
+/// </summary>
 public sealed class WatchSpaceMemberRow
 {
     public Guid WatchSpaceId { get; set; }
