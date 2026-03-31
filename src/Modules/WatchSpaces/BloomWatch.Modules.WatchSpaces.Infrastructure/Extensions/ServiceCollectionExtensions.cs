@@ -59,7 +59,13 @@ public static class ServiceCollectionExtensions
         // Abstractions
         services.AddScoped<IUserReadModel, UserReadModel>();
         services.AddScoped<IUserDisplayNameLookup, UserDisplayNameLookup>();
-        services.AddScoped<IInvitationEmailSender, NoOpInvitationEmailSender>();
+
+        var smtpHost = configuration["Email:Smtp:Host"];
+        if (!string.IsNullOrEmpty(smtpHost))
+            services.AddScoped<IInvitationEmailSender, SmtpInvitationEmailSender>();
+        else
+            services.AddScoped<IInvitationEmailSender, NoOpInvitationEmailSender>();
+
         services.AddScoped<IIntegrationEventPublisher, InProcessIntegrationEventPublisher>();
 
         return services;
