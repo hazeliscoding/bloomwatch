@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Modules\WatchSpaces\BloomWatch.Modules.WatchSpaces.Domain\BloomWatch.Modules.WatchSpaces.Domain.csproj" />
     <ProjectReference Include="..\..\src\Modules\WatchSpaces\BloomWatch.Modules.WatchSpaces.Application\BloomWatch.Modules.WatchSpaces.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\WatchSpaces\BloomWatch.Modules.WatchSpaces.Infrastructure\BloomWatch.Modules.WatchSpaces.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
