@@ -25,7 +25,7 @@ BloomWatch lets friends maintain a joint backlog, track watch progress, leave se
 
 ## 🚀 Quick Start
 
-**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) · [Node.js 18+](https://nodejs.org/) · PostgreSQL
+**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) · [Node.js 18+](https://nodejs.org/) · PostgreSQL · [Docker](https://www.docker.com/) (optional, for local email)
 
 ```bash
 # 1. Clone and restore
@@ -36,12 +36,16 @@ dotnet restore
 #    Default: Host=localhost;Database=bloomwatch;Username=postgres;Password=postgres
 export ConnectionStrings__DefaultConnection="Host=localhost;Database=bloomwatch;Username=youruser;Password=yourpass"
 
-# 3. Apply migrations and start the API
+# 3. (Optional) Start Mailpit to capture invitation emails locally
+docker run -d -p 1025:1025 -p 8025:8025 axllent/mailpit
+# → SMTP on localhost:1025  ·  Web UI at http://localhost:8025
+
+# 4. Apply migrations and start the API
 ./scripts/apply-migrations.sh
 dotnet run --project src/BloomWatch.Api
 # → http://localhost:5192  (API docs at /scalar/v1)
 
-# 4. Start the frontend
+# 5. Start the frontend
 cd src/BloomWatch.UI && npm install && npm start
 # → http://localhost:4200
 ```

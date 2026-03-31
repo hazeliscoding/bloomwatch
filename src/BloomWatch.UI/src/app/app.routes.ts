@@ -26,6 +26,16 @@ export const routes: Routes = [
       { path: 'home', loadChildren: () => import('./features/home/home.routes').then(m => m.homeRoutes) },
       { path: 'watch-spaces', loadChildren: () => import('./features/watch-spaces/watch-spaces.routes').then(m => m.watchSpacesRoutes) },
       { path: 'settings', loadChildren: () => import('./features/settings/settings.routes').then(m => m.settingsRoutes) },
+      {
+        path: 'invitations/:token/accept',
+        loadComponent: () => import('./features/watch-spaces/invitation-response').then(m => m.InvitationResponse),
+        data: { action: 'accept' },
+      },
+      {
+        path: 'invitations/:token/decline',
+        loadComponent: () => import('./features/watch-spaces/invitation-response').then(m => m.InvitationResponse),
+        data: { action: 'decline' },
+      },
       ...(!environment.production ? [{ path: 'showcase', loadChildren: () => import('./features/showcase/showcase.routes').then(m => m.showcaseRoutes) }] : []),
     ],
   },

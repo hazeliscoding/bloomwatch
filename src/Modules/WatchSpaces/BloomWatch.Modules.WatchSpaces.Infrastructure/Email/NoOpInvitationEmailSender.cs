@@ -21,17 +21,19 @@ internal sealed class NoOpInvitationEmailSender(ILogger<NoOpInvitationEmailSende
     /// <param name="invitedEmail">The email address of the invitee.</param>
     /// <param name="token">The unique invitation token the invitee uses to accept.</param>
     /// <param name="watchSpaceName">The display name of the watch space the invitee is being invited to.</param>
+    /// <param name="inviterName">The display name of the user who sent the invitation.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation (unused in this implementation).</param>
     /// <returns>A completed task, since no I/O is performed.</returns>
     public Task SendAsync(
         string invitedEmail,
         string token,
         string watchSpaceName,
+        string inviterName,
         CancellationToken cancellationToken = default)
     {
         logger.LogInformation(
-            "NOOP: Invitation email to {Email} for watch space '{WatchSpaceName}'. Token: {Token}",
-            invitedEmail, watchSpaceName, token);
+            "NOOP: Invitation email to {Email} for watch space '{WatchSpaceName}' from '{InviterName}'. Token: {Token}",
+            invitedEmail, watchSpaceName, inviterName, token);
 
         return Task.CompletedTask;
     }

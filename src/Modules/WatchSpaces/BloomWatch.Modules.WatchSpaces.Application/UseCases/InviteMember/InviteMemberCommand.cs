@@ -18,9 +18,14 @@ public sealed record InviteMemberCommand(Guid WatchSpaceId, string InvitedEmail,
 /// <param name="Status">The current status of the invitation (e.g., <c>"Pending"</c>).</param>
 /// <param name="ExpiresAt">The UTC timestamp when the invitation expires.</param>
 /// <param name="Token">The single-use token the invitee uses to accept the invitation.</param>
+/// <param name="EmailDeliveryFailed">
+/// <c>true</c> if all email delivery attempts failed after retries; the invitation is still valid.
+/// The owner should notify the invitee manually if this is <c>true</c>.
+/// </param>
 public sealed record InviteMemberResult(
     Guid InvitationId,
     string InvitedEmail,
     string Status,
     DateTime ExpiresAt,
-    string Token);
+    string Token,
+    bool EmailDeliveryFailed);

@@ -102,7 +102,9 @@ public static class WatchSpacesEndpoints
             .WithDescription(
                 "Sends an invitation to the specified email address. " +
                 "Only the Owner may send invitations. " +
-                "The invitation includes a unique token that the recipient uses to accept or decline.")
+                "The invitation includes a unique token that the recipient uses to accept or decline. " +
+                "If email delivery fails after retries, the invitation is still created and " +
+                "`emailDeliveryFailed: true` is returned so the owner can notify the invitee manually.")
             .Produces<InviteMemberResult>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status403Forbidden)

@@ -15,7 +15,8 @@ public interface IInvitationEmailSender
     /// <param name="invitedEmail">The email address of the invited user.</param>
     /// <param name="token">A unique, single-use token the recipient uses to accept the invitation.</param>
     /// <param name="watchSpaceName">The display name of the watch space the user is being invited to.</param>
+    /// <param name="inviterName">The display name of the user who sent the invitation.</param>
     /// <param name="cancellationToken">A token to cancel the send operation.</param>
     /// <returns>A task that completes when the email has been submitted for delivery.</returns>
-    Task SendAsync(string invitedEmail, string token, string watchSpaceName, CancellationToken cancellationToken = default);
+    Task SendAsync(string invitedEmail, string token, string watchSpaceName, string inviterName, CancellationToken cancellationToken = default);
 }
