@@ -32,7 +32,7 @@ public sealed class LoginUserCommandHandlerTests
         var expires = DateTime.UtcNow.AddHours(1);
         _tokenGenerator.GenerateToken(user).Returns(new TokenResult("jwt-token", expires));
 
-        var result = await _sut.HandleAsync(new LoginUserCommand("user@example.com", "password123"));
+        var result = await _sut.Handle(new LoginUserCommand("user@example.com", "password123"), CancellationToken.None);
 
         result.AccessToken.Should().Be("jwt-token");
         result.ExpiresAt.Should().Be(expires);
@@ -45,7 +45,7 @@ public sealed class LoginUserCommandHandlerTests
         _repository.GetByEmailAsync(Arg.Any<EmailAddress>()).Returns(user);
         _hasher.Verify(Arg.Any<string>(), Arg.Any<string>()).Returns(false);
 
-        var act = async () => await _sut.HandleAsync(new LoginUserCommand("user@example.com", "wrong"));
+        var act = async () => await _sut.Handle(new LoginUserCommand("user@example.com", "wrong"), CancellationToken.None);
         await act.Should().ThrowAsync<InvalidCredentialsException>();
     }
 
@@ -54,7 +54,7 @@ public sealed class LoginUserCommandHandlerTests
     {
         _repository.GetByEmailAsync(Arg.Any<EmailAddress>()).Returns((User?)null);
 
-        var act = async () => await _sut.HandleAsync(new LoginUserCommand("unknown@example.com", "password123"));
+        var act = async () => await _sut.Handle(new LoginUserCommand("unknown@example.com", "password123"), CancellationToken.None);
         await act.Should().ThrowAsync<InvalidCredentialsException>();
     }
 
@@ -69,7 +69,7 @@ public sealed class LoginUserCommandHandlerTests
         // This is a placeholder asserting the exception type exists and is caught correctly.
         _repository.GetByEmailAsync(Arg.Any<EmailAddress>()).Returns((User?)null);
 
-        var act = async () => await _sut.HandleAsync(new LoginUserCommand("suspended@example.com", "pw"));
+        var act = async () => await _sut.Handle(new LoginUserCommand("suspended@example.com", "pw"), CancellationToken.None);
         await act.Should().ThrowAsync<InvalidCredentialsException>();
     }
 }

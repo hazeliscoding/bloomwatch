@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.Identity.Application.UseCases.Register;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace BloomWatch.Modules.Identity.Application.UseCases.Register;
 /// <param name="Email">The email address for the new account. Must be a valid, unique email address.</param>
 /// <param name="Password">The plain-text password for the new account. Must be at least 8 characters.</param>
 /// <param name="DisplayName">The user-facing display name for the new account.</param>
-public sealed record RegisterUserCommand(string Email, string Password, string DisplayName);
+public sealed record RegisterUserCommand(string Email, string Password, string DisplayName) : ICommand<RegisterUserResult>;
 
 /// <summary>
 /// Represents the successful result of a user registration operation.

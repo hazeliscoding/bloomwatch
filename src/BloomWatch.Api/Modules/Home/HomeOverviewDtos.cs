@@ -1,10 +1,12 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Api.Modules.Home;
 
 /// <summary>
 /// Query to retrieve the home overview for the authenticated user.
 /// </summary>
 /// <param name="UserId">The authenticated user's identifier.</param>
-public sealed record GetHomeOverviewQuery(Guid UserId);
+public sealed record GetHomeOverviewQuery(Guid UserId) : IQuery<HomeOverviewResult>;
 
 /// <summary>
 /// Composite result for the home overview endpoint.

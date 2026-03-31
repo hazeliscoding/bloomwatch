@@ -1,10 +1,4 @@
 using BloomWatch.Modules.AnimeTracking.Application.Abstractions;
-using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
-using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
-using BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
-using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
-using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRating;
-using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.CrossModule;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.Persistence;
@@ -15,8 +9,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BloomWatch.Modules.AnimeTracking.Infrastructure.Extensions;
 
+/// <summary>
+/// Registers the AnimeTracking module's services and cross-module read contexts
+/// into the dependency injection container.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds the AnimeTracking module to the service collection, including the primary
+    /// <see cref="AnimeTrackingDbContext"/>, cross-module read contexts for WatchSpaces
+    /// membership and AniListSync media cache, and all repository/abstraction implementations.
+    /// </summary>
+    /// <param name="services">The service collection to register into.</param>
+    /// <param name="configuration">The application configuration (requires <c>ConnectionStrings:DefaultConnection</c>).</param>
+    /// <returns>The same <see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddAnimeTrackingModule(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -39,16 +45,6 @@ public static class ServiceCollectionExtensions
         // Abstractions
         services.AddScoped<IMembershipChecker, MembershipChecker>();
         services.AddScoped<IMediaCacheLookup, MediaCacheLookup>();
-
-        // Command handlers
-        services.AddScoped<AddAnimeToWatchSpaceCommandHandler>();
-        services.AddScoped<UpdateSharedAnimeStatusCommandHandler>();
-        services.AddScoped<UpdateParticipantProgressCommandHandler>();
-        services.AddScoped<UpdateParticipantRatingCommandHandler>();
-
-        // Query handlers
-        services.AddScoped<ListWatchSpaceAnimeQueryHandler>();
-        services.AddScoped<GetWatchSpaceAnimeDetailQueryHandler>();
 
         return services;
     }

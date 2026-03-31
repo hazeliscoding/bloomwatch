@@ -1,6 +1,7 @@
 using BloomWatch.Modules.AnimeTracking.Application.Abstractions;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 
@@ -11,10 +12,11 @@ namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAn
 public sealed class ListWatchSpaceAnimeQueryHandler(
     IMembershipChecker membershipChecker,
     IAnimeTrackingRepository repository)
+    : IRequestHandler<ListWatchSpaceAnimeQuery, ListWatchSpaceAnimeResult>
 {
-    public async Task<ListWatchSpaceAnimeResult> HandleAsync(
+    public async Task<ListWatchSpaceAnimeResult> Handle(
         ListWatchSpaceAnimeQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             query.WatchSpaceId, query.RequestingUserId, cancellationToken);

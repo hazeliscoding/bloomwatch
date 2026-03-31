@@ -1,5 +1,6 @@
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.DeclineInvitation;
 
@@ -9,6 +10,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.DeclineInvitation;
 /// </summary>
 /// <param name="repository">The watch space repository used for persistence.</param>
 public sealed class DeclineInvitationCommandHandler(IWatchSpaceRepository repository)
+    : IRequestHandler<DeclineInvitationCommand>
 {
     /// <summary>
     /// Declines a pending invitation. The invitation is marked as declined and can no longer be accepted.
@@ -16,9 +18,9 @@ public sealed class DeclineInvitationCommandHandler(IWatchSpaceRepository reposi
     /// <param name="command">The command containing the invitation token and declining user's email.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <exception cref="InvitationNotFoundException">Thrown when no invitation matches the provided token.</exception>
-    public async Task HandleAsync(
+    public async Task Handle(
         DeclineInvitationCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
 

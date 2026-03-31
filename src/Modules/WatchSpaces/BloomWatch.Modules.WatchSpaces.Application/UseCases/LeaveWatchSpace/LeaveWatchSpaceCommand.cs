@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.LeaveWatchSpace;
 
 /// <summary>
@@ -6,4 +8,4 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.LeaveWatchSpace;
 /// </summary>
 /// <param name="WatchSpaceId">The unique identifier of the watch space to leave.</param>
 /// <param name="LeavingUserId">The identifier of the member who is leaving.</param>
-public sealed record LeaveWatchSpaceCommand(Guid WatchSpaceId, Guid LeavingUserId);
+public sealed record LeaveWatchSpaceCommand(Guid WatchSpaceId, Guid LeavingUserId) : ICommand;

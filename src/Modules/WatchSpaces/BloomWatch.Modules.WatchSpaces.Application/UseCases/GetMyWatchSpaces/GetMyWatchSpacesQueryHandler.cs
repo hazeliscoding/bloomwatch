@@ -1,5 +1,6 @@
 using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
 
@@ -12,6 +13,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
 public sealed class GetMyWatchSpacesQueryHandler(
     IWatchSpaceRepository repository,
     IUserDisplayNameLookup displayNameLookup)
+    : IRequestHandler<GetMyWatchSpacesQuery, IReadOnlyList<WatchSpaceSummary>>
 {
     /// <summary>
     /// Retrieves all watch spaces the user is a member of, along with their role in each.
@@ -19,9 +21,9 @@ public sealed class GetMyWatchSpacesQueryHandler(
     /// <param name="query">The query containing the user identifier.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A read-only list of <see cref="WatchSpaceSummary"/> projections, one per watch space membership.</returns>
-    public async Task<IReadOnlyList<WatchSpaceSummary>> HandleAsync(
+    public async Task<IReadOnlyList<WatchSpaceSummary>> Handle(
         GetMyWatchSpacesQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var spaces = await repository.GetByMemberUserIdAsync(query.UserId, cancellationToken);
 

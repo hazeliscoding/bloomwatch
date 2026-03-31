@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel;
+
 namespace BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
 /// and to make method signatures self-documenting.
 /// </summary>
 /// <param name="Value">The underlying <see cref="Guid"/> value of this identifier.</param>
-public readonly record struct WatchSpaceId(Guid Value)
+public readonly record struct WatchSpaceId(Guid Value) : IEntityId<WatchSpaceId>
 {
     /// <summary>
     /// Generates a new, unique <see cref="WatchSpaceId"/> backed by <see cref="Guid.NewGuid"/>.

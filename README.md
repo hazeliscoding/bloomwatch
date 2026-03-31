@@ -20,7 +20,7 @@ BloomWatch lets friends maintain a joint backlog, track watch progress, leave se
 | **Backend** | .NET 10 · ASP.NET Core Minimal APIs · PostgreSQL · EF Core 9 · JWT auth |
 | **Frontend** | Angular 21 · SCSS design tokens · Vitest |
 | **Architecture** | DDD-inspired modular monolith (5 modules, one DB schema each) |
-| **Testing** | 446 automated tests (xUnit + Vitest) |
+| **Testing** | 700+ automated tests (180 xUnit backend + 527 Vitest frontend) |
 | **API Docs** | OpenAPI + [Scalar](https://scalar.com/) interactive explorer at `/scalar/v1` |
 
 ## 🚀 Quick Start
@@ -55,6 +55,21 @@ cd src/BloomWatch.UI && npm test     # Frontend tests
 
 Backend integration tests use in-memory SQLite via `WebApplicationFactory` — no running database needed.
 
+## � Interactive API Docs (Scalar)
+
+With the API running (`dotnet run --project src/BloomWatch.Api`), open **[http://localhost:5192/scalar/v1](http://localhost:5192/scalar/v1)** in your browser to access the Scalar API explorer.
+
+Scalar provides:
+
+- **Browse all 30 endpoints** grouped by module (Identity, WatchSpaces, AniList, AnimeTracking, Analytics, Home)
+- **Try requests live** — fill in parameters, set headers, and execute calls against your local API
+- **Authenticate** — click the 🔒 lock icon, paste a JWT obtained from `POST /auth/login`, and all subsequent requests include the `Authorization: Bearer` header automatically
+- **View request/response schemas** — expand any endpoint to see the full JSON shape, required fields, and status codes
+
+> **Tip:** Register a user via `POST /auth/register`, then log in via `POST /auth/login` to get a token. Paste it into Scalar's auth dialog and you can explore every protected endpoint interactively.
+
+The raw OpenAPI JSON spec is also available at [`/openapi/v1.json`](http://localhost:5192/openapi/v1.json) for importing into other tools (Postman, Insomnia, etc.).
+
 ## 📁 Project Structure
 
 ```
@@ -75,6 +90,18 @@ openspec/                        # Spec-driven change tracking (see below)
 ```
 
 Each module follows a consistent DDD layering: **Domain → Application → Infrastructure → Contracts**.
+
+## 🧩 Modules
+
+| Module | Schema | Responsibility |
+|--------|--------|---------------|
+| **Identity** | `identity` | User registration, login, JWT authentication, and profile management |
+| **WatchSpaces** | `watch_spaces` | Shared space lifecycle, invitations, membership, and ownership transfer |
+| **AniListSync** | `anilist_sync` | AniList GraphQL proxy with persistent `media_cache` table (24-hour freshness) and in-memory search cache (5-minute TTL) |
+| **AnimeTracking** | `anime_tracking` | Per-space anime lifecycle, shared group status, individual participant progress/ratings |
+| **Analytics** | *(read-only)* | Compatibility scores, rating gap analysis, shared stats, dashboard summaries, and random backlog picks |
+
+Modules communicate through **read-only cross-module `DbContext`s** — never by calling another module's services or repositories directly. This preserves bounded context isolation while sharing a single database.
 
 ## 🎨 Design System
 

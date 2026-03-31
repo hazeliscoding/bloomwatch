@@ -109,3 +109,44 @@ Components use the `bloom-` prefix. Design tokens (colors, spacing, radii, typog
 ## OpenSpec Workflow
 
 Features are planned before implementation: `openspec/changes/` contains named change folders with design docs, specs, and task checklists. Completed changes are archived in `openspec/changes/archive/`. Use the `/propose`, `/apply-change`, and `/archive-change` skills to manage this workflow.
+
+## Git Workflow and Releases
+
+### Branching
+
+All work branches off `main`. `main` is always deployable; tagged releases live there.
+
+```
+feat/#<issue>-<slug>    # new features
+fix/#<issue>-<slug>     # bug fixes
+chore/<slug>            # deps, tooling, config
+docs/<slug>             # documentation only
+```
+
+```bash
+git checkout -b feat/#3-refresh-tokens
+# ... implement, then open a PR
+gh pr create --title "feat: refresh token flow" --body "Closes #3"
+```
+
+### Semver
+
+`MAJOR.MINOR.PATCH` — project is pre-1.0, so use `0.MINOR.PATCH`:
+- `0.x.y` — bug fixes
+- `0.x.0` — new backward-compatible features
+- `1.0.0` — all P0 + P1 issues resolved, production deployed
+
+```bash
+git tag -a v0.2.0 -m "feat: refresh tokens, password reset"
+git push origin v0.2.0
+# or with auto-generated release notes
+gh release create v0.2.0 --generate-notes --title "v0.2.0"
+```
+
+### Milestone targets
+
+| Version | Issues |
+|---------|--------|
+| v0.2.0 | #2 email delivery · #3 refresh tokens · #4 password reset |
+| v0.3.0 | #5 CI/CD · #6 invite-before-signup |
+| v1.0.0 | All P0 + P1 issues resolved, production deployed |

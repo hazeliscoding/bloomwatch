@@ -1,19 +1,29 @@
+using BloomWatch.Api.Infrastructure;
 using BloomWatch.Api.Modules.AniListSync;
 using BloomWatch.Api.Modules.Analytics;
 using BloomWatch.Api.Modules.AnimeTracking;
 using BloomWatch.Api.Modules.Home;
 using BloomWatch.Api.Modules.Identity;
 using BloomWatch.Api.Modules.WatchSpaces;
+using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
+using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 using BloomWatch.Modules.AniListSync.Infrastructure.Extensions;
 using BloomWatch.Modules.Analytics.Infrastructure.Extensions;
+using BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.Extensions;
+using BloomWatch.Modules.Identity.Application.UseCases.Register;
 using BloomWatch.Modules.Identity.Infrastructure.Extensions;
+using BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Infrastructure.Extensions;
+using BloomWatch.SharedKernel.Behaviors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddExceptionHandler<DomainExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddIdentityModule(builder.Configuration);
 builder.Services.AddWatchSpacesModule(builder.Configuration);
@@ -21,8 +31,19 @@ builder.Services.AddAniListSyncModule(builder.Configuration);
 builder.Services.AddAnimeTrackingModule(builder.Configuration);
 builder.Services.AddAnalyticsModule(builder.Configuration);
 
-// Home overview (thin cross-module orchestrator)
-builder.Services.AddScoped<GetHomeOverviewQueryHandler>();
+// MediatR: handler auto-discovery + pipeline behaviors
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(
+        typeof(RegisterUserCommand).Assembly,
+        typeof(CreateWatchSpaceCommand).Assembly,
+        typeof(SearchAnimeQuery).Assembly,
+        typeof(AddAnimeToWatchSpaceCommand).Assembly,
+        typeof(GetDashboardSummaryQuery).Assembly,
+        typeof(Program).Assembly);
+    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    cfg.AddOpenBehavior(typeof(UnhandledExceptionBehavior<,>));
+});
 
 builder.Services.AddOpenApi(options =>
 {
@@ -96,6 +117,8 @@ if (app.Environment.IsDevelopment())
         options.DefaultHttpClient = new(ScalarTarget.Http, ScalarClient.HttpClient);
     });
 }
+
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 

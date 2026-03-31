@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using MediatR;
 
 namespace BloomWatch.Api.Modules.Home;
 
@@ -30,11 +31,11 @@ public static class HomeEndpoints
 
     private static async Task<IResult> GetOverviewAsync(
         ClaimsPrincipal user,
-        GetHomeOverviewQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
-        var result = await handler.HandleAsync(new GetHomeOverviewQuery(userId), ct);
+        var result = await sender.Send(new GetHomeOverviewQuery(userId), ct);
         return Results.Ok(result);
     }
 

@@ -27,7 +27,7 @@ public sealed class SearchAnimeQueryHandlerTests
         _client.SearchAnimeAsync("Cowboy Bebop", Arg.Any<CancellationToken>())
             .Returns(expected);
 
-        var result = await _handler.HandleAsync(new SearchAnimeQuery("Cowboy Bebop"));
+        var result = await _handler.Handle(new SearchAnimeQuery("Cowboy Bebop"), CancellationToken.None);
 
         result.Should().BeEquivalentTo(expected);
         await _client.Received(1).SearchAnimeAsync("Cowboy Bebop", Arg.Any<CancellationToken>());
@@ -39,7 +39,7 @@ public sealed class SearchAnimeQueryHandlerTests
         _client.SearchAnimeAsync("Naruto", Arg.Any<CancellationToken>())
             .Returns(new List<AnimeSearchResult>());
 
-        await _handler.HandleAsync(new SearchAnimeQuery("  Naruto  "));
+        await _handler.Handle(new SearchAnimeQuery("  Naruto  "), CancellationToken.None);
 
         await _client.Received(1).SearchAnimeAsync("Naruto", Arg.Any<CancellationToken>());
     }
@@ -50,7 +50,7 @@ public sealed class SearchAnimeQueryHandlerTests
     [InlineData("   ")]
     public async Task HandleAsync_EmptyOrWhitespaceQuery_ThrowsArgumentException(string? query)
     {
-        var act = () => _handler.HandleAsync(new SearchAnimeQuery(query!));
+        var act = () => _handler.Handle(new SearchAnimeQuery(query!), CancellationToken.None);
 
         await act.Should().ThrowAsync<ArgumentException>()
             .WithParameterName("query");

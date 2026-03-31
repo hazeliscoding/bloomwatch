@@ -2,6 +2,7 @@ using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Contracts.IntegrationEvents;
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 
@@ -14,6 +15,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 public sealed class AcceptInvitationCommandHandler(
     IWatchSpaceRepository repository,
     IIntegrationEventPublisher publisher)
+    : IRequestHandler<AcceptInvitationCommand, AcceptInvitationResult>
 {
     /// <summary>
     /// Accepts a pending invitation, adds the user as a member, and publishes a membership event.
@@ -22,9 +24,9 @@ public sealed class AcceptInvitationCommandHandler(
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>The result containing the watch space identifier.</returns>
     /// <exception cref="InvitationNotFoundException">Thrown when no invitation matches the provided token.</exception>
-    public async Task<AcceptInvitationResult> HandleAsync(
+    public async Task<AcceptInvitationResult> Handle(
         AcceptInvitationCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow;
 

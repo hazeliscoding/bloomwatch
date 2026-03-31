@@ -2,6 +2,7 @@ using BloomWatch.Modules.Identity.Application.Abstractions;
 using BloomWatch.Modules.Identity.Domain.Aggregates;
 using BloomWatch.Modules.Identity.Domain.Repositories;
 using BloomWatch.Modules.Identity.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.Identity.Application.UseCases.Register;
 
@@ -9,21 +10,13 @@ namespace BloomWatch.Modules.Identity.Application.UseCases.Register;
 /// Handles user registration by validating input, ensuring email uniqueness,
 /// hashing the password, and persisting the new user aggregate.
 /// </summary>
-public sealed class RegisterUserCommandHandler
+public sealed class RegisterUserCommandHandler(
+    IUserRepository userRepository,
+    IPasswordHasher passwordHasher)
+    : IRequestHandler<RegisterUserCommand, RegisterUserResult>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterUserCommandHandler"/> class.
-    /// </summary>
-    /// <param name="userRepository">The repository for persisting and querying user aggregates.</param>
-    /// <param name="passwordHasher">The service used to securely hash the user's password.</param>
-    public RegisterUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher)
-    {
-        _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
-    }
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
     /// <summary>
     /// Processes a user registration command by creating a new user account.
@@ -44,9 +37,9 @@ public sealed class RegisterUserCommandHandler
     /// <returns>A <see cref="RegisterUserResult"/> containing the new user's ID, email, and display name.</returns>
     /// <exception cref="RegistrationException">Thrown when the password is null or fewer than 8 characters.</exception>
     /// <exception cref="DuplicateEmailException">Thrown when an account with the given email already exists.</exception>
-    public async Task<RegisterUserResult> HandleAsync(
+    public async Task<RegisterUserResult> Handle(
         RegisterUserCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var email = EmailAddress.From(command.Email);
         var displayName = DisplayName.From(command.DisplayName);

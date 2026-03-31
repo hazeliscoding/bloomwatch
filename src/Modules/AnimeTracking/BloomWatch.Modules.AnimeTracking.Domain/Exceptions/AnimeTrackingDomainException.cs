@@ -1,9 +1,11 @@
+using BloomWatch.SharedKernel;
+
 namespace BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 
 /// <summary>
 /// Base exception for all domain-rule violations within the AnimeTracking module.
 /// </summary>
-public class AnimeTrackingDomainException(string message) : Exception(message);
+public class AnimeTrackingDomainException(string message) : DomainException(message);
 
 /// <summary>
 /// Thrown when attempting to add an anime that already exists in the watch space.

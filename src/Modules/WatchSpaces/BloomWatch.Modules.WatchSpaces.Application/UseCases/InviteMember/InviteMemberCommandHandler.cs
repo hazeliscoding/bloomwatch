@@ -2,6 +2,7 @@ using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.InviteMember;
 
@@ -17,6 +18,7 @@ public sealed class InviteMemberCommandHandler(
     IWatchSpaceRepository repository,
     IUserReadModel userReadModel,
     IInvitationEmailSender emailSender)
+    : IRequestHandler<InviteMemberCommand, InviteMemberResult>
 {
     private static readonly TimeSpan DefaultExpiry = TimeSpan.FromDays(7);
 
@@ -29,9 +31,9 @@ public sealed class InviteMemberCommandHandler(
     /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
     /// <exception cref="InvitedUserNotFoundException">Thrown when no registered user matches the invited email address.</exception>
     /// <exception cref="AlreadyAMemberException">Thrown when the invited user is already a member of the watch space.</exception>
-    public async Task<InviteMemberResult> HandleAsync(
+    public async Task<InviteMemberResult> Handle(
         InviteMemberCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(command.WatchSpaceId), cancellationToken)

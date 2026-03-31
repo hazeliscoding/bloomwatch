@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetInvitationByToken;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetInvitationByTok
 /// </summary>
 /// <param name="Token">The unique invitation token.</param>
 /// <param name="RequestingUserEmail">The email of the authenticated user making the request.</param>
-public sealed record GetInvitationByTokenQuery(string Token, string RequestingUserEmail);
+public sealed record GetInvitationByTokenQuery(string Token, string RequestingUserEmail) : IQuery<InvitationPreviewResult>;
 
 /// <summary>
 /// Preview of an invitation returned to the invitee.

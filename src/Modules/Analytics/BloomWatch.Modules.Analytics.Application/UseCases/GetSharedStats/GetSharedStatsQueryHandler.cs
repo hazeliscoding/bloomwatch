@@ -1,15 +1,17 @@
 using BloomWatch.Modules.Analytics.Application.Abstractions;
 using BloomWatch.Modules.Analytics.Application.Exceptions;
+using MediatR;
 
 namespace BloomWatch.Modules.Analytics.Application.UseCases.GetSharedStats;
 
 public sealed class GetSharedStatsQueryHandler(
     IMembershipChecker membershipChecker,
     IWatchSpaceAnalyticsDataSource dataSource)
+    : IRequestHandler<GetSharedStatsQuery, SharedStatsResult>
 {
-    public async Task<SharedStatsResult> HandleAsync(
+    public async Task<SharedStatsResult> Handle(
         GetSharedStatsQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             query.WatchSpaceId, query.UserId, cancellationToken);

@@ -1,6 +1,7 @@
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RevokeInvitation;
 
@@ -10,6 +11,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RevokeInvitation;
 /// </summary>
 /// <param name="repository">The watch space repository used for persistence.</param>
 public sealed class RevokeInvitationCommandHandler(IWatchSpaceRepository repository)
+    : IRequestHandler<RevokeInvitationCommand>
 {
     /// <summary>
     /// Revokes a pending invitation so it can no longer be accepted by the invitee.
@@ -17,9 +19,9 @@ public sealed class RevokeInvitationCommandHandler(IWatchSpaceRepository reposit
     /// <param name="command">The command containing the watch space identifier, invitation identifier, and requesting user.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
-    public async Task HandleAsync(
+    public async Task Handle(
         RevokeInvitationCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(command.WatchSpaceId), cancellationToken)

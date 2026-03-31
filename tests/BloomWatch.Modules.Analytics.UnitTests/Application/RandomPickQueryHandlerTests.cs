@@ -27,7 +27,7 @@ public sealed class RandomPickQueryHandlerTests
         _membershipChecker.IsMemberAsync(watchSpaceId, userId, Arg.Any<CancellationToken>())
             .Returns(false);
 
-        var act = () => _handler.HandleAsync(new GetRandomPickQuery(watchSpaceId, userId));
+        var act = () => _handler.Handle(new GetRandomPickQuery(watchSpaceId, userId), CancellationToken.None);
 
         await act.Should().ThrowAsync<NotAWatchSpaceMemberException>();
     }
@@ -44,7 +44,7 @@ public sealed class RandomPickQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(new List<WatchSpaceAnimeData>());
 
-        var result = await _handler.HandleAsync(new GetRandomPickQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetRandomPickQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.Pick.Should().BeNull();
         result.Message.Should().Be("Backlog is empty");
@@ -68,7 +68,7 @@ public sealed class RandomPickQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(animeList);
 
-        var result = await _handler.HandleAsync(new GetRandomPickQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetRandomPickQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.Pick.Should().BeNull();
         result.Message.Should().Be("Backlog is empty");
@@ -94,7 +94,7 @@ public sealed class RandomPickQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(animeList);
 
-        var result = await _handler.HandleAsync(new GetRandomPickQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetRandomPickQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.Pick.Should().NotBeNull();
         result.Message.Should().BeNull();
@@ -127,7 +127,7 @@ public sealed class RandomPickQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(animeList);
 
-        var result = await _handler.HandleAsync(new GetRandomPickQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetRandomPickQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.Pick.Should().NotBeNull();
         result.Pick!.WatchSpaceAnimeId.Should().Be(backlogId);

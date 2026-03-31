@@ -1,8 +1,5 @@
 using System.Text;
 using BloomWatch.Modules.Identity.Application.Abstractions;
-using BloomWatch.Modules.Identity.Application.UseCases.GetProfile;
-using BloomWatch.Modules.Identity.Application.UseCases.Login;
-using BloomWatch.Modules.Identity.Application.UseCases.Register;
 using BloomWatch.Modules.Identity.Domain.Repositories;
 using BloomWatch.Modules.Identity.Infrastructure.Auth;
 using BloomWatch.Modules.Identity.Infrastructure.Persistence;
@@ -60,11 +57,6 @@ public static class ServiceCollectionExtensions
         // Auth services
         services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
-        // Use case handlers
-        services.AddScoped<RegisterUserCommandHandler>();
-        services.AddScoped<LoginUserCommandHandler>();
-        services.AddScoped<GetUserProfileQueryHandler>();
 
         // JWT bearer authentication
         var secretKey = configuration["Identity:Jwt:SecretKey"]

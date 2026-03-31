@@ -2,6 +2,7 @@ using BloomWatch.Modules.Analytics.Application.Abstractions;
 using BloomWatch.Modules.Analytics.Application.DTOs;
 using BloomWatch.Modules.Analytics.Application.Exceptions;
 using BloomWatch.Modules.Analytics.Application.Shared;
+using MediatR;
 
 namespace BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
 
@@ -13,14 +14,15 @@ public sealed class GetDashboardSummaryQueryHandler(
     IMembershipChecker membershipChecker,
     IWatchSpaceAnalyticsDataSource dataSource,
     IUserDisplayNameLookup userDisplayNameLookup)
+    : IRequestHandler<GetDashboardSummaryQuery, DashboardSummaryResult>
 {
     private const int MaxCurrentlyWatching = 5;
     private const int MaxBacklogHighlights = 5;
     private const int MaxRatingGapHighlights = 3;
 
-    public async Task<DashboardSummaryResult> HandleAsync(
+    public async Task<DashboardSummaryResult> Handle(
         GetDashboardSummaryQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             query.WatchSpaceId, query.UserId, cancellationToken);

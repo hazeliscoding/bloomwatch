@@ -39,7 +39,7 @@ public sealed class SharedStatsQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(animeList);
 
-        var result = await _handler.HandleAsync(new GetSharedStatsQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetSharedStatsQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.TotalEpisodesWatchedTogether.Should().Be(51); // 24+12+10+5+0
         result.TotalFinished.Should().Be(2);
@@ -58,7 +58,7 @@ public sealed class SharedStatsQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(new List<WatchSpaceAnimeData>());
 
-        var result = await _handler.HandleAsync(new GetSharedStatsQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetSharedStatsQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.TotalEpisodesWatchedTogether.Should().Be(0);
         result.TotalFinished.Should().Be(0);
@@ -74,7 +74,7 @@ public sealed class SharedStatsQueryHandlerTests
         _membershipChecker.IsMemberAsync(watchSpaceId, userId, Arg.Any<CancellationToken>())
             .Returns(false);
 
-        var act = () => _handler.HandleAsync(new GetSharedStatsQuery(watchSpaceId, userId));
+        var act = () => _handler.Handle(new GetSharedStatsQuery(watchSpaceId, userId), CancellationToken.None);
 
         await act.Should().ThrowAsync<NotAWatchSpaceMemberException>();
     }

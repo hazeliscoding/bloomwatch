@@ -3,16 +3,18 @@ using BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDe
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
 using BloomWatch.Modules.AnimeTracking.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 
 public sealed class UpdateSharedAnimeStatusCommandHandler(
     IMembershipChecker membershipChecker,
     IAnimeTrackingRepository repository)
+    : IRequestHandler<UpdateSharedAnimeStatusCommand, GetWatchSpaceAnimeDetailResult?>
 {
-    public async Task<GetWatchSpaceAnimeDetailResult?> HandleAsync(
+    public async Task<GetWatchSpaceAnimeDetailResult?> Handle(
         UpdateSharedAnimeStatusCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             command.WatchSpaceId, command.RequestingUserId, cancellationToken);

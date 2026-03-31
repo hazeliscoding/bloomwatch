@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel;
+
 namespace BloomWatch.Modules.Identity.Domain.ValueObjects;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace BloomWatch.Modules.Identity.Domain.ValueObjects;
 /// Wraps a <see cref="Guid"/> to prevent primitive obsession and accidental misuse of unrelated identifiers.
 /// </summary>
 /// <param name="Value">The underlying <see cref="Guid"/> that uniquely identifies a user.</param>
-public readonly record struct UserId(Guid Value)
+public readonly record struct UserId(Guid Value) : IEntityId<UserId>
 {
     /// <summary>
     /// Generates a new, unique <see cref="UserId"/> backed by a fresh <see cref="Guid"/>.

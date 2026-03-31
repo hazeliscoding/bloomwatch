@@ -1,5 +1,6 @@
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 
@@ -9,6 +10,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 /// </summary>
 /// <param name="repository">The watch space repository used for persistence.</param>
 public sealed class RenameWatchSpaceCommandHandler(IWatchSpaceRepository repository)
+    : IRequestHandler<RenameWatchSpaceCommand, RenameWatchSpaceResult>
 {
     /// <summary>
     /// Renames a watch space to the specified new name.
@@ -17,9 +19,9 @@ public sealed class RenameWatchSpaceCommandHandler(IWatchSpaceRepository reposit
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A <see cref="RenameWatchSpaceResult"/> containing the updated watch space identifier and name.</returns>
     /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
-    public async Task<RenameWatchSpaceResult> HandleAsync(
+    public async Task<RenameWatchSpaceResult> Handle(
         RenameWatchSpaceCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(command.WatchSpaceId), cancellationToken)

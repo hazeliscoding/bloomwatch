@@ -1,10 +1,12 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
 
 /// <summary>
 /// Query to retrieve all watch spaces that a user is a member of.
 /// </summary>
 /// <param name="UserId">The identifier of the user whose watch spaces to retrieve.</param>
-public sealed record GetMyWatchSpacesQuery(Guid UserId);
+public sealed record GetMyWatchSpacesQuery(Guid UserId) : IQuery<IReadOnlyList<WatchSpaceSummary>>;
 
 /// <summary>
 /// A summary projection of a watch space, including the requesting user's role within it.

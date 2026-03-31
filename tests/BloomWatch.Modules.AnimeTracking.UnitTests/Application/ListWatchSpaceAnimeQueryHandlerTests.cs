@@ -41,7 +41,7 @@ public sealed class ListWatchSpaceAnimeQueryHandlerTests
         var query = new ListWatchSpaceAnimeQuery(_watchSpaceId, null, _userId);
 
         // Act
-        var result = await _handler.HandleAsync(query);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(1);
@@ -65,7 +65,7 @@ public sealed class ListWatchSpaceAnimeQueryHandlerTests
         var query = new ListWatchSpaceAnimeQuery(_watchSpaceId, null, _userId);
 
         // Act
-        var result = await _handler.HandleAsync(query);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.Items.Should().BeEmpty();
@@ -81,7 +81,7 @@ public sealed class ListWatchSpaceAnimeQueryHandlerTests
         var query = new ListWatchSpaceAnimeQuery(_watchSpaceId, null, _userId);
 
         // Act
-        var act = () => _handler.HandleAsync(query);
+        var act = () => _handler.Handle(query, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<NotAWatchSpaceMemberException>();
@@ -99,7 +99,7 @@ public sealed class ListWatchSpaceAnimeQueryHandlerTests
         var query = new ListWatchSpaceAnimeQuery(_watchSpaceId, AnimeStatus.Watching, _userId);
 
         // Act
-        await _handler.HandleAsync(query);
+        await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         await _repository.Received(1).ListByWatchSpaceAsync(

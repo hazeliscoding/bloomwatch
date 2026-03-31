@@ -48,6 +48,9 @@ public sealed class AnimeTrackingReadDbContext(
     }
 }
 
+/// <summary>
+/// Read-only projection of a row from the <c>anime_tracking.watch_space_anime</c> table.
+/// </summary>
 public sealed class AnimeRow
 {
     public Guid Id { get; set; }
@@ -65,6 +68,9 @@ public sealed class AnimeRow
     public List<ParticipantRow> Participants { get; set; } = [];
 }
 
+/// <summary>
+/// Read-only projection of a row from the <c>anime_tracking.participant_entries</c> table.
+/// </summary>
 public sealed class ParticipantRow
 {
     public Guid Id { get; set; }

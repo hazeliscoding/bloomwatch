@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.ListInvitations;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.ListInvitations;
 /// </summary>
 /// <param name="WatchSpaceId">The unique identifier of the watch space whose invitations to list.</param>
 /// <param name="RequestingUserId">The identifier of the user making the request (must be the owner).</param>
-public sealed record ListInvitationsQuery(Guid WatchSpaceId, Guid RequestingUserId);
+public sealed record ListInvitationsQuery(Guid WatchSpaceId, Guid RequestingUserId) : IQuery<IReadOnlyList<InvitationDetail>>;
 
 /// <summary>
 /// A projection of a single invitation associated with a watch space.

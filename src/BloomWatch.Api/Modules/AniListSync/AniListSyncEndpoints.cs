@@ -1,6 +1,7 @@
 using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 using BloomWatch.Modules.AniListSync.Infrastructure.AniList;
+using MediatR;
 
 namespace BloomWatch.Api.Modules.AniListSync;
 
@@ -63,7 +64,7 @@ public static class AniListSyncEndpoints
     /// </returns>
     private static async Task<IResult> SearchAnimeAsync(
         string? query,
-        SearchAnimeQueryHandler handler,
+        ISender sender,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(query))
@@ -72,7 +73,7 @@ public static class AniListSyncEndpoints
         try
         {
             var searchQuery = new SearchAnimeQuery(query);
-            var results = await handler.HandleAsync(searchQuery, cancellationToken);
+            var results = await sender.Send(searchQuery, cancellationToken);
             return Results.Ok(results);
         }
         catch (AniListApiException ex)
@@ -89,13 +90,13 @@ public static class AniListSyncEndpoints
     /// </summary>
     private static async Task<IResult> GetMediaDetailAsync(
         int anilistMediaId,
-        GetMediaDetailQueryHandler handler,
+        ISender sender,
         CancellationToken cancellationToken)
     {
         try
         {
             var query = new GetMediaDetailQuery(anilistMediaId);
-            var result = await handler.HandleAsync(query, cancellationToken);
+            var result = await sender.Send(query, cancellationToken);
 
             return result is null
                 ? Results.NotFound()

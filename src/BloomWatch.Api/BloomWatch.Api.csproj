@@ -9,6 +9,7 @@
     <ProjectReference Include="..\Modules\AnimeTracking\BloomWatch.Modules.AnimeTracking.Infrastructure\BloomWatch.Modules.AnimeTracking.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Analytics\BloomWatch.Modules.Analytics.Infrastructure\BloomWatch.Modules.Analytics.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Analytics\BloomWatch.Modules.Analytics.Contracts\BloomWatch.Modules.Analytics.Contracts.csproj" />
+    <ProjectReference Include="..\BloomWatch.SharedKernel\BloomWatch.SharedKernel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

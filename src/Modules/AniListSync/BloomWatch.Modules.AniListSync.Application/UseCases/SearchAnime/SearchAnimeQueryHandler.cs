@@ -1,22 +1,16 @@
 using BloomWatch.Modules.AniListSync.Application.Abstractions;
+using MediatR;
 
 namespace BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 
 /// <summary>
 /// Handles <see cref="SearchAnimeQuery"/> requests by delegating to the <see cref="IAniListClient"/>.
 /// </summary>
-public sealed class SearchAnimeQueryHandler
+public sealed class SearchAnimeQueryHandler(
+    IAniListClient aniListClient)
+    : IRequestHandler<SearchAnimeQuery, IReadOnlyList<AnimeSearchResult>>
 {
-    private readonly IAniListClient _aniListClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SearchAnimeQueryHandler"/> class.
-    /// </summary>
-    /// <param name="aniListClient">The AniList client used to perform the anime search.</param>
-    public SearchAnimeQueryHandler(IAniListClient aniListClient)
-    {
-        _aniListClient = aniListClient;
-    }
+    private readonly IAniListClient _aniListClient = aniListClient;
 
     /// <summary>
     /// Executes the search query against the AniList API and returns the matching results.
@@ -25,9 +19,9 @@ public sealed class SearchAnimeQueryHandler
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A read-only list of <see cref="AnimeSearchResult"/> objects matching the query.</returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="query"/> contains an empty or whitespace-only search term.</exception>
-    public async Task<IReadOnlyList<AnimeSearchResult>> HandleAsync(
+    public async Task<IReadOnlyList<AnimeSearchResult>> Handle(
         SearchAnimeQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(query.Query))
             throw new ArgumentException("Search query must not be empty.", nameof(query));

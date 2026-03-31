@@ -13,6 +13,7 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandlerTests
 {
     private readonly IMembershipChecker _membershipChecker = Substitute.For<IMembershipChecker>();
     private readonly IAnimeTrackingRepository _repository = Substitute.For<IAnimeTrackingRepository>();
+    private readonly IMediaCacheLookup _mediaCacheLookup = Substitute.For<IMediaCacheLookup>();
     private readonly GetWatchSpaceAnimeDetailQueryHandler _handler;
 
     private readonly Guid _watchSpaceId = Guid.NewGuid();
@@ -20,7 +21,7 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandlerTests
 
     public GetWatchSpaceAnimeDetailQueryHandlerTests()
     {
-        _handler = new GetWatchSpaceAnimeDetailQueryHandler(_membershipChecker, _repository);
+        _handler = new GetWatchSpaceAnimeDetailQueryHandler(_membershipChecker, _repository, _mediaCacheLookup);
     }
 
     [Fact]
@@ -41,7 +42,7 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandlerTests
         var query = new GetWatchSpaceAnimeDetailQuery(_watchSpaceId, anime.Id.Value, _userId);
 
         // Act
-        var result = await _handler.HandleAsync(query);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -74,7 +75,7 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandlerTests
         var query = new GetWatchSpaceAnimeDetailQuery(_watchSpaceId, Guid.NewGuid(), _userId);
 
         // Act
-        var act = () => _handler.HandleAsync(query);
+        var act = () => _handler.Handle(query, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<NotAWatchSpaceMemberException>();
@@ -94,7 +95,7 @@ public sealed class GetWatchSpaceAnimeDetailQueryHandlerTests
         var query = new GetWatchSpaceAnimeDetailQuery(_watchSpaceId, animeId.Value, _userId);
 
         // Act
-        var result = await _handler.HandleAsync(query);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();

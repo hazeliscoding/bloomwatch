@@ -1,4 +1,5 @@
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
+using BloomWatch.SharedKernel.CQRS;
 
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAnime;
 
@@ -8,4 +9,4 @@ namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.ListWatchSpaceAn
 public sealed record ListWatchSpaceAnimeQuery(
     Guid WatchSpaceId,
     AnimeStatus? Status,
-    Guid RequestingUserId);
+    Guid RequestingUserId) : IQuery<ListWatchSpaceAnimeResult>;

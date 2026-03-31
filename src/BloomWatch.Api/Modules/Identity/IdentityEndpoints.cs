@@ -4,6 +4,7 @@ using BloomWatch.Modules.Identity.Application.UseCases.GetProfile;
 using BloomWatch.Modules.Identity.Application.UseCases.Login;
 using BloomWatch.Modules.Identity.Application.UseCases.Register;
 using BloomWatch.Modules.Identity.Domain.ValueObjects;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BloomWatch.Api.Modules.Identity;
@@ -78,13 +79,13 @@ public static class IdentityEndpoints
     /// </returns>
     private static async Task<IResult> RegisterAsync(
         [FromBody] RegisterRequest request,
-        RegisterUserCommandHandler handler,
+        ISender sender,
         CancellationToken cancellationToken)
     {
         try
         {
             var command = new RegisterUserCommand(request.Email, request.Password, request.DisplayName);
-            var result = await handler.HandleAsync(command, cancellationToken);
+            var result = await sender.Send(command, cancellationToken);
             return Results.Created($"/users/{result.UserId}", result);
         }
         catch (DuplicateEmailException ex)
@@ -113,13 +114,13 @@ public static class IdentityEndpoints
     /// </returns>
     private static async Task<IResult> LoginAsync(
         [FromBody] LoginRequest request,
-        LoginUserCommandHandler handler,
+        ISender sender,
         CancellationToken cancellationToken)
     {
         try
         {
             var command = new LoginUserCommand(request.Email, request.Password);
-            var result = await handler.HandleAsync(command, cancellationToken);
+            var result = await sender.Send(command, cancellationToken);
             return Results.Ok(new { accessToken = result.AccessToken, expiresAt = result.ExpiresAt });
         }
         catch (InvalidCredentialsException)
@@ -144,7 +145,7 @@ public static class IdentityEndpoints
     /// </returns>
     private static async Task<IResult> GetMyProfileAsync(
         ClaimsPrincipal user,
-        GetUserProfileQueryHandler handler,
+        ISender sender,
         CancellationToken cancellationToken)
     {
         var subClaim = user.FindFirstValue(JwtRegisteredClaimNames.Sub)
@@ -156,7 +157,7 @@ public static class IdentityEndpoints
         try
         {
             var query = new GetUserProfileQuery(UserId.From(userId));
-            var result = await handler.HandleAsync(query, cancellationToken);
+            var result = await sender.Send(query, cancellationToken);
             return Results.Ok(result);
         }
         catch (UserNotFoundException)

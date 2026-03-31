@@ -1,17 +1,4 @@
 using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.DeclineInvitation;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetInvitationByToken;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetMyWatchSpaces;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.InviteMember;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.LeaveWatchSpace;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.ListInvitations;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.RemoveMember;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.RevokeInvitation;
-using BloomWatch.Modules.WatchSpaces.Application.UseCases.TransferOwnership;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Infrastructure.CrossModule;
 using BloomWatch.Modules.WatchSpaces.Infrastructure.Email;
@@ -74,23 +61,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserDisplayNameLookup, UserDisplayNameLookup>();
         services.AddScoped<IInvitationEmailSender, NoOpInvitationEmailSender>();
         services.AddScoped<IIntegrationEventPublisher, InProcessIntegrationEventPublisher>();
-
-        // Command handlers
-        services.AddScoped<CreateWatchSpaceCommandHandler>();
-        services.AddScoped<RenameWatchSpaceCommandHandler>();
-        services.AddScoped<InviteMemberCommandHandler>();
-        services.AddScoped<AcceptInvitationCommandHandler>();
-        services.AddScoped<DeclineInvitationCommandHandler>();
-        services.AddScoped<RevokeInvitationCommandHandler>();
-        services.AddScoped<RemoveMemberCommandHandler>();
-        services.AddScoped<LeaveWatchSpaceCommandHandler>();
-        services.AddScoped<TransferOwnershipCommandHandler>();
-
-        // Query handlers
-        services.AddScoped<GetMyWatchSpacesQueryHandler>();
-        services.AddScoped<GetWatchSpaceByIdQueryHandler>();
-        services.AddScoped<ListInvitationsQueryHandler>();
-        services.AddScoped<GetInvitationByTokenQueryHandler>();
 
         return services;
     }

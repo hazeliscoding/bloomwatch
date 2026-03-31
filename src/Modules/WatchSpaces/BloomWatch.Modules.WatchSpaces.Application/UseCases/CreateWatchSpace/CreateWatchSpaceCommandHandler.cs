@@ -1,6 +1,7 @@
 using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 
@@ -13,6 +14,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 public sealed class CreateWatchSpaceCommandHandler(
     IWatchSpaceRepository repository,
     IUserDisplayNameLookup displayNameLookup)
+    : IRequestHandler<CreateWatchSpaceCommand, CreateWatchSpaceResult>
 {
     /// <summary>
     /// Creates a new watch space and assigns the requesting user as its owner.
@@ -20,9 +22,9 @@ public sealed class CreateWatchSpaceCommandHandler(
     /// <param name="command">The command containing the watch space name and requesting user.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A <see cref="CreateWatchSpaceResult"/> containing the new watch space details.</returns>
-    public async Task<CreateWatchSpaceResult> HandleAsync(
+    public async Task<CreateWatchSpaceResult> Handle(
         CreateWatchSpaceCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = WatchSpace.Create(command.Name, command.RequestingUserId);
 

@@ -4,6 +4,7 @@ using BloomWatch.Modules.Identity.Application.UseCases.GetProfile;
 using BloomWatch.Modules.Identity.Domain.ValueObjects;
 using BloomWatch.Modules.WatchSpaces.Application.Abstractions;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Api.Modules.Home;
 
@@ -12,17 +13,18 @@ namespace BloomWatch.Api.Modules.Home;
 /// modules to build the home overview response.
 /// </summary>
 public sealed class GetHomeOverviewQueryHandler(
-    GetUserProfileQueryHandler profileHandler,
+    ISender sender,
     IWatchSpaceRepository watchSpaceRepository,
     IUserDisplayNameLookup displayNameLookup,
     IAnimeTrackingRepository animeTrackingRepository)
+    : IRequestHandler<GetHomeOverviewQuery, HomeOverviewResult>
 {
-    public async Task<HomeOverviewResult> HandleAsync(
+    public async Task<HomeOverviewResult> Handle(
         GetHomeOverviewQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         // 1. Get display name
-        var profile = await profileHandler.HandleAsync(
+        var profile = await sender.Send(
             new GetUserProfileQuery(UserId.From(query.UserId)), cancellationToken);
 
         // 2. Get user's watch spaces with members

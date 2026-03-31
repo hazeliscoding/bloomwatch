@@ -26,7 +26,7 @@ public sealed class GetUserProfileQueryHandlerTests
         var user = MakeUser();
         _repository.GetByIdAsync(user.Id, Arg.Any<CancellationToken>()).Returns(user);
 
-        var result = await _sut.HandleAsync(new GetUserProfileQuery(user.Id));
+        var result = await _sut.Handle(new GetUserProfileQuery(user.Id), CancellationToken.None);
 
         result.UserId.Should().Be(user.Id.Value);
         result.Email.Should().Be("alice@example.com");
@@ -42,7 +42,7 @@ public sealed class GetUserProfileQueryHandlerTests
         var missingId = UserId.New();
         _repository.GetByIdAsync(missingId, Arg.Any<CancellationToken>()).Returns((User?)null);
 
-        var act = async () => await _sut.HandleAsync(new GetUserProfileQuery(missingId));
+        var act = async () => await _sut.Handle(new GetUserProfileQuery(missingId), CancellationToken.None);
 
         await act.Should().ThrowAsync<UserNotFoundException>();
     }

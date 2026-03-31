@@ -26,7 +26,7 @@ public sealed class RegisterUserCommandHandlerTests
         _hasher.Hash(Arg.Any<string>()).Returns("hashed-password");
 
         var command = new RegisterUserCommand("user@example.com", "password123", "Alice");
-        var result = await _sut.HandleAsync(command);
+        var result = await _sut.Handle(command, CancellationToken.None);
 
         result.UserId.Should().NotBeEmpty();
         result.Email.Should().Be("user@example.com");
@@ -40,7 +40,7 @@ public sealed class RegisterUserCommandHandlerTests
         _repository.ExistsWithEmailAsync(Arg.Any<EmailAddress>()).Returns(true);
 
         var command = new RegisterUserCommand("taken@example.com", "password123", "Bob");
-        var act = async () => await _sut.HandleAsync(command);
+        var act = async () => await _sut.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<DuplicateEmailException>();
         await _repository.DidNotReceive().AddAsync(Arg.Any<User>());
@@ -52,7 +52,7 @@ public sealed class RegisterUserCommandHandlerTests
         _repository.ExistsWithEmailAsync(Arg.Any<EmailAddress>()).Returns(false);
 
         var command = new RegisterUserCommand("user@example.com", "short", "Alice");
-        var act = async () => await _sut.HandleAsync(command);
+        var act = async () => await _sut.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<RegistrationException>();
     }

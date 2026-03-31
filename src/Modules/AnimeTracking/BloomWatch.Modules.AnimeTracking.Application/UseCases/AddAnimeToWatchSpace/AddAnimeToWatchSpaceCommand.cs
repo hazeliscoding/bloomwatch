@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
 
 /// <summary>
@@ -9,7 +11,7 @@ public sealed record AddAnimeToWatchSpaceCommand(
     string? Mood,
     string? Vibe,
     string? Pitch,
-    Guid RequestingUserId);
+    Guid RequestingUserId) : ICommand<AddAnimeToWatchSpaceResult>;
 
 /// <summary>
 /// Result returned after successfully adding an anime to a watch space.
