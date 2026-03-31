@@ -7,6 +7,7 @@ using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRat
 using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateSharedAnimeStatus;
 using BloomWatch.Modules.AnimeTracking.Domain.Enums;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BloomWatch.Api.Modules.AnimeTracking;
@@ -119,13 +120,13 @@ public static class AnimeTrackingEndpoints
         Guid watchSpaceId,
         [FromBody] AddAnimeRequest request,
         ClaimsPrincipal user,
-        AddAnimeToWatchSpaceCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new AddAnimeToWatchSpaceCommand(
                     watchSpaceId,
                     request.AniListMediaId,
@@ -161,13 +162,13 @@ public static class AnimeTrackingEndpoints
         Guid watchSpaceId,
         [FromQuery] AnimeStatus? status,
         ClaimsPrincipal user,
-        ListWatchSpaceAnimeQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new ListWatchSpaceAnimeQuery(watchSpaceId, status, userId), ct);
 
             return Results.Ok(result);
@@ -189,13 +190,13 @@ public static class AnimeTrackingEndpoints
         Guid watchSpaceId,
         Guid watchSpaceAnimeId,
         ClaimsPrincipal user,
-        GetWatchSpaceAnimeDetailQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new GetWatchSpaceAnimeDetailQuery(watchSpaceId, watchSpaceAnimeId, userId), ct);
 
             return result is null
@@ -221,7 +222,7 @@ public static class AnimeTrackingEndpoints
         Guid watchSpaceAnimeId,
         [FromBody] UpdateSharedAnimeStatusRequest request,
         ClaimsPrincipal user,
-        UpdateSharedAnimeStatusCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
@@ -236,7 +237,7 @@ public static class AnimeTrackingEndpoints
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new UpdateSharedAnimeStatusCommand(
                     watchSpaceId,
                     watchSpaceAnimeId,
@@ -276,7 +277,7 @@ public static class AnimeTrackingEndpoints
         Guid watchSpaceAnimeId,
         [FromBody] UpdateParticipantProgressRequest request,
         ClaimsPrincipal user,
-        UpdateParticipantProgressCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
@@ -286,7 +287,7 @@ public static class AnimeTrackingEndpoints
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new UpdateParticipantProgressCommand(
                     watchSpaceId,
                     watchSpaceAnimeId,
@@ -323,14 +324,14 @@ public static class AnimeTrackingEndpoints
         Guid watchSpaceAnimeId,
         [FromBody] UpdateParticipantRatingRequest request,
         ClaimsPrincipal user,
-        UpdateParticipantRatingCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new UpdateParticipantRatingCommand(
                     watchSpaceId,
                     watchSpaceAnimeId,

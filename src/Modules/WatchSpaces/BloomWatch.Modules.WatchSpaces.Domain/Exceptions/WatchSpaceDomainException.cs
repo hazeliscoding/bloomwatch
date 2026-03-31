@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel;
+
 namespace BloomWatch.Modules.WatchSpaces.Domain.Exceptions;
 
 /// <summary>
@@ -6,4 +8,4 @@ namespace BloomWatch.Modules.WatchSpaces.Domain.Exceptions;
 /// <see cref="Aggregates.WatchSpace"/> aggregate or its child entities.
 /// </summary>
 /// <param name="message">A human-readable description of the domain rule that was violated.</param>
-public class WatchSpaceDomainException(string message) : Exception(message);
+public class WatchSpaceDomainException(string message) : DomainException(message);

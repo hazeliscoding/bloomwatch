@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
 /// </summary>
 /// <param name="WatchSpaceId">The unique identifier of the watch space to retrieve.</param>
 /// <param name="RequestingUserId">The identifier of the user making the request (must be a member).</param>
-public sealed record GetWatchSpaceByIdQuery(Guid WatchSpaceId, Guid RequestingUserId);
+public sealed record GetWatchSpaceByIdQuery(Guid WatchSpaceId, Guid RequestingUserId) : IQuery<WatchSpaceDetail>;
 
 /// <summary>
 /// A detailed projection of a watch space, including its full member list.

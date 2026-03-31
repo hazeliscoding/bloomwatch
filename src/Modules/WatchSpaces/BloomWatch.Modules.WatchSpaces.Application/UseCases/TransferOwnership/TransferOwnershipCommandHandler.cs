@@ -1,6 +1,7 @@
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.TransferOwnership;
 
@@ -10,6 +11,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.TransferOwnership;
 /// </summary>
 /// <param name="repository">The watch space repository used for persistence.</param>
 public sealed class TransferOwnershipCommandHandler(IWatchSpaceRepository repository)
+    : IRequestHandler<TransferOwnershipCommand>
 {
     /// <summary>
     /// Transfers ownership of a watch space from the current owner to another existing member.
@@ -18,9 +20,9 @@ public sealed class TransferOwnershipCommandHandler(IWatchSpaceRepository reposi
     /// <param name="command">The command containing the watch space identifier, new owner, and requesting user.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
-    public async Task HandleAsync(
+    public async Task Handle(
         TransferOwnershipCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(command.WatchSpaceId), cancellationToken)

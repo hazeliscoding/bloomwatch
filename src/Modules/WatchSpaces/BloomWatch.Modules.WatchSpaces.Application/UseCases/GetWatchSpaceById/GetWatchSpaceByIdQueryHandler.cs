@@ -3,6 +3,7 @@ using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
 
@@ -13,14 +14,15 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetWatchSpaceById;
 public sealed class GetWatchSpaceByIdQueryHandler(
     IWatchSpaceRepository repository,
     IUserDisplayNameLookup displayNameLookup)
+    : IRequestHandler<GetWatchSpaceByIdQuery, WatchSpaceDetail>
 {
     /// <summary>
     /// Retrieves a watch space by its identifier, including the full member list with display names.
     /// Only members of the watch space can access its details.
     /// </summary>
-    public async Task<WatchSpaceDetail> HandleAsync(
+    public async Task<WatchSpaceDetail> Handle(
         GetWatchSpaceByIdQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(query.WatchSpaceId), cancellationToken)

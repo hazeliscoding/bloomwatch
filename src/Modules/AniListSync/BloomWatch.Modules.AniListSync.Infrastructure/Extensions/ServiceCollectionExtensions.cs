@@ -1,6 +1,4 @@
 using BloomWatch.Modules.AniListSync.Application.Abstractions;
-using BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
-using BloomWatch.Modules.AniListSync.Application.UseCases.SearchAnime;
 using BloomWatch.Modules.AniListSync.Infrastructure.AniList;
 using BloomWatch.Modules.AniListSync.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -51,10 +49,6 @@ public static class ServiceCollectionExtensions
             new CachedAniListClient(
                 sp.GetRequiredService<AniListGraphQlClient>(),
                 sp.GetRequiredService<IMemoryCache>()));
-
-        // Use case handlers
-        services.AddScoped<SearchAnimeQueryHandler>();
-        services.AddScoped<GetMediaDetailQueryHandler>();
 
         return services;
     }

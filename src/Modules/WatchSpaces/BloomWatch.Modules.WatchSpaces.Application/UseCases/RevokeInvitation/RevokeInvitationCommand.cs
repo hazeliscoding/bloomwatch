@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RevokeInvitation;
 
 /// <summary>
@@ -7,4 +9,4 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RevokeInvitation;
 /// <param name="WatchSpaceId">The unique identifier of the watch space the invitation belongs to.</param>
 /// <param name="InvitationId">The unique identifier of the invitation to revoke.</param>
 /// <param name="RequestingUserId">The identifier of the user requesting the revocation (must be the owner).</param>
-public sealed record RevokeInvitationCommand(Guid WatchSpaceId, Guid InvitationId, Guid RequestingUserId);
+public sealed record RevokeInvitationCommand(Guid WatchSpaceId, Guid InvitationId, Guid RequestingUserId) : ICommand;

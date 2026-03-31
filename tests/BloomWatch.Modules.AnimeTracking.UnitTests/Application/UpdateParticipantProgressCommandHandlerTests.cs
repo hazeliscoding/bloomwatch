@@ -45,7 +45,7 @@ public sealed class UpdateParticipantProgressCommandHandlerTests
             EpisodesWatched: 5);
 
         // Act
-        var result = await _handler.HandleAsync(command);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -70,7 +70,7 @@ public sealed class UpdateParticipantProgressCommandHandlerTests
             EpisodesWatched: 0);
 
         // Act
-        var act = () => _handler.HandleAsync(command);
+        var act = () => _handler.Handle(command, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<NotAWatchSpaceMemberException>();
@@ -93,7 +93,7 @@ public sealed class UpdateParticipantProgressCommandHandlerTests
             EpisodesWatched: 0);
 
         // Act
-        var result = await _handler.HandleAsync(command);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();

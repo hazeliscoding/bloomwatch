@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.InviteMember;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.InviteMember;
 /// <param name="WatchSpaceId">The unique identifier of the watch space to invite the user to.</param>
 /// <param name="InvitedEmail">The email address of the user being invited.</param>
 /// <param name="RequestingUserId">The identifier of the user issuing the invitation (must be the owner).</param>
-public sealed record InviteMemberCommand(Guid WatchSpaceId, string InvitedEmail, Guid RequestingUserId);
+public sealed record InviteMemberCommand(Guid WatchSpaceId, string InvitedEmail, Guid RequestingUserId) : ICommand<InviteMemberResult>;
 
 /// <summary>
 /// The result returned after an invitation is successfully created and sent.

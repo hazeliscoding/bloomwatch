@@ -3,16 +3,18 @@ using BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantPro
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
 using BloomWatch.Modules.AnimeTracking.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantRating;
 
 public sealed class UpdateParticipantRatingCommandHandler(
     IMembershipChecker membershipChecker,
     IAnimeTrackingRepository repository)
+    : IRequestHandler<UpdateParticipantRatingCommand, ParticipantDetailResult?>
 {
-    public async Task<ParticipantDetailResult?> HandleAsync(
+    public async Task<ParticipantDetailResult?> Handle(
         UpdateParticipantRatingCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             command.WatchSpaceId, command.RequestingUserId, cancellationToken);

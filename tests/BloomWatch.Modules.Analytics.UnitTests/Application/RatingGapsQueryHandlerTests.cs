@@ -44,7 +44,7 @@ public sealed class RatingGapsQueryHandlerTests
         _displayNameLookup.GetDisplayNamesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(new Dictionary<Guid, string> { [raterA] = "Alice", [raterB] = "Bob" });
 
-        var result = await _handler.HandleAsync(new GetRatingGapsQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetRatingGapsQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.Items.Should().HaveCount(2);
         // Both have gap 3.0, so tie-break by title: Bleach before Naruto
@@ -65,7 +65,7 @@ public sealed class RatingGapsQueryHandlerTests
         _dataSource.GetAnimeWithParticipantsAsync(watchSpaceId, Arg.Any<CancellationToken>())
             .Returns(new List<WatchSpaceAnimeData>());
 
-        var result = await _handler.HandleAsync(new GetRatingGapsQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetRatingGapsQuery(watchSpaceId, userId), CancellationToken.None);
 
         result.Items.Should().BeEmpty();
         result.Message.Should().Be("Not enough data");
@@ -93,7 +93,7 @@ public sealed class RatingGapsQueryHandlerTests
         _displayNameLookup.GetDisplayNamesAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
             .Returns(new Dictionary<Guid, string> { [raterA] = "A", [raterB] = "B" });
 
-        var result = await _handler.HandleAsync(new GetRatingGapsQuery(watchSpaceId, userId));
+        var result = await _handler.Handle(new GetRatingGapsQuery(watchSpaceId, userId), CancellationToken.None);
 
         // All 5 should be returned (no cap like the dashboard's top-3)
         result.Items.Should().HaveCount(5);

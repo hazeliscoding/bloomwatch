@@ -1,16 +1,18 @@
 using BloomWatch.Modules.Analytics.Application.Abstractions;
 using BloomWatch.Modules.Analytics.Application.Exceptions;
 using BloomWatch.Modules.Analytics.Application.Shared;
+using MediatR;
 
 namespace BloomWatch.Modules.Analytics.Application.UseCases.GetCompatibility;
 
 public sealed class GetCompatibilityQueryHandler(
     IMembershipChecker membershipChecker,
     IWatchSpaceAnalyticsDataSource dataSource)
+    : IRequestHandler<GetCompatibilityQuery, CompatibilityScoreResult>
 {
-    public async Task<CompatibilityScoreResult> HandleAsync(
+    public async Task<CompatibilityScoreResult> Handle(
         GetCompatibilityQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             query.WatchSpaceId, query.UserId, cancellationToken);

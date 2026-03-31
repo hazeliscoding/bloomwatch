@@ -2,16 +2,18 @@ using BloomWatch.Modules.AnimeTracking.Application.Abstractions;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
 using BloomWatch.Modules.AnimeTracking.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.UpdateParticipantProgress;
 
 public sealed class UpdateParticipantProgressCommandHandler(
     IMembershipChecker membershipChecker,
     IAnimeTrackingRepository repository)
+    : IRequestHandler<UpdateParticipantProgressCommand, ParticipantDetailResult?>
 {
-    public async Task<ParticipantDetailResult?> HandleAsync(
+    public async Task<ParticipantDetailResult?> Handle(
         UpdateParticipantProgressCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             command.WatchSpaceId, command.RequestingUserId, cancellationToken);

@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.CreateWatchSpace;
 /// </summary>
 /// <param name="Name">The display name for the new watch space.</param>
 /// <param name="RequestingUserId">The identifier of the user creating the watch space.</param>
-public sealed record CreateWatchSpaceCommand(string Name, Guid RequestingUserId);
+public sealed record CreateWatchSpaceCommand(string Name, Guid RequestingUserId) : ICommand<CreateWatchSpaceResult>;
 
 /// <summary>
 /// The result returned after a watch space is successfully created.

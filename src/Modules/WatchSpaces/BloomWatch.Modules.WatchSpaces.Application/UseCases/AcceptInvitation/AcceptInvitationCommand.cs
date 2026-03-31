@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 
 /// <summary>
@@ -6,7 +8,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.AcceptInvitation;
 /// <param name="Token">The single-use invitation token received via email.</param>
 /// <param name="AcceptingUserId">The identifier of the user accepting the invitation.</param>
 /// <param name="AcceptingUserEmail">The email address of the accepting user, used to verify it matches the invitation.</param>
-public sealed record AcceptInvitationCommand(string Token, Guid AcceptingUserId, string AcceptingUserEmail);
+public sealed record AcceptInvitationCommand(string Token, Guid AcceptingUserId, string AcceptingUserEmail) : ICommand<AcceptInvitationResult>;
 
 /// <summary>
 /// The result returned after successfully accepting an invitation.

@@ -3,6 +3,7 @@ using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Contracts.IntegrationEvents;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RemoveMember;
 
@@ -15,6 +16,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.RemoveMember;
 public sealed class RemoveMemberCommandHandler(
     IWatchSpaceRepository repository,
     IIntegrationEventPublisher publisher)
+    : IRequestHandler<RemoveMemberCommand>
 {
     /// <summary>
     /// Removes a member from the watch space and publishes an integration event to notify other modules.
@@ -22,9 +24,9 @@ public sealed class RemoveMemberCommandHandler(
     /// <param name="command">The command containing the watch space identifier, target member, and requesting user.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
-    public async Task HandleAsync(
+    public async Task Handle(
         RemoveMemberCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(command.WatchSpaceId), cancellationToken)

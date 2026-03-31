@@ -34,6 +34,8 @@ public sealed class GetMediaDetailQueryHandlerTests
         Description: "A bounty hunter crew.",
         AverageScore: 86,
         Popularity: 200000,
+        Tags: [],
+        SiteUrl: null,
         CachedAt: default);
 
     private static MediaCacheEntry CreateCacheEntry(int id = 1, DateTime? cachedAt = null) =>
@@ -41,6 +43,7 @@ public sealed class GetMediaDetailQueryHandlerTests
             id, "Cowboy Bebop", "Cowboy Bebop", "カウボーイビバップ",
             "https://img.example.com/1.jpg", 26, "FINISHED", "TV", "SPRING", 1998,
             ["Action", "Sci-Fi"], "A bounty hunter crew.", 86, 200000,
+            [], null,
             cachedAt ?? DateTime.UtcNow);
 
     [Fact]
@@ -49,7 +52,7 @@ public sealed class GetMediaDetailQueryHandlerTests
         var entry = CreateCacheEntry(cachedAt: DateTime.UtcNow.AddHours(-1));
         _cacheRepo.GetByAnilistMediaIdAsync(1, Arg.Any<CancellationToken>()).Returns(entry);
 
-        var result = await _handler.HandleAsync(new GetMediaDetailQuery(1));
+        var result = await _handler.Handle(new GetMediaDetailQuery(1), CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.AnilistMediaId.Should().Be(1);
@@ -63,7 +66,7 @@ public sealed class GetMediaDetailQueryHandlerTests
         _cacheRepo.GetByAnilistMediaIdAsync(1, Arg.Any<CancellationToken>()).Returns((MediaCacheEntry?)null);
         _client.GetMediaByIdAsync(1, Arg.Any<CancellationToken>()).Returns(CreateDetail());
 
-        var result = await _handler.HandleAsync(new GetMediaDetailQuery(1));
+        var result = await _handler.Handle(new GetMediaDetailQuery(1), CancellationToken.None);
 
         result.Should().NotBeNull();
         result!.AnilistMediaId.Should().Be(1);
@@ -77,7 +80,7 @@ public sealed class GetMediaDetailQueryHandlerTests
         _cacheRepo.GetByAnilistMediaIdAsync(1, Arg.Any<CancellationToken>()).Returns(stale);
         _client.GetMediaByIdAsync(1, Arg.Any<CancellationToken>()).Returns(CreateDetail());
 
-        var result = await _handler.HandleAsync(new GetMediaDetailQuery(1));
+        var result = await _handler.Handle(new GetMediaDetailQuery(1), CancellationToken.None);
 
         result.Should().NotBeNull();
         await _client.Received(1).GetMediaByIdAsync(1, Arg.Any<CancellationToken>());
@@ -92,7 +95,7 @@ public sealed class GetMediaDetailQueryHandlerTests
         _client.GetMediaByIdAsync(1, Arg.Any<CancellationToken>())
             .ThrowsAsync(new AniListApiException("AniList API returned HTTP 500."));
 
-        var act = () => _handler.HandleAsync(new GetMediaDetailQuery(1));
+        var act = () => _handler.Handle(new GetMediaDetailQuery(1), CancellationToken.None);
 
         await act.Should().ThrowAsync<AniListApiException>();
         await _cacheRepo.DidNotReceive().UpsertAsync(Arg.Any<MediaCacheEntry>(), Arg.Any<CancellationToken>());
@@ -104,7 +107,7 @@ public sealed class GetMediaDetailQueryHandlerTests
         _cacheRepo.GetByAnilistMediaIdAsync(999, Arg.Any<CancellationToken>()).Returns((MediaCacheEntry?)null);
         _client.GetMediaByIdAsync(999, Arg.Any<CancellationToken>()).Returns((AnimeMediaDetail?)null);
 
-        var result = await _handler.HandleAsync(new GetMediaDetailQuery(999));
+        var result = await _handler.Handle(new GetMediaDetailQuery(999), CancellationToken.None);
 
         result.Should().BeNull();
     }

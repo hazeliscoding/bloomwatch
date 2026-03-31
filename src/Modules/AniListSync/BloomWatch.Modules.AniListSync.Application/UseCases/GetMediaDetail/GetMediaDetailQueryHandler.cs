@@ -1,5 +1,6 @@
 using BloomWatch.Modules.AniListSync.Application.Abstractions;
 using BloomWatch.Modules.AniListSync.Domain.Entities;
+using MediatR;
 
 namespace BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 
@@ -7,21 +8,15 @@ namespace BloomWatch.Modules.AniListSync.Application.UseCases.GetMediaDetail;
 /// Handles <see cref="GetMediaDetailQuery"/> requests by checking the persistent cache first,
 /// then falling back to the AniList API on cache miss or stale entry.
 /// </summary>
-public sealed class GetMediaDetailQueryHandler
+public sealed class GetMediaDetailQueryHandler(
+    IMediaCacheRepository cacheRepository,
+    IAniListClient aniListClient)
+    : IRequestHandler<GetMediaDetailQuery, AnimeMediaDetail?>
 {
     private static readonly TimeSpan CacheFreshness = TimeSpan.FromHours(24);
 
-    private readonly IMediaCacheRepository _cacheRepository;
-    private readonly IAniListClient _aniListClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GetMediaDetailQueryHandler"/> class.
-    /// </summary>
-    public GetMediaDetailQueryHandler(IMediaCacheRepository cacheRepository, IAniListClient aniListClient)
-    {
-        _cacheRepository = cacheRepository;
-        _aniListClient = aniListClient;
-    }
+    private readonly IMediaCacheRepository _cacheRepository = cacheRepository;
+    private readonly IAniListClient _aniListClient = aniListClient;
 
     /// <summary>
     /// Executes the media detail query. Returns cached data if fresh, otherwise fetches from AniList.
@@ -33,9 +28,9 @@ public sealed class GetMediaDetailQueryHandler
     /// <exception cref="AniListApiException">
     /// Re-thrown when the AniList API fails and no cached data is available to serve.
     /// </exception>
-    public async Task<AnimeMediaDetail?> HandleAsync(
+    public async Task<AnimeMediaDetail?> Handle(
         GetMediaDetailQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var cached = await _cacheRepository.GetByAnilistMediaIdAsync(query.AnilistMediaId, cancellationToken);
 

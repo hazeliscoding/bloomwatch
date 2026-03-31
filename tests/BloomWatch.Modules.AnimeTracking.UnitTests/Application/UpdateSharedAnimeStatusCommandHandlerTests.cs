@@ -48,7 +48,7 @@ public sealed class UpdateSharedAnimeStatusCommandHandlerTests
             Pitch: "must watch");
 
         // Act
-        var result = await _handler.HandleAsync(command);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -74,7 +74,7 @@ public sealed class UpdateSharedAnimeStatusCommandHandlerTests
             Mood: null, Vibe: null, Pitch: null);
 
         // Act
-        var act = () => _handler.HandleAsync(command);
+        var act = () => _handler.Handle(command, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<NotAWatchSpaceMemberException>();
@@ -98,7 +98,7 @@ public sealed class UpdateSharedAnimeStatusCommandHandlerTests
             Mood: null, Vibe: null, Pitch: null);
 
         // Act
-        var result = await _handler.HandleAsync(command);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();

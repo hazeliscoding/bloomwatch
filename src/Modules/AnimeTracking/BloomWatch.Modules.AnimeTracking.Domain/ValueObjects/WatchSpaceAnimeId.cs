@@ -1,9 +1,11 @@
+using BloomWatch.SharedKernel;
+
 namespace BloomWatch.Modules.AnimeTracking.Domain.ValueObjects;
 
 /// <summary>
 /// Strongly-typed identifier for a <see cref="Aggregates.WatchSpaceAnime"/> aggregate.
 /// </summary>
-public readonly record struct WatchSpaceAnimeId(Guid Value)
+public readonly record struct WatchSpaceAnimeId(Guid Value) : IEntityId<WatchSpaceAnimeId>
 {
     public static WatchSpaceAnimeId New() => new(Guid.NewGuid());
     public static WatchSpaceAnimeId From(Guid value) => new(value);

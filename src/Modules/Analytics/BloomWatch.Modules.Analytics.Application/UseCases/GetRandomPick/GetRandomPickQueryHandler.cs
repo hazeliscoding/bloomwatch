@@ -1,15 +1,17 @@
 using BloomWatch.Modules.Analytics.Application.Abstractions;
 using BloomWatch.Modules.Analytics.Application.Exceptions;
+using MediatR;
 
 namespace BloomWatch.Modules.Analytics.Application.UseCases.GetRandomPick;
 
 public sealed class GetRandomPickQueryHandler(
     IMembershipChecker membershipChecker,
     IWatchSpaceAnalyticsDataSource dataSource)
+    : IRequestHandler<GetRandomPickQuery, RandomPickResult>
 {
-    public async Task<RandomPickResult> HandleAsync(
+    public async Task<RandomPickResult> Handle(
         GetRandomPickQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             query.WatchSpaceId, query.UserId, cancellationToken);

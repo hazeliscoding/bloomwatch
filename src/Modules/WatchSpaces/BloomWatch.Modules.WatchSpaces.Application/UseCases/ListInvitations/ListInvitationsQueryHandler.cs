@@ -3,6 +3,7 @@ using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Enums;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.ListInvitations;
 
@@ -12,6 +13,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.ListInvitations;
 /// </summary>
 /// <param name="repository">The watch space repository used for querying.</param>
 public sealed class ListInvitationsQueryHandler(IWatchSpaceRepository repository)
+    : IRequestHandler<ListInvitationsQuery, IReadOnlyList<InvitationDetail>>
 {
     /// <summary>
     /// Lists all invitations for a watch space. Access is restricted to the watch space owner.
@@ -21,9 +23,9 @@ public sealed class ListInvitationsQueryHandler(IWatchSpaceRepository repository
     /// <returns>A read-only list of <see cref="InvitationDetail"/> projections for all invitations in the watch space.</returns>
     /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
     /// <exception cref="NotAnOwnerException">Thrown when the requesting user is not the owner of the watch space.</exception>
-    public async Task<IReadOnlyList<InvitationDetail>> HandleAsync(
+    public async Task<IReadOnlyList<InvitationDetail>> Handle(
         ListInvitationsQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(query.WatchSpaceId), cancellationToken)

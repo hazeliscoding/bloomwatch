@@ -5,6 +5,7 @@ using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetRatingGaps;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetRandomPick;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetSharedStats;
+using MediatR;
 
 namespace BloomWatch.Api.Modules.Analytics;
 
@@ -96,14 +97,14 @@ public static class AnalyticsEndpoints
     private static async Task<IResult> GetDashboardSummaryAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
-        GetDashboardSummaryQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new GetDashboardSummaryQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
@@ -121,14 +122,14 @@ public static class AnalyticsEndpoints
     private static async Task<IResult> GetCompatibilityAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
-        GetCompatibilityQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new GetCompatibilityQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
@@ -146,14 +147,14 @@ public static class AnalyticsEndpoints
     private static async Task<IResult> GetRatingGapsAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
-        GetRatingGapsQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new GetRatingGapsQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
@@ -171,14 +172,14 @@ public static class AnalyticsEndpoints
     private static async Task<IResult> GetSharedStatsAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
-        GetSharedStatsQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new GetSharedStatsQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);
@@ -196,14 +197,14 @@ public static class AnalyticsEndpoints
     private static async Task<IResult> GetRandomPickAsync(
         Guid watchSpaceId,
         ClaimsPrincipal user,
-        GetRandomPickQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
 
         try
         {
-            var result = await handler.HandleAsync(
+            var result = await sender.Send(
                 new GetRandomPickQuery(watchSpaceId, userId), ct);
 
             return Results.Ok(result);

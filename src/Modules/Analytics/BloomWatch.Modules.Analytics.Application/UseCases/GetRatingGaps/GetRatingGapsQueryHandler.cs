@@ -2,6 +2,7 @@ using BloomWatch.Modules.Analytics.Application.Abstractions;
 using BloomWatch.Modules.Analytics.Application.Exceptions;
 using BloomWatch.Modules.Analytics.Application.Shared;
 using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
+using MediatR;
 
 namespace BloomWatch.Modules.Analytics.Application.UseCases.GetRatingGaps;
 
@@ -9,10 +10,11 @@ public sealed class GetRatingGapsQueryHandler(
     IMembershipChecker membershipChecker,
     IWatchSpaceAnalyticsDataSource dataSource,
     IUserDisplayNameLookup userDisplayNameLookup)
+    : IRequestHandler<GetRatingGapsQuery, RatingGapsResult>
 {
-    public async Task<RatingGapsResult> HandleAsync(
+    public async Task<RatingGapsResult> Handle(
         GetRatingGapsQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var isMember = await membershipChecker.IsMemberAsync(
             query.WatchSpaceId, query.UserId, cancellationToken);

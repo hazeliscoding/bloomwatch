@@ -2,6 +2,7 @@ using BloomWatch.Modules.AnimeTracking.Application.Abstractions;
 using BloomWatch.Modules.AnimeTracking.Domain.Aggregates;
 using BloomWatch.Modules.AnimeTracking.Domain.Exceptions;
 using BloomWatch.Modules.AnimeTracking.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.AddAnimeToWatchSpace;
 
@@ -14,10 +15,11 @@ public sealed class AddAnimeToWatchSpaceCommandHandler(
     IMembershipChecker membershipChecker,
     IMediaCacheLookup mediaCacheLookup,
     IAnimeTrackingRepository repository)
+    : IRequestHandler<AddAnimeToWatchSpaceCommand, AddAnimeToWatchSpaceResult>
 {
-    public async Task<AddAnimeToWatchSpaceResult> HandleAsync(
+    public async Task<AddAnimeToWatchSpaceResult> Handle(
         AddAnimeToWatchSpaceCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         // 1. Membership check
         var isMember = await membershipChecker.IsMemberAsync(

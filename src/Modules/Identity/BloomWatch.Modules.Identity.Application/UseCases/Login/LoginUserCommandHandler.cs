@@ -2,6 +2,7 @@ using BloomWatch.Modules.Identity.Application.Abstractions;
 using BloomWatch.Modules.Identity.Domain.Aggregates;
 using BloomWatch.Modules.Identity.Domain.Repositories;
 using BloomWatch.Modules.Identity.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.Identity.Application.UseCases.Login;
 
@@ -9,27 +10,15 @@ namespace BloomWatch.Modules.Identity.Application.UseCases.Login;
 /// Handles user authentication by validating credentials, checking account status,
 /// and issuing a JWT access token upon successful login.
 /// </summary>
-public sealed class LoginUserCommandHandler
+public sealed class LoginUserCommandHandler(
+    IUserRepository userRepository,
+    IPasswordHasher passwordHasher,
+    IJwtTokenGenerator jwtTokenGenerator)
+    : IRequestHandler<LoginUserCommand, LoginUserResult>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LoginUserCommandHandler"/> class.
-    /// </summary>
-    /// <param name="userRepository">The repository for querying user aggregates by email.</param>
-    /// <param name="passwordHasher">The service used to verify the password against the stored hash.</param>
-    /// <param name="jwtTokenGenerator">The service used to generate JWT access tokens.</param>
-    public LoginUserCommandHandler(
-        IUserRepository userRepository,
-        IPasswordHasher passwordHasher,
-        IJwtTokenGenerator jwtTokenGenerator)
-    {
-        _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
-        _jwtTokenGenerator = jwtTokenGenerator;
-    }
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IPasswordHasher _passwordHasher = passwordHasher;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator = jwtTokenGenerator;
 
     /// <summary>
     /// Processes a login command by authenticating the user and returning an access token.
@@ -53,9 +42,9 @@ public sealed class LoginUserCommandHandler
     /// Thrown when the email format is invalid, no account matches the email, or the password is incorrect.
     /// </exception>
     /// <exception cref="AccountNotActiveException">Thrown when the matched account is not in an active state.</exception>
-    public async Task<LoginUserResult> HandleAsync(
+    public async Task<LoginUserResult> Handle(
         LoginUserCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         EmailAddress email;
         try

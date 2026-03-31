@@ -1,9 +1,4 @@
 using BloomWatch.Modules.Analytics.Application.Abstractions;
-using BloomWatch.Modules.Analytics.Application.UseCases.GetCompatibility;
-using BloomWatch.Modules.Analytics.Application.UseCases.GetDashboardSummary;
-using BloomWatch.Modules.Analytics.Application.UseCases.GetRatingGaps;
-using BloomWatch.Modules.Analytics.Application.UseCases.GetRandomPick;
-using BloomWatch.Modules.Analytics.Application.UseCases.GetSharedStats;
 using BloomWatch.Modules.Analytics.Infrastructure.CrossModule;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,8 +6,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BloomWatch.Modules.Analytics.Infrastructure.Extensions;
 
+/// <summary>
+/// Registers the Analytics module's services and cross-module read contexts
+/// into the dependency injection container.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds the Analytics module to the service collection, including cross-module
+    /// read-only <see cref="Microsoft.EntityFrameworkCore.DbContext"/> instances for
+    /// AnimeTracking, WatchSpaces, and Identity data, plus the abstraction implementations.
+    /// </summary>
+    /// <param name="services">The service collection to register into.</param>
+    /// <param name="configuration">The application configuration (requires <c>ConnectionStrings:DefaultConnection</c>).</param>
+    /// <returns>The same <see cref="IServiceCollection"/> for chaining.</returns>
     public static IServiceCollection AddAnalyticsModule(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -31,13 +38,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMembershipChecker, MembershipChecker>();
         services.AddScoped<IWatchSpaceAnalyticsDataSource, WatchSpaceAnalyticsDataSource>();
         services.AddScoped<IUserDisplayNameLookup, UserDisplayNameLookup>();
-
-        // Query handlers
-        services.AddScoped<GetDashboardSummaryQueryHandler>();
-        services.AddScoped<GetCompatibilityQueryHandler>();
-        services.AddScoped<GetRatingGapsQueryHandler>();
-        services.AddScoped<GetSharedStatsQueryHandler>();
-        services.AddScoped<GetRandomPickQueryHandler>();
 
         return services;
     }

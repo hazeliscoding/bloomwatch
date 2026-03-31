@@ -42,7 +42,7 @@ public sealed class AddAnimeToWatchSpaceCommandHandlerTests
             _watchSpaceId, AniListMediaId, "Cozy", "Sunday", "Best fantasy", _userId);
 
         // Act
-        var result = await _handler.HandleAsync(command);
+        var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.WatchSpaceAnimeId.Should().NotBeEmpty();
@@ -67,7 +67,7 @@ public sealed class AddAnimeToWatchSpaceCommandHandlerTests
         var command = new AddAnimeToWatchSpaceCommand(
             _watchSpaceId, AniListMediaId, null, null, null, _userId);
 
-        var act = () => _handler.HandleAsync(command);
+        var act = () => _handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<NotAWatchSpaceMemberException>();
     }
@@ -83,7 +83,7 @@ public sealed class AddAnimeToWatchSpaceCommandHandlerTests
         var command = new AddAnimeToWatchSpaceCommand(
             _watchSpaceId, AniListMediaId, null, null, null, _userId);
 
-        var act = () => _handler.HandleAsync(command);
+        var act = () => _handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<AnimeAlreadyInWatchSpaceException>();
     }
@@ -101,7 +101,7 @@ public sealed class AddAnimeToWatchSpaceCommandHandlerTests
         var command = new AddAnimeToWatchSpaceCommand(
             _watchSpaceId, AniListMediaId, null, null, null, _userId);
 
-        var act = () => _handler.HandleAsync(command);
+        var act = () => _handler.Handle(command, CancellationToken.None);
 
         await act.Should().ThrowAsync<MediaNotFoundException>();
     }

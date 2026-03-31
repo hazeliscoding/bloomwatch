@@ -14,6 +14,7 @@ using BloomWatch.Modules.WatchSpaces.Application.UseCases.RevokeInvitation;
 using BloomWatch.Modules.WatchSpaces.Application.UseCases.TransferOwnership;
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BloomWatch.Api.Modules.WatchSpaces;
@@ -198,13 +199,13 @@ public static class WatchSpacesEndpoints
     private static async Task<IResult> CreateAsync(
         [FromBody] CreateWatchSpaceRequest request,
         ClaimsPrincipal user,
-        CreateWatchSpaceCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(new CreateWatchSpaceCommand(request.Name, userId), ct);
+            var result = await sender.Send(new CreateWatchSpaceCommand(request.Name, userId), ct);
             return Results.Created($"/watchspaces/{result.WatchSpaceId}", result);
         }
         catch (WatchSpaceDomainException ex)
@@ -218,11 +219,11 @@ public static class WatchSpacesEndpoints
     /// </summary>
     private static async Task<IResult> GetMySpacesAsync(
         ClaimsPrincipal user,
-        GetMyWatchSpacesQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
-        var result = await handler.HandleAsync(new GetMyWatchSpacesQuery(userId), ct);
+        var result = await sender.Send(new GetMyWatchSpacesQuery(userId), ct);
         return Results.Ok(result);
     }
 
@@ -232,13 +233,13 @@ public static class WatchSpacesEndpoints
     private static async Task<IResult> GetByIdAsync(
         Guid id,
         ClaimsPrincipal user,
-        GetWatchSpaceByIdQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(new GetWatchSpaceByIdQuery(id, userId), ct);
+            var result = await sender.Send(new GetWatchSpaceByIdQuery(id, userId), ct);
             return Results.Ok(result);
         }
         catch (WatchSpaceNotFoundException)
@@ -258,13 +259,13 @@ public static class WatchSpacesEndpoints
         Guid id,
         [FromBody] RenameWatchSpaceRequest request,
         ClaimsPrincipal user,
-        RenameWatchSpaceCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(new RenameWatchSpaceCommand(id, request.Name, userId), ct);
+            var result = await sender.Send(new RenameWatchSpaceCommand(id, request.Name, userId), ct);
             return Results.Ok(result);
         }
         catch (WatchSpaceNotFoundException)
@@ -288,13 +289,13 @@ public static class WatchSpacesEndpoints
         Guid id,
         [FromBody] TransferOwnershipRequest request,
         ClaimsPrincipal user,
-        TransferOwnershipCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            await handler.HandleAsync(new TransferOwnershipCommand(id, request.NewOwnerId, userId), ct);
+            await sender.Send(new TransferOwnershipCommand(id, request.NewOwnerId, userId), ct);
             return Results.Ok();
         }
         catch (WatchSpaceNotFoundException)
@@ -320,13 +321,13 @@ public static class WatchSpacesEndpoints
         Guid id,
         [FromBody] InviteMemberRequest request,
         ClaimsPrincipal user,
-        InviteMemberCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(new InviteMemberCommand(id, request.Email, userId), ct);
+            var result = await sender.Send(new InviteMemberCommand(id, request.Email, userId), ct);
             return Results.Created($"/watchspaces/{id}/invitations/{result.InvitationId}", result);
         }
         catch (WatchSpaceNotFoundException)
@@ -357,13 +358,13 @@ public static class WatchSpacesEndpoints
     private static async Task<IResult> ListInvitationsAsync(
         Guid id,
         ClaimsPrincipal user,
-        ListInvitationsQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            var result = await handler.HandleAsync(new ListInvitationsQuery(id, userId), ct);
+            var result = await sender.Send(new ListInvitationsQuery(id, userId), ct);
             return Results.Ok(result);
         }
         catch (WatchSpaceNotFoundException)
@@ -383,13 +384,13 @@ public static class WatchSpacesEndpoints
         Guid id,
         Guid invitationId,
         ClaimsPrincipal user,
-        RevokeInvitationCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            await handler.HandleAsync(new RevokeInvitationCommand(id, invitationId, userId), ct);
+            await sender.Send(new RevokeInvitationCommand(id, invitationId, userId), ct);
             return Results.Ok();
         }
         catch (WatchSpaceNotFoundException)
@@ -414,13 +415,13 @@ public static class WatchSpacesEndpoints
     private static async Task<IResult> GetInvitationByTokenAsync(
         string token,
         ClaimsPrincipal user,
-        GetInvitationByTokenQueryHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var email = GetEmail(user);
         try
         {
-            var result = await handler.HandleAsync(new GetInvitationByTokenQuery(token, email), ct);
+            var result = await sender.Send(new GetInvitationByTokenQuery(token, email), ct);
             return Results.Ok(result);
         }
         catch (InvitationNotFoundException)
@@ -435,14 +436,14 @@ public static class WatchSpacesEndpoints
     private static async Task<IResult> AcceptInvitationAsync(
         string token,
         ClaimsPrincipal user,
-        AcceptInvitationCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         var email = GetEmail(user);
         try
         {
-            var result = await handler.HandleAsync(new AcceptInvitationCommand(token, userId, email), ct);
+            var result = await sender.Send(new AcceptInvitationCommand(token, userId, email), ct);
             return Results.Ok(result);
         }
         catch (InvitationNotFoundException)
@@ -469,13 +470,13 @@ public static class WatchSpacesEndpoints
     private static async Task<IResult> DeclineInvitationAsync(
         string token,
         ClaimsPrincipal user,
-        DeclineInvitationCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var email = GetEmail(user);
         try
         {
-            await handler.HandleAsync(new DeclineInvitationCommand(token, email), ct);
+            await sender.Send(new DeclineInvitationCommand(token, email), ct);
             return Results.Ok();
         }
         catch (InvitationNotFoundException)
@@ -497,13 +498,13 @@ public static class WatchSpacesEndpoints
         Guid id,
         Guid userId,
         ClaimsPrincipal user,
-        RemoveMemberCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var requestingUserId = GetUserId(user);
         try
         {
-            await handler.HandleAsync(new RemoveMemberCommand(id, userId, requestingUserId), ct);
+            await sender.Send(new RemoveMemberCommand(id, userId, requestingUserId), ct);
             return Results.Ok();
         }
         catch (WatchSpaceNotFoundException)
@@ -530,13 +531,13 @@ public static class WatchSpacesEndpoints
     private static async Task<IResult> LeaveAsync(
         Guid id,
         ClaimsPrincipal user,
-        LeaveWatchSpaceCommandHandler handler,
+        ISender sender,
         CancellationToken ct)
     {
         var userId = GetUserId(user);
         try
         {
-            await handler.HandleAsync(new LeaveWatchSpaceCommand(id, userId), ct);
+            await sender.Send(new LeaveWatchSpaceCommand(id, userId), ct);
             return Results.Ok();
         }
         catch (WatchSpaceNotFoundException)

@@ -3,6 +3,7 @@ using BloomWatch.Modules.WatchSpaces.Application.UseCases.RenameWatchSpace;
 using BloomWatch.Modules.WatchSpaces.Contracts.IntegrationEvents;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
 using BloomWatch.Modules.WatchSpaces.Domain.ValueObjects;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.LeaveWatchSpace;
 
@@ -15,6 +16,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.LeaveWatchSpace;
 public sealed class LeaveWatchSpaceCommandHandler(
     IWatchSpaceRepository repository,
     IIntegrationEventPublisher publisher)
+    : IRequestHandler<LeaveWatchSpaceCommand>
 {
     /// <summary>
     /// Removes the leaving user from the watch space membership and publishes an integration event.
@@ -22,9 +24,9 @@ public sealed class LeaveWatchSpaceCommandHandler(
     /// <param name="command">The command containing the watch space identifier and leaving user identifier.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <exception cref="WatchSpaceNotFoundException">Thrown when no watch space exists with the given identifier.</exception>
-    public async Task HandleAsync(
+    public async Task Handle(
         LeaveWatchSpaceCommand command,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByIdWithMembersAsync(
             WatchSpaceId.From(command.WatchSpaceId), cancellationToken)

@@ -1,4 +1,5 @@
 using BloomWatch.Modules.Identity.Domain.ValueObjects;
+using BloomWatch.SharedKernel.CQRS;
 
 namespace BloomWatch.Modules.Identity.Application.UseCases.GetProfile;
 
@@ -6,7 +7,7 @@ namespace BloomWatch.Modules.Identity.Application.UseCases.GetProfile;
 /// Query to retrieve a user's profile by their unique identifier.
 /// </summary>
 /// <param name="UserId">The strongly-typed unique identifier of the user whose profile to retrieve.</param>
-public sealed record GetUserProfileQuery(UserId UserId);
+public sealed record GetUserProfileQuery(UserId UserId) : IQuery<UserProfileResult>;
 
 /// <summary>
 /// Represents the data returned when a user profile is successfully retrieved.

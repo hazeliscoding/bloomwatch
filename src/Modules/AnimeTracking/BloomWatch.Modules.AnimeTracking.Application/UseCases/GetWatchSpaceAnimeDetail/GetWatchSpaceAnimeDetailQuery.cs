@@ -1,3 +1,5 @@
+using BloomWatch.SharedKernel.CQRS;
+
 namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAnimeDetail;
 
 /// <summary>
@@ -6,4 +8,4 @@ namespace BloomWatch.Modules.AnimeTracking.Application.UseCases.GetWatchSpaceAni
 public sealed record GetWatchSpaceAnimeDetailQuery(
     Guid WatchSpaceId,
     Guid WatchSpaceAnimeId,
-    Guid RequestingUserId);
+    Guid RequestingUserId) : IQuery<GetWatchSpaceAnimeDetailResult?>;

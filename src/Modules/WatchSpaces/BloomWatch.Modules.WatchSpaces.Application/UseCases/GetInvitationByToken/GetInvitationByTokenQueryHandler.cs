@@ -1,5 +1,6 @@
 using BloomWatch.Modules.WatchSpaces.Domain.Aggregates;
 using BloomWatch.Modules.WatchSpaces.Domain.Repositories;
+using MediatR;
 
 namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetInvitationByToken;
 
@@ -9,6 +10,7 @@ namespace BloomWatch.Modules.WatchSpaces.Application.UseCases.GetInvitationByTok
 /// </summary>
 /// <param name="repository">The watch space repository.</param>
 public sealed class GetInvitationByTokenQueryHandler(IWatchSpaceRepository repository)
+    : IRequestHandler<GetInvitationByTokenQuery, InvitationPreviewResult>
 {
     /// <summary>
     /// Retrieves the invitation preview for the given token.
@@ -17,9 +19,9 @@ public sealed class GetInvitationByTokenQueryHandler(IWatchSpaceRepository repos
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>The invitation preview result.</returns>
     /// <exception cref="InvitationNotFoundException">Thrown when no invitation matches the token.</exception>
-    public async Task<InvitationPreviewResult> HandleAsync(
+    public async Task<InvitationPreviewResult> Handle(
         GetInvitationByTokenQuery query,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var watchSpace = await repository.GetByInvitationTokenAsync(query.Token, cancellationToken)
             ?? throw new InvitationNotFoundException();
