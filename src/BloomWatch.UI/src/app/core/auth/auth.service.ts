@@ -1,10 +1,13 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ApiService } from '../http/api.service';
 
 const TOKEN_KEY = 'bloom_access_token';
 const EXPIRES_KEY = 'bloom_token_expires_at';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly api = inject(ApiService);
   private readonly tokenSignal = signal<string | null>(null);
 
   readonly token = this.tokenSignal.asReadonly();
@@ -47,5 +50,13 @@ export class AuthService {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(EXPIRES_KEY);
     this.tokenSignal.set(null);
+  }
+
+  forgotPassword(email: string): Observable<void> {
+    return this.api.post<void>('/auth/forgot-password', { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.api.post<void>('/auth/reset-password', { token, newPassword });
   }
 }
