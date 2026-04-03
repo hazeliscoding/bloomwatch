@@ -72,7 +72,9 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:d[k] for k in [''''scripts'''',''''dependencies''''] if k in d}, indent=2\\)\\)\")",
       "Bash(gh repo:*)",
       "Bash(gh issue:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(gh pr:*)",
+      "Bash(./scripts/apply-migrations.sh)"
     ]
   }
 }

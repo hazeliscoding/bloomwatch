@@ -21,10 +21,14 @@ namespace BloomWatch.Modules.Identity.Infrastructure.Persistence;
 /// <param name="options">The EF Core options for this context, typically configured with a PostgreSQL provider.</param>
 public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> options) : DbContext(options)
 {
-    /// <summary>
-    /// Gets the <see cref="DbSet{TEntity}"/> for <see cref="User"/> aggregates.
-    /// </summary>
+    /// <summary>Gets the <see cref="DbSet{TEntity}"/> for <see cref="User"/> aggregates.</summary>
     public DbSet<User> Users => Set<User>();
+
+    /// <summary>Gets the <see cref="DbSet{TEntity}"/> for <see cref="RefreshToken"/> entities.</summary>
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    /// <summary>Gets the <see cref="DbSet{TEntity}"/> for <see cref="PasswordResetToken"/> entities.</summary>
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
     /// <summary>
     /// Configures the entity model for the Identity module.
@@ -34,5 +38,7 @@ public sealed class IdentityDbContext(DbContextOptions<IdentityDbContext> option
     {
         modelBuilder.HasDefaultSchema("identity");
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+        modelBuilder.ApplyConfiguration(new PasswordResetTokenConfiguration());
     }
 }

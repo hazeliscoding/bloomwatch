@@ -13,11 +13,16 @@ public sealed class LoginUserCommandHandlerTests
     private readonly IUserRepository _repository = Substitute.For<IUserRepository>();
     private readonly IPasswordHasher _hasher = Substitute.For<IPasswordHasher>();
     private readonly IJwtTokenGenerator _tokenGenerator = Substitute.For<IJwtTokenGenerator>();
+    private readonly IRefreshTokenService _refreshTokenService = Substitute.For<IRefreshTokenService>();
+    private readonly IRefreshTokenRepository _refreshTokenRepository = Substitute.For<IRefreshTokenRepository>();
     private readonly LoginUserCommandHandler _sut;
 
     public LoginUserCommandHandlerTests()
     {
-        _sut = new LoginUserCommandHandler(_repository, _hasher, _tokenGenerator);
+        _sut = new LoginUserCommandHandler(
+            _repository, _hasher, _tokenGenerator, _refreshTokenService, _refreshTokenRepository);
+        _refreshTokenService.GenerateToken().Returns("plain-refresh-token");
+        _refreshTokenService.HashToken("plain-refresh-token").Returns("refresh-hash");
     }
 
     private static User MakeActiveUser(string email = "user@example.com")

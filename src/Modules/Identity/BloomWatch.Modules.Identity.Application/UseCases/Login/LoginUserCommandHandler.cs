@@ -13,12 +13,16 @@ namespace BloomWatch.Modules.Identity.Application.UseCases.Login;
 public sealed class LoginUserCommandHandler(
     IUserRepository userRepository,
     IPasswordHasher passwordHasher,
-    IJwtTokenGenerator jwtTokenGenerator)
+    IJwtTokenGenerator jwtTokenGenerator,
+    IRefreshTokenService refreshTokenService,
+    IRefreshTokenRepository refreshTokenRepository)
     : IRequestHandler<LoginUserCommand, LoginUserResult>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
     private readonly IJwtTokenGenerator _jwtTokenGenerator = jwtTokenGenerator;
+    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
+    private readonly IRefreshTokenRepository _refreshTokenRepository = refreshTokenRepository;
 
     /// <summary>
     /// Processes a login command by authenticating the user and returning an access token.
@@ -69,7 +73,13 @@ public sealed class LoginUserCommandHandler(
 
         var token = _jwtTokenGenerator.GenerateToken(user);
 
-        return new LoginUserResult(token.AccessToken, token.ExpiresAt);
+        var plainRefreshToken = _refreshTokenService.GenerateToken();
+        var refreshHash = _refreshTokenService.HashToken(plainRefreshToken);
+        var refreshExpiresAt = DateTime.UtcNow.AddDays(30);
+        var refreshToken = Domain.Aggregates.RefreshToken.Create(user.Id, refreshHash, refreshExpiresAt);
+        await _refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
+
+        return new LoginUserResult(token.AccessToken, token.ExpiresAt, plainRefreshToken, refreshExpiresAt);
     }
 }
 

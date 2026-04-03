@@ -76,7 +76,30 @@
 // --------------------------------------------------------------------------
 
 .login__submit {
+  margin-bottom: var(--bloom-space-3);
+}
+
+// --------------------------------------------------------------------------
+// Forgot Password Link
+// --------------------------------------------------------------------------
+
+.login__forgot {
+  text-align: center;
+  font-size: var(--bloom-text-sm);
+  color: var(--bloom-text-secondary);
   margin-bottom: var(--bloom-space-6);
+
+  a {
+    color: var(--bloom-text-link);
+    text-decoration: none;
+    font-weight: var(--bloom-font-semibold);
+    transition: color var(--bloom-transition-fast);
+
+    &:hover {
+      color: var(--bloom-text-link-hover);
+      text-decoration: underline;
+    }
+  }
 }
 
 // --------------------------------------------------------------------------

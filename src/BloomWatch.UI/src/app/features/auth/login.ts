@@ -65,6 +65,10 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
               Sign In
             </bloom-button>
           </div>
+
+          <p class="login__forgot">
+            <a routerLink="/forgot-password">Forgot password?</a>
+          </p>
         </form>
 
         <p class="login__footer">

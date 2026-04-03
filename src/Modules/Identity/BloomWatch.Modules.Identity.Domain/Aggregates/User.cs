@@ -118,4 +118,15 @@ public sealed class User
             isEmailVerified: false,
             createdAtUtc: DateTime.UtcNow);
     }
+
+    /// <summary>
+    /// Updates the user's password hash to the provided value.
+    /// The caller is responsible for hashing the new password before invoking this method.
+    /// </summary>
+    /// <param name="newPasswordHash">The bcrypt hash of the new password.</param>
+    public void UpdatePasswordHash(string newPasswordHash)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(newPasswordHash, nameof(newPasswordHash));
+        PasswordHash = newPasswordHash;
+    }
 }

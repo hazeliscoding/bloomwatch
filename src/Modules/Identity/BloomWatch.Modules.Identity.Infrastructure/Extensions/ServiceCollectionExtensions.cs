@@ -2,6 +2,7 @@ using System.Text;
 using BloomWatch.Modules.Identity.Application.Abstractions;
 using BloomWatch.Modules.Identity.Domain.Repositories;
 using BloomWatch.Modules.Identity.Infrastructure.Auth;
+using BloomWatch.Modules.Identity.Infrastructure.Email;
 using BloomWatch.Modules.Identity.Infrastructure.Persistence;
 using BloomWatch.Modules.Identity.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -53,10 +54,19 @@ public static class ServiceCollectionExtensions
 
         // Repositories
         services.AddScoped<IUserRepository, EfUserRepository>();
+        services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();
+        services.AddScoped<IPasswordResetTokenRepository, EfPasswordResetTokenRepository>();
 
         // Auth services
         services.AddScoped<IPasswordHasher, BcryptPasswordHasher>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+
+        var smtpHost = configuration["Email:Smtp:Host"];
+        if (!string.IsNullOrEmpty(smtpHost))
+            services.AddScoped<IPasswordResetEmailSender, SmtpPasswordResetEmailSender>();
+        else
+            services.AddScoped<IPasswordResetEmailSender, NoOpPasswordResetEmailSender>();
 
         // JWT bearer authentication
         var secretKey = configuration["Identity:Jwt:SecretKey"]
