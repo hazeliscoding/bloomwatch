@@ -14,4 +14,10 @@ public sealed record LoginUserCommand(string Email, string Password) : ICommand<
 /// </summary>
 /// <param name="AccessToken">The signed JWT access token for subsequent authenticated requests.</param>
 /// <param name="ExpiresAt">The UTC date and time at which the access token expires.</param>
-public sealed record LoginUserResult(string AccessToken, DateTime ExpiresAt);
+/// <param name="RefreshToken">The opaque refresh token for obtaining new access tokens.</param>
+/// <param name="RefreshTokenExpiresAt">The UTC date and time at which the refresh token expires.</param>
+public sealed record LoginUserResult(
+    string AccessToken,
+    DateTime ExpiresAt,
+    string RefreshToken,
+    DateTime RefreshTokenExpiresAt);
