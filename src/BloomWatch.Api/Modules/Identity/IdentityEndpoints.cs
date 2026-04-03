@@ -1,11 +1,16 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using BloomWatch.Modules.Identity.Application.UseCases.ForgotPassword;
 using BloomWatch.Modules.Identity.Application.UseCases.GetProfile;
 using BloomWatch.Modules.Identity.Application.UseCases.Login;
+using BloomWatch.Modules.Identity.Application.UseCases.RefreshToken;
 using BloomWatch.Modules.Identity.Application.UseCases.Register;
+using BloomWatch.Modules.Identity.Application.UseCases.ResetPassword;
+using BloomWatch.Modules.Identity.Application.UseCases.RevokeToken;
 using BloomWatch.Modules.Identity.Domain.ValueObjects;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BloomWatch.Api.Modules.Identity;
 
@@ -50,6 +55,38 @@ public static class IdentityEndpoints
                 "along with its expiration timestamp.")
             .Produces<LoginUserResult>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized);
+
+        group.MapPost("/refresh", RefreshAsync)
+            .WithName("RefreshToken")
+            .WithSummary("Exchange a refresh token for a new token pair")
+            .WithDescription("Rotates the refresh token and issues a new access + refresh token pair.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized);
+
+        group.MapPost("/revoke", RevokeAsync)
+            .WithName("RevokeToken")
+            .WithSummary("Revoke a refresh token (logout)")
+            .WithDescription("Invalidates the supplied refresh token. Idempotent for unknown tokens.")
+            .Produces(StatusCodes.Status204NoContent);
+
+        group.MapPost("/forgot-password", ForgotPasswordAsync)
+            .WithName("ForgotPassword")
+            .WithSummary("Request a password-reset email")
+            .WithDescription(
+                "Sends a password-reset link to the provided email address if it belongs to an active account. " +
+                "Always returns 200 to prevent user enumeration. Rate-limited to 5 requests per email per hour.")
+            .RequireRateLimiting("forgot-password-limit")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status429TooManyRequests);
+
+        group.MapPost("/reset-password", ResetPasswordAsync)
+            .WithName("ResetPassword")
+            .WithSummary("Reset a user's password using a reset token")
+            .WithDescription(
+                "Validates the supplied reset token and, if valid, updates the user's password. " +
+                "Returns 400 for expired, used, or invalid tokens.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
 
         var usersGroup = app.MapGroup("/users").WithTags("Users");
 
@@ -121,7 +158,13 @@ public static class IdentityEndpoints
         {
             var command = new LoginUserCommand(request.Email, request.Password);
             var result = await sender.Send(command, cancellationToken);
-            return Results.Ok(new { accessToken = result.AccessToken, expiresAt = result.ExpiresAt });
+            return Results.Ok(new
+            {
+                accessToken = result.AccessToken,
+                expiresAt = result.ExpiresAt,
+                refreshToken = result.RefreshToken,
+                refreshTokenExpiresAt = result.RefreshTokenExpiresAt,
+            });
         }
         catch (InvalidCredentialsException)
         {
@@ -165,6 +208,68 @@ public static class IdentityEndpoints
             return Results.NotFound();
         }
     }
+
+    private static async Task<IResult> RefreshAsync(
+        [FromBody] RefreshRequest request,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await sender.Send(new RefreshTokenCommand(request.RefreshToken), cancellationToken);
+            return Results.Ok(new
+            {
+                accessToken = result.AccessToken,
+                expiresAt = result.ExpiresAt,
+                refreshToken = result.RefreshToken,
+                refreshTokenExpiresAt = result.RefreshTokenExpiresAt,
+            });
+        }
+        catch (InvalidRefreshTokenException)
+        {
+            return Results.Unauthorized();
+        }
+    }
+
+    private static async Task<IResult> RevokeAsync(
+        [FromBody] RevokeRequest request,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        await sender.Send(new RevokeTokenCommand(request.RefreshToken), cancellationToken);
+        return Results.NoContent();
+    }
+
+    private static async Task<IResult> ForgotPasswordAsync(
+        [FromBody] ForgotPasswordRequest request,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        await sender.Send(new ForgotPasswordCommand(request.Email), cancellationToken);
+        return Results.Ok(new { message = "If that email is registered, a reset link has been sent." });
+    }
+
+    private static async Task<IResult> ResetPasswordAsync(
+        [FromBody] ResetPasswordRequest request,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var result = await sender.Send(
+            new ResetPasswordCommand(request.Token, request.NewPassword), cancellationToken);
+
+        return result switch
+        {
+            ResetPasswordResult.Success =>
+                Results.Ok(new { message = "Password has been reset successfully." }),
+            ResetPasswordResult.TokenExpired =>
+                Results.BadRequest(new { error = "Reset link has expired. Please request a new one." }),
+            ResetPasswordResult.TokenAlreadyUsed =>
+                Results.BadRequest(new { error = "Reset link has already been used. Please request a new one." }),
+            ResetPasswordResult.WeakPassword =>
+                Results.BadRequest(new { error = "Password must be at least 8 characters and include uppercase, lowercase, and a digit." }),
+            _ => Results.BadRequest(new { error = "Invalid reset link. Please request a new one." }),
+        };
+    }
 }
 
 /// <summary>
@@ -181,3 +286,28 @@ public sealed record RegisterRequest(string Email, string Password, string Displ
 /// <param name="Email">The email address of the account to authenticate.</param>
 /// <param name="Password">The password to validate against the account.</param>
 public sealed record LoginRequest(string Email, string Password);
+
+/// <summary>
+/// Represents the request body for initiating a password reset.
+/// </summary>
+/// <param name="Email">The email address to send the reset link to.</param>
+public sealed record ForgotPasswordRequest(string Email);
+
+/// <summary>
+/// Represents the request body for refreshing a token pair.
+/// </summary>
+/// <param name="RefreshToken">The current refresh token to exchange.</param>
+public sealed record RefreshRequest(string RefreshToken);
+
+/// <summary>
+/// Represents the request body for revoking a refresh token.
+/// </summary>
+/// <param name="RefreshToken">The refresh token to revoke.</param>
+public sealed record RevokeRequest(string RefreshToken);
+
+/// <summary>
+/// Represents the request body for completing a password reset.
+/// </summary>
+/// <param name="Token">The plain reset token from the email link.</param>
+/// <param name="NewPassword">The new password to set.</param>
+public sealed record ResetPasswordRequest(string Token, string NewPassword);
