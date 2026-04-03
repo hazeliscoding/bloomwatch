@@ -50,6 +50,37 @@ cd src/BloomWatch.UI && npm install && npm start
 # → http://localhost:4200
 ```
 
+## 🗄️ Database Scripts
+
+Use the helper scripts in [scripts/](scripts/) for common EF Core database tasks:
+
+```bash
+# Apply all module migrations
+./scripts/apply-migrations.sh
+
+# Create a migration for one module
+./scripts/add-migration.sh <module> <MigrationName>
+
+# Drop the database (with confirmation)
+./scripts/drop-database.sh
+
+# Drop the database without confirmation (automation/CI)
+./scripts/drop-database.sh --force
+```
+
+Supported modules for `add-migration.sh`:
+
+- `identity`
+- `watchspaces`
+- `anilistsync`
+- `animetracking`
+
+Example:
+
+```bash
+./scripts/add-migration.sh identity AddRefreshTokenTable
+```
+
 ## 🧪 Running Tests
 
 ```bash

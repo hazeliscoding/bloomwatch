@@ -20,11 +20,19 @@ dotnet test tests/BloomWatch.Modules.Identity.UnitTests
 # Apply all EF Core migrations
 ./scripts/apply-migrations.sh
 
-# Add a migration to a specific module (example: Identity)
-dotnet ef migrations add <MigrationName> \
-  --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure \
-  --startup-project src/BloomWatch.Api \
-  --context IdentityDbContext
+# Add a migration to a specific module
+./scripts/add-migration.sh <module> <MigrationName>
+# Example:
+./scripts/add-migration.sh identity AddRefreshTokenTable
+
+# Drop the database (prompts for confirmation)
+./scripts/drop-database.sh
+
+# Drop the database without prompt (for automation)
+./scripts/drop-database.sh --force
+
+# Valid modules for add-migration.sh:
+# identity | watchspaces | anilistsync | animetracking
 ```
 
 ### Frontend (Angular 21)
