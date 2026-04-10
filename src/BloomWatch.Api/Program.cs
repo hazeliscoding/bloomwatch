@@ -3,6 +3,7 @@ using BloomWatch.Api.Infrastructure;
 using BloomWatch.Api.Modules.AniListSync;
 using BloomWatch.Api.Modules.Analytics;
 using BloomWatch.Api.Modules.AnimeTracking;
+using BloomWatch.Api.Modules.Health;
 using BloomWatch.Api.Modules.Home;
 using BloomWatch.Api.Modules.Identity;
 using BloomWatch.Api.Modules.WatchSpaces;
@@ -117,9 +118,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200") 
-                  .AllowAnyHeader() // Allows all headers
-                  .AllowAnyMethod(); // Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
+            var allowedOrigins = builder.Configuration
+                .GetSection("Cors:AllowedOrigins")
+                .Get<string[]>()
+                ?? ["http://localhost:4200"];
+
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
         });
 });
 
@@ -145,6 +151,7 @@ app.UseRateLimiter();
 app.UseCors("AllowSpecificOrigin");
 
 
+app.MapHealthEndpoints();
 app.MapIdentityEndpoints();
 app.MapWatchSpacesEndpoints();
 app.MapAniListSyncEndpoints();

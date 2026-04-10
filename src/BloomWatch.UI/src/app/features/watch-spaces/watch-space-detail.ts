@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomInputComponent } from '../../shared/ui/input/bloom-input';
 import { WatchSpaceService } from './watch-space.service';
@@ -21,6 +22,7 @@ export class WatchSpaceDetail implements OnInit {
   private readonly router = inject(Router);
   private readonly watchSpaceService = inject(WatchSpaceService);
   private readonly authService = inject(AuthService);
+  private readonly titleService = inject(Title);
 
   readonly detail = signal<WatchSpaceDetailModel | null>(null);
   readonly isLoading = signal(true);
@@ -272,6 +274,7 @@ export class WatchSpaceDetail implements OnInit {
       next: (detail) => {
         this.detail.set(detail);
         this.isLoading.set(false);
+        this.titleService.setTitle(`${detail.name} · Anime List · BloomWatch`);
         this.loadInvitations();
       },
       error: () => {

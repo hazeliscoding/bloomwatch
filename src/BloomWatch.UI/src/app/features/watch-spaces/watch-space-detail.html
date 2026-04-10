@@ -53,9 +53,11 @@
       } @else {
         <div class="watch-space-detail__title-row">
           <h1 class="watch-space-detail__title bloom-font-display">Anime List &mdash; {{ d.name }}</h1>
-          <bloom-button variant="primary" size="sm" (clicked)="openSearchModal()">
-            🔍 Add Anime
-          </bloom-button>
+          <div class="watch-space-detail__add-anime">
+            <bloom-button variant="primary" size="sm" (clicked)="openSearchModal()">
+              🔍 Add Anime
+            </bloom-button>
+          </div>
         </div>
       }
     </header>

@@ -1,4 +1,6 @@
 using System.Net;
+using System.Text.Json;
+using BloomWatch.Modules.AniListSync.Domain.Entities;
 using BloomWatch.Modules.AniListSync.Infrastructure.AniList;
 using BloomWatch.Modules.AniListSync.Infrastructure.Persistence;
 using BloomWatch.Modules.Identity.Infrastructure.Persistence;
@@ -7,9 +9,60 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BloomWatch.Modules.AniListSync.IntegrationTests;
+
+/// <summary>
+/// An <see cref="IModelCustomizer"/> that wraps the default EF Core customizer and then
+/// patches any <c>jsonb</c>-typed properties to use <c>TEXT</c> with JSON value converters,
+/// making the model compatible with SQLite in integration tests.
+/// </summary>
+internal sealed class SqliteJsonModelCustomizer(ModelCustomizerDependencies dependencies)
+    : ModelCustomizer(dependencies)
+{
+    public override void Customize(ModelBuilder modelBuilder, DbContext context)
+    {
+        base.Customize(modelBuilder, context);
+        SqliteJsonPatch.ApplyToModel(modelBuilder);
+    }
+}
+
+/// <summary>
+/// Patches the EF Core model to replace <c>jsonb</c> column type annotations with
+/// plain <c>TEXT</c> + JSON value converters so that SQLite can validate and use them.
+/// </summary>
+internal static class SqliteJsonPatch
+{
+    public static void ApplyToModel(ModelBuilder modelBuilder)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.GetColumnType() != "jsonb")
+                    continue;
+
+                var clrType = property.ClrType;
+                property.SetColumnType("TEXT");
+
+                if (clrType == typeof(IReadOnlyList<string>))
+                {
+                    property.SetValueConverter(new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<IReadOnlyList<string>, string>(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => (IReadOnlyList<string>)(JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null) ?? new List<string>())));
+                }
+                else if (clrType == typeof(IReadOnlyList<MediaTag>))
+                {
+                    property.SetValueConverter(new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<IReadOnlyList<MediaTag>, string>(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => (IReadOnlyList<MediaTag>)(JsonSerializer.Deserialize<List<MediaTag>>(v, (JsonSerializerOptions?)null) ?? new List<MediaTag>())));
+                }
+            }
+        }
+    }
+}
 
 public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
@@ -49,10 +102,13 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
     {
         builder.ConfigureServices(services =>
         {
-            // Replace DbContexts with SQLite in-memory
+            // Replace DbContexts with SQLite in-memory. AniListSyncDbContext uses jsonb
+            // columns, so we also replace the IModelCustomizer service to patch those
+            // column types to TEXT + JSON value converters for SQLite compatibility.
             ReplaceDbContext<IdentityDbContext>(services, _identityConnection!);
             ReplaceDbContext<WatchSpacesDbContext>(services, _watchSpacesConnection!);
-            ReplaceDbContext<AniListSyncDbContext>(services, _aniListSyncConnection!);
+            ReplaceDbContext<AniListSyncDbContext>(services, _aniListSyncConnection!,
+                patchJsonb: true);
 
             // Replace the AniListGraphQlClient's HttpClient with a stub handler
             services.AddHttpClient<AniListGraphQlClient>()
@@ -70,7 +126,10 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
         scope.ServiceProvider.GetRequiredService<AniListSyncDbContext>().Database.EnsureCreated();
     }
 
-    private static void ReplaceDbContext<TContext>(IServiceCollection services, SqliteConnection connection)
+    private static void ReplaceDbContext<TContext>(
+        IServiceCollection services,
+        SqliteConnection connection,
+        bool patchJsonb = false)
         where TContext : DbContext
     {
         var toRemove = services
@@ -86,7 +145,16 @@ public sealed class AniListSyncWebAppFactory : WebApplicationFactory<Program>, I
         foreach (var descriptor in toRemove)
             services.Remove(descriptor);
 
-        services.AddDbContext<TContext>(options => options.UseSqlite(connection));
+        if (patchJsonb)
+        {
+            services.AddDbContext<TContext>(options =>
+                options.UseSqlite(connection)
+                       .ReplaceService<IModelCustomizer, SqliteJsonModelCustomizer>());
+        }
+        else
+        {
+            services.AddDbContext<TContext>(options => options.UseSqlite(connection));
+        }
     }
 }
 

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.CrossModule;
 using BloomWatch.Modules.AnimeTracking.Infrastructure.Persistence;
 using BloomWatch.Modules.Identity.Infrastructure.Persistence;
@@ -7,9 +8,51 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BloomWatch.Modules.AnimeTracking.IntegrationTests;
+
+/// <summary>
+/// EF Core <see cref="IModelCustomizer"/> that patches <c>jsonb</c>-typed columns to
+/// use <c>TEXT</c> with JSON value converters, making them compatible with SQLite.
+/// </summary>
+internal sealed class SqliteJsonModelCustomizer(ModelCustomizerDependencies dependencies)
+    : ModelCustomizer(dependencies)
+{
+    public override void Customize(ModelBuilder modelBuilder, DbContext context)
+    {
+        base.Customize(modelBuilder, context);
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.GetColumnType() != "jsonb")
+                    continue;
+
+                var clrType = property.ClrType;
+                property.SetColumnType("TEXT");
+
+                if (clrType == typeof(IReadOnlyList<string>))
+                {
+                    property.SetValueConverter(
+                        new ValueConverter<IReadOnlyList<string>, string>(
+                            v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                            v => (IReadOnlyList<string>)(JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null) ?? new List<string>())));
+                }
+                else if (clrType == typeof(IReadOnlyList<MediaCacheTagRow>))
+                {
+                    property.SetValueConverter(
+                        new ValueConverter<IReadOnlyList<MediaCacheTagRow>, string>(
+                            v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                            v => (IReadOnlyList<MediaCacheTagRow>)(JsonSerializer.Deserialize<List<MediaCacheTagRow>>(v, (JsonSerializerOptions?)null) ?? new List<MediaCacheTagRow>())));
+                }
+            }
+        }
+    }
+}
 
 /// <summary>
 /// Uses four named SQLite in-memory databases:
@@ -65,7 +108,11 @@ public sealed class AnimeTrackingWebAppFactory : WebApplicationFactory<Program>,
             services.AddDbContext<WatchSpacesDbContext>(o => o.UseSqlite(_watchSpacesConnection!));
             services.AddDbContext<AnimeTrackingDbContext>(o => o.UseSqlite(_animeTrackingConnection!));
             services.AddDbContext<WatchSpaceMembershipReadDbContext>(o => o.UseSqlite(_watchSpacesConnection!));
-            services.AddDbContext<AniListMediaCacheReadDbContext>(o => o.UseSqlite(_aniListSyncConnection!));
+            // AniListMediaCacheReadDbContext uses jsonb columns — use the SQLite JSON model
+            // customizer to replace those column types with TEXT + value converters.
+            services.AddDbContext<AniListMediaCacheReadDbContext>(o =>
+                o.UseSqlite(_aniListSyncConnection!)
+                 .ReplaceService<IModelCustomizer, SqliteJsonModelCustomizer>());
         });
 
         builder.UseEnvironment("Testing");

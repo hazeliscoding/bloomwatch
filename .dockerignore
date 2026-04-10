@@ -1,0 +1,13 @@
+**/.git
+**/.github
+**/bin
+**/obj
+**/node_modules
+**/dist
+tests/
+openspec/
+docs/
+scripts/
+*.md
+.env
+.env.*

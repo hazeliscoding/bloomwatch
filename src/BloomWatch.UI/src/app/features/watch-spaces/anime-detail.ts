@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
@@ -367,6 +367,7 @@ export class AnimeDetail implements OnInit, OnDestroy {
   private readonly watchSpaceService = inject(WatchSpaceService);
   private readonly authService = inject(AuthService);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly titleService = inject(Title);
 
   readonly statusOptions = STATUS_OPTIONS;
   private readonly GENRE_BADGE_COLORS: BloomBadgeColor[] = ['lilac', 'blue', 'pink', 'green', 'yellow', 'neutral'];
@@ -505,6 +506,7 @@ export class AnimeDetail implements OnInit, OnDestroy {
         this.anime.set(detail);
         this.isLoading.set(false);
         this.prefillForms(detail);
+        this.titleService.setTitle(`${detail.preferredTitle} · BloomWatch`);
       },
       error: () => {
         this.isLoading.set(false);

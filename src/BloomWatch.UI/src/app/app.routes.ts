@@ -12,10 +12,10 @@ export const routes: Routes = [
     component: MinimalLayout,
     children: [
       { path: '', loadComponent: () => import('./features/landing/landing').then(m => m.Landing), pathMatch: 'full' },
-      { path: 'login', canActivate: [guestGuard], loadComponent: () => import('./features/auth/login').then(m => m.Login) },
-      { path: 'register', canActivate: [guestGuard], loadComponent: () => import('./features/auth/register').then(m => m.Register) },
-      { path: 'forgot-password', loadComponent: () => import('./features/auth/forgot-password/forgot-password').then(m => m.ForgotPassword) },
-      { path: 'reset-password', loadComponent: () => import('./features/auth/reset-password/reset-password').then(m => m.ResetPassword) },
+      { path: 'login', title: 'Sign In', canActivate: [guestGuard], loadComponent: () => import('./features/auth/login').then(m => m.Login) },
+      { path: 'register', title: 'Create Account', canActivate: [guestGuard], loadComponent: () => import('./features/auth/register').then(m => m.Register) },
+      { path: 'forgot-password', title: 'Forgot Password', loadComponent: () => import('./features/auth/forgot-password/forgot-password').then(m => m.ForgotPassword) },
+      { path: 'reset-password', title: 'Reset Password', loadComponent: () => import('./features/auth/reset-password/reset-password').then(m => m.ResetPassword) },
     ],
   },
   // Authenticated routes (shell layout — with nav bar)
@@ -30,11 +30,13 @@ export const routes: Routes = [
       { path: 'settings', loadChildren: () => import('./features/settings/settings.routes').then(m => m.settingsRoutes) },
       {
         path: 'invitations/:token/accept',
+        title: 'Invitation',
         loadComponent: () => import('./features/watch-spaces/invitation-response').then(m => m.InvitationResponse),
         data: { action: 'accept' },
       },
       {
         path: 'invitations/:token/decline',
+        title: 'Invitation',
         loadComponent: () => import('./features/watch-spaces/invitation-response').then(m => m.InvitationResponse),
         data: { action: 'decline' },
       },

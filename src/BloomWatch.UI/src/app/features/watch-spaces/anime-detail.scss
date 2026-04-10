@@ -299,7 +299,7 @@
   &:focus {
     outline: none;
     border-color: var(--bloom-primary);
-    box-shadow: 0 0 0 3px var(--bloom-pink-100);
+    box-shadow: 0 0 0 3px rgb(255 45 138 / 0.15);
   }
 }
 
@@ -335,8 +335,8 @@
     border-color var(--bloom-transition-fast);
 
   &:hover:not(:disabled) {
-    background: var(--bloom-pink-50);
-    border-color: var(--bloom-pink-200);
+    background: var(--bloom-ghost-hover-bg);
+    border-color: var(--bloom-ghost-hover-border);
   }
 
   &:disabled {
@@ -459,7 +459,7 @@
 
 .anime-detail__participant-card--self {
   border-color: var(--bloom-pink-200);
-  background: var(--bloom-pink-50);
+  background: var(--bloom-surface-tinted);
 }
 
 .anime-detail__participant-header {
@@ -569,7 +569,7 @@
   &:focus {
     outline: none;
     border-color: var(--bloom-primary);
-    box-shadow: 0 0 0 3px var(--bloom-pink-100);
+    box-shadow: 0 0 0 3px rgb(255 45 138 / 0.15);
   }
 }
 
@@ -639,6 +639,16 @@
 
   .anime-detail__shared-controls {
     justify-content: center;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Dark Mode Overrides
+// --------------------------------------------------------------------------
+
+html[data-theme='dark'] {
+  .anime-detail__participant-card--self {
+    border-color: var(--bloom-pink-700);
   }
 }
 

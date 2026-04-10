@@ -35,7 +35,7 @@ export class InvitationResponse implements OnInit {
       this.errorMessage.set('No invitation token provided.');
       return;
     }
-    this.autoAction = this.route.snapshot.data['action'] ?? null;
+    this.autoAction = this.route.snapshot.data?.['action'] ?? null;
     this.loadPreview();
   }
 

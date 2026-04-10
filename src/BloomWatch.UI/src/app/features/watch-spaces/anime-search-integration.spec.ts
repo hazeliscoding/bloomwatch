@@ -133,11 +133,19 @@ describe('Anime Search Integration', () => {
     ]);
     fixture.detectChanges();
 
-    // 5. Click Add on the result
+    // 5. Click Add on the result (opens confirm panel)
     const resultAddBtn = fixture.nativeElement.querySelector(
       '.anime-search__result-action bloom-button button'
     );
     resultAddBtn.click();
+    fixture.detectChanges();
+
+    // Confirm panel should appear — click "Add to Space"
+    const confirmBtn = fixture.nativeElement.querySelector(
+      '.anime-search__add-actions bloom-button:last-child button'
+    );
+    expect(confirmBtn).toBeTruthy();
+    confirmBtn.click();
     fixture.detectChanges();
 
     // Flush ensureMediaCached GET
