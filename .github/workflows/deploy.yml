@@ -48,7 +48,7 @@ jobs:
       - name: Build & push frontend image
         uses: docker/build-push-action@v5
         with:
-          context: src/BloomWatch.UI
+          context: .
           file: src/BloomWatch.UI/Dockerfile
           push: true
           tags: |
