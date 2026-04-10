@@ -79,6 +79,7 @@ jobs:
           dotnet ef database update \
             --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure \
             --startup-project src/BloomWatch.Api \
+            --configuration Release \
             --no-build
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
@@ -88,6 +89,7 @@ jobs:
           dotnet ef database update \
             --project src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure \
             --startup-project src/BloomWatch.Api \
+            --configuration Release \
             --no-build
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
@@ -97,6 +99,7 @@ jobs:
           dotnet ef database update \
             --project src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Infrastructure \
             --startup-project src/BloomWatch.Api \
+            --configuration Release \
             --no-build
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
@@ -106,6 +109,7 @@ jobs:
           dotnet ef database update \
             --project src/Modules/AnimeTracking/BloomWatch.Modules.AnimeTracking.Infrastructure \
             --startup-project src/BloomWatch.Api \
+            --configuration Release \
             --no-build
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
