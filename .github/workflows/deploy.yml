@@ -80,6 +80,7 @@ jobs:
             --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --context IdentityDbContext \
             --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
 
@@ -89,6 +90,7 @@ jobs:
             --project src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --context WatchSpacesDbContext \
             --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
 
@@ -98,6 +100,7 @@ jobs:
             --project src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --context AniListSyncDbContext \
             --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
 
@@ -107,6 +110,7 @@ jobs:
             --project src/Modules/AnimeTracking/BloomWatch.Modules.AnimeTracking.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --context AnimeTrackingDbContext \
             --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
 
