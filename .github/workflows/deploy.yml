@@ -80,9 +80,8 @@ jobs:
             --project src/Modules/Identity/BloomWatch.Modules.Identity.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
 
       - name: Migrate — WatchSpaces
         run: |
@@ -90,9 +89,8 @@ jobs:
             --project src/Modules/WatchSpaces/BloomWatch.Modules.WatchSpaces.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
 
       - name: Migrate — AniListSync
         run: |
@@ -100,9 +98,8 @@ jobs:
             --project src/Modules/AniListSync/BloomWatch.Modules.AniListSync.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
 
       - name: Migrate — AnimeTracking
         run: |
@@ -110,9 +107,8 @@ jobs:
             --project src/Modules/AnimeTracking/BloomWatch.Modules.AnimeTracking.Infrastructure \
             --startup-project src/BloomWatch.Api \
             --configuration Release \
+            --connection "${{ secrets.DATABASE_URL }}" \
             --no-build
-        env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.DATABASE_URL }}
 
   deploy:
     name: Deploy to Railway
