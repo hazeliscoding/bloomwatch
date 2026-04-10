@@ -12,7 +12,7 @@ RUN npm run build
 FROM nginx:alpine AS serve
 
 COPY --from=build /app/dist/BloomWatch.UI/browser /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY src/BloomWatch.UI/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
