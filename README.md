@@ -2,7 +2,7 @@
 
 > A shared anime tracking platform for pairs and small groups.
 
-BloomWatch lets friends maintain a joint backlog, track watch progress, leave separate ratings, and discover how compatible their taste really is — no more spreadsheets or Discord threads.
+BloomWatch lets friends maintain a joint backlog, track watch progress, leave separate ratings, and discover how compatible their taste really is — no more spreadsheets or Discord threads!
 
 ## ✨ Features
 
