@@ -44,5 +44,6 @@
     <Project Path="tests/BloomWatch.Modules.WatchSpaces.UnitTests/BloomWatch.Modules.WatchSpaces.UnitTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.Analytics.UnitTests/BloomWatch.Modules.Analytics.UnitTests.csproj" />
     <Project Path="tests/BloomWatch.Modules.Analytics.IntegrationTests/BloomWatch.Modules.Analytics.IntegrationTests.csproj" />
+    <Project Path="tests/BloomWatch.Modules.AnimeTracking.IntegrationTests/BloomWatch.Modules.AnimeTracking.IntegrationTests.csproj" />
   </Folder>
 </Solution>
