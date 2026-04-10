@@ -2,17 +2,17 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 
-COPY src/BloomWatch.UI/package*.json ./
+COPY package*.json ./
 RUN npm ci
 
-COPY src/BloomWatch.UI/ .
+COPY . .
 RUN npm run build
 
 # Stage 2: serve with nginx
 FROM nginx:alpine AS serve
 
 COPY --from=build /app/dist/BloomWatch.UI/browser /usr/share/nginx/html
-COPY src/BloomWatch.UI/nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
