@@ -6,6 +6,7 @@ using BloomWatch.Modules.AnimeTracking.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace BloomWatch.Modules.AnimeTracking.Infrastructure.Extensions;
 
@@ -36,8 +37,12 @@ public static class ServiceCollectionExtensions
         // Cross-module read contexts
         services.AddDbContext<WatchSpaceMembershipReadDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        var mediaCacheDataSource = new NpgsqlDataSourceBuilder(connectionString)
+            .EnableDynamicJson()
+            .Build();
         services.AddDbContext<AniListMediaCacheReadDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(mediaCacheDataSource));
 
         // Repositories
         services.AddScoped<IAnimeTrackingRepository, EfAnimeTrackingRepository>();

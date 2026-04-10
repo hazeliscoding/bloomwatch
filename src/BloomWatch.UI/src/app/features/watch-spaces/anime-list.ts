@@ -55,7 +55,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
             (click)="setTab(tab.value)"
           >
             {{ tab.label }}
-            <span class="anime-list__tab-count">({{ countForTab(tab.value) }})</span>
+            <span class="anime-list__tab-count">{{ countForTab(tab.value) }}</span>
           </button>
         }
       </nav>
@@ -91,7 +91,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
       @if (!isLoading() && !loadError() && filteredList().length > 0) {
         <div class="anime-list__grid">
           @for (anime of filteredList(); track anime.watchSpaceAnimeId) {
-            <bloom-card class="anime-list__card">
+            <bloom-card class="anime-list__card" (click)="navigateToDetail(anime.watchSpaceAnimeId)">
               <div class="anime-list__card-inner">
                 <div class="anime-list__card-cover">
                   @if (anime.coverImageUrlSnapshot) {
@@ -138,7 +138,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
                   @if (anime.participants.length > 0) {
                     <div class="anime-list__card-participants">
                       @for (p of anime.participants; track p.userId) {
-                        <div class="anime-list__participant-row">
+                        <div class="anime-list__participant-row anime-list__card-participant">
                           <bloom-avatar size="xs" [name]="p.displayName" />
                           <span class="anime-list__participant-name">{{ p.displayName }}:</span>
                           <span class="anime-list__participant-ep">Ep {{ p.episodesWatched }}</span>
@@ -174,7 +174,7 @@ const STATUS_BADGE_COLORS: Record<string, BloomBadgeColor> = {
                 <p class="anime-list__card-error" role="alert">{{ err }}</p>
               }
 
-              <div bloomCardFooter class="anime-list__card-footer">
+              <div bloomCardFooter class="anime-list__card-footer" (click)="$event.stopPropagation()">
                 <bloom-button
                   variant="ghost"
                   size="sm"

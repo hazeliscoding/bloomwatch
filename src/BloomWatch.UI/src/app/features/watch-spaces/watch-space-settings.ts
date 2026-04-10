@@ -8,6 +8,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 import { BloomCardComponent } from '../../shared/ui/card/bloom-card';
 import { BloomButtonComponent } from '../../shared/ui/button/bloom-button';
 import { BloomInputComponent } from '../../shared/ui/input/bloom-input';
@@ -225,6 +226,7 @@ export class WatchSpaceSettings implements OnInit {
   private readonly router = inject(Router);
   private readonly watchSpaceService = inject(WatchSpaceService);
   private readonly authService = inject(AuthService);
+  private readonly titleService = inject(Title);
 
   readonly detail = signal<WatchSpaceDetail | null>(null);
   readonly isLoading = signal(true);
@@ -450,6 +452,7 @@ export class WatchSpaceSettings implements OnInit {
       next: (detail) => {
         this.detail.set(detail);
         this.isLoading.set(false);
+        this.titleService.setTitle(`${detail.name} · Settings · BloomWatch`);
         this.loadInvitations();
       },
       error: () => {

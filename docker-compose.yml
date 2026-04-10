@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bloomwatch-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=host.docker.internal;Database=bloomwatch;Username=postgres;Password=postgres
+      - Identity__Jwt__SecretKey=dev-secret-at-least-32-chars-long!!
+
+  frontend:
+    build:
+      context: .
+      dockerfile: src/BloomWatch.UI/Dockerfile
+    container_name: bloomwatch-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api

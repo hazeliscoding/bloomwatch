@@ -113,7 +113,7 @@ const GENRE_BADGE_COLORS: BloomBadgeColor[] = ['lilac', 'blue', 'pink', 'green',
               </div>
               <div class="anime-search__result-action">
                 @if (item.addState === 'added') {
-                  <bloom-badge color="green" size="sm">&#10003; Added</bloom-badge>
+                  <bloom-badge class="anime-search__result-added" color="green" size="sm">&#10003; Added</bloom-badge>
                 } @else if (item.addState === 'error') {
                   <bloom-button variant="danger" size="sm" (clicked)="startAdd(item)">
                     Retry
