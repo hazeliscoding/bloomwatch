@@ -2,10 +2,10 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 
-COPY package*.json ./
+COPY src/BloomWatch.UI/package*.json ./
 RUN npm ci
 
-COPY . .
+COPY src/BloomWatch.UI/ .
 RUN npm run build
 
 # Stage 2: serve with nginx
