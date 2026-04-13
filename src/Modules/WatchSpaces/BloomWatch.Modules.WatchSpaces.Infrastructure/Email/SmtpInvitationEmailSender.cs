@@ -20,7 +20,9 @@ internal sealed class SmtpInvitationEmailSender(
 {
     private static readonly AsyncRetryPolicy RetryPolicy = Policy
         .Handle<Exception>()
-        .WaitAndRetryAsync(retryCount: 2, sleepDurationProvider: _ => TimeSpan.FromSeconds(1));
+        .WaitAndRetryAsync(retryCount: 2, sleepDurationProvider: _ => TimeSpan.FromSeconds(2));
+
+    private const int ConnectTimeoutMs = 5_000;
 
     public async Task SendAsync(
         string invitedEmail,
@@ -55,6 +57,8 @@ internal sealed class SmtpInvitationEmailSender(
         await RetryPolicy.ExecuteAsync(async () =>
         {
             using var client = new SmtpClient();
+            client.Timeout = ConnectTimeoutMs;
+
             var secureSocketOptions = string.IsNullOrEmpty(username)
                 ? SecureSocketOptions.None   // Mailpit: no TLS, no auth
                 : SecureSocketOptions.StartTls;

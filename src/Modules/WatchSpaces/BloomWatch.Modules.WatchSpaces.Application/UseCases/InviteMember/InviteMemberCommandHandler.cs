@@ -57,23 +57,26 @@ public sealed class InviteMemberCommandHandler(
         var names = await displayNameLookup.GetDisplayNamesAsync([command.RequestingUserId], cancellationToken);
         var inviterName = names.TryGetValue(command.RequestingUserId, out var n) ? n : "Someone";
 
-        var emailDeliveryFailed = false;
-        try
+        // Fire-and-forget: email delivery must not block or fail the HTTP response.
+        // The invitation is already persisted; delivery failure is logged but non-fatal.
+        _ = Task.Run(async () =>
         {
-            await emailSender.SendAsync(
-                command.InvitedEmail,
-                invitation.Token,
-                watchSpace.Name,
-                inviterName,
-                cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex,
-                "Failed to deliver invitation email to {Email} for watch space {WatchSpaceId}",
-                command.InvitedEmail, command.WatchSpaceId);
-            emailDeliveryFailed = true;
-        }
+            try
+            {
+                await emailSender.SendAsync(
+                    command.InvitedEmail,
+                    invitation.Token,
+                    watchSpace.Name,
+                    inviterName,
+                    CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex,
+                    "Failed to deliver invitation email to {Email} for watch space {WatchSpaceId}",
+                    command.InvitedEmail, command.WatchSpaceId);
+            }
+        });
 
         return new InviteMemberResult(
             invitation.Id,
@@ -81,7 +84,7 @@ public sealed class InviteMemberCommandHandler(
             invitation.Status.ToString(),
             invitation.ExpiresAtUtc,
             invitation.Token,
-            emailDeliveryFailed);
+            false);
     }
 }
 
