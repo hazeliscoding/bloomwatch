@@ -62,8 +62,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
-        var smtpHost = configuration["Email:Smtp:Host"];
-        if (!string.IsNullOrEmpty(smtpHost))
+        if (!string.IsNullOrEmpty(configuration["Email:Mailgun:ApiKey"]))
+            services.AddScoped<IPasswordResetEmailSender, MailgunPasswordResetEmailSender>();
+        else if (!string.IsNullOrEmpty(configuration["Email:Smtp:Host"]))
             services.AddScoped<IPasswordResetEmailSender, SmtpPasswordResetEmailSender>();
         else
             services.AddScoped<IPasswordResetEmailSender, NoOpPasswordResetEmailSender>();

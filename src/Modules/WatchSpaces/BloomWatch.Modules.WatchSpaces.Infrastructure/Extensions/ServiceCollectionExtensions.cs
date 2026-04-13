@@ -60,8 +60,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserReadModel, UserReadModel>();
         services.AddScoped<IUserDisplayNameLookup, UserDisplayNameLookup>();
 
-        var smtpHost = configuration["Email:Smtp:Host"];
-        if (!string.IsNullOrEmpty(smtpHost))
+        if (!string.IsNullOrEmpty(configuration["Email:Mailgun:ApiKey"]))
+            services.AddScoped<IInvitationEmailSender, MailgunInvitationEmailSender>();
+        else if (!string.IsNullOrEmpty(configuration["Email:Smtp:Host"]))
             services.AddScoped<IInvitationEmailSender, SmtpInvitationEmailSender>();
         else
             services.AddScoped<IInvitationEmailSender, NoOpInvitationEmailSender>();
